@@ -1,52 +1,96 @@
-function toggleCoordinateFields() {
-    const dimension = document.getElementById("dimension").value;
-    const zInput = document.getElementById("zInput");
-    zInput.classList.toggle("hidden", dimension === "2");
-}
-
 function displayMaxCoord() {
-    const bitLength = parseInt(document.getElementById("bitLength").value);
-    const dimension = parseInt(document.getElementById("dimension").value);
+    const bitLength = document.getElementById("bitLength").value;
+    const dimension = document.getElementById("dimension").value;
+    const maxCoord = document.getElementById("maxCoord");
 
-    // Berechnung der maximalen Koordinate pro Achse
-    const bitsPerCoord = Math.floor(bitLength / dimension);
-    const maxCoord = (1 << bitsPerCoord) - 1;
-
-    const maxCoordDiv = document.getElementById("maxCoord");
-    maxCoordDiv.innerHTML = `Maximale Koordinate pro Achse (Dezimal): ${maxCoord}`;
-    maxCoordDiv.classList.remove("hidden");
+    if (bitLength) {
+        const maxCoordinate = (1 << (bitLength / dimension)) - 1;
+        maxCoord.innerText = `Maximale Koordinate: ${maxCoordinate}`;
+        maxCoord.classList.remove("hidden");
+    } else {
+        maxCoord.classList.add("hidden");
+    }
 }
+
+function toggleCoordinateFields() {
+    const dimension = document.getElementById('dimension').value;
+    const layout = document.getElementById('layout');
+    const zInput = document.getElementById('zInput');
+
+    // Zeige oder verstecke die z-Koordinate basierend auf der Dimension
+    if (dimension === '3') {
+        zInput.classList.remove('hidden');
+        layout.classList.remove('hidden'); // Zeige das Layout-Select-Feld
+    } else {
+        zInput.classList.add('hidden');
+        layout.classList.add('hidden'); // Verstecke das Layout-Select-Feld
+    }
+
+    // Anpassen der Eingabereihenfolge basierend auf dem Layout
+    updateCoordinateInputOrder(layout.value);
+}
+
+function updateCoordinateInputOrder(layout) {
+    const xLabel = document.querySelector('label[for="x"]');
+    const yLabel = document.querySelector('label[for="y"]');
+    const zLabel = document.querySelector('label[for="z"]');
+    const xInput = document.getElementById('x');
+    const yInput = document.getElementById('y');
+    const zInput = document.getElementById('zInput');
+
+    // Entferne alle Koordinaten-Labels und Eingabefelder
+    const coordinateInputs = document.getElementById('coordinateInputs');
+    coordinateInputs.innerHTML = '';
+
+    if (layout === 'xyz') {
+        coordinateInputs.appendChild(xLabel);
+        coordinateInputs.appendChild(xInput);
+        coordinateInputs.appendChild(yLabel);
+        coordinateInputs.appendChild(yInput);
+        coordinateInputs.appendChild(zLabel);
+        coordinateInputs.appendChild(zInput);
+    } else if (layout === 'zyx') {
+        coordinateInputs.appendChild(zLabel);
+        coordinateInputs.appendChild(zInput);
+        coordinateInputs.appendChild(yLabel);
+        coordinateInputs.appendChild(yInput);
+        coordinateInputs.appendChild(xLabel);
+        coordinateInputs.appendChild(xInput);
+    }
+}
+
 
 function calculateMortonCode() {
     const bitLength = parseInt(document.getElementById("bitLength").value);
-    const dimension = parseInt(document.getElementById("dimension").value);
-    const x = parseInt(document.getElementById("x").value);
-    const y = parseInt(document.getElementById("y").value);
-    const z = dimension === 3 ? parseInt(document.getElementById("z").value) : 0;
-
-    // Calculate max coord based on bit length and dimension
-    const bitsPerCoord = Math.floor(bitLength / dimension);
-    const maxCoord = (1 << bitsPerCoord) - 1;
-    
-    if (x > maxCoord || y > maxCoord || (dimension === 3 && z > maxCoord)) {
-        alert("Koordinatenwerte überschreiten die maximale erlaubte Koordinate für die gewählte Bitlänge und Dimension.");
-        return;
-    }
+    const dimension = document.getElementById("dimension").value;
+    const layout = document.getElementById("layout").value;
+    const x = parseInt(document.getElementById("x").value) || 0;
+    const y = parseInt(document.getElementById("y").value) || 0;
+    const z = dimension === "3" ? (parseInt(document.getElementById("z").value) || 0) : 0;
 
     let mortonCode = 0;
-    for (let i = 0; i < bitsPerCoord; i++) {
-        mortonCode |= ((x >> i) & 1) << (i * dimension);
-        mortonCode |= ((y >> i) & 1) << (i * dimension + 1);
-        if (dimension === 3) {
-            mortonCode |= ((z >> i) & 1) << (i * dimension + 2);
+
+    if (dimension === "3") {
+        const coords = layout === "xyz" ? [x, y, z] : [z, y, x];
+        mortonCode = interleaveBits(coords, bitLength);
+    } else {
+        mortonCode = interleaveBits([x, y], bitLength);
+    }
+
+    const result = document.getElementById("result");
+    result.innerHTML = `Morton-Code (Dezimal): ${mortonCode}<br>Morton-Code (Binär): ${mortonCode.toString(2)}`;
+    result.classList.remove("hidden");
+}
+
+function interleaveBits(coords, bitLength) {
+    let mortonCode = 0;
+    const bitsPerCoordinate = bitLength / coords.length;
+
+    for (let i = 0; i < bitsPerCoordinate; i++) {
+        for (let j = 0; j < coords.length; j++) {
+            mortonCode |= ((coords[j] >> i) & 1) << (i * coords.length + j);
         }
     }
 
-    // Convert Morton code to binary and pad with leading zeros based on bit length
-    const binaryMortonCode = mortonCode.toString(2).padStart(bitLength, '0');
-
-    // Display the result
-    const resultDiv = document.getElementById("result");
-    resultDiv.innerHTML = `Morton-Code (Dezimal): ${mortonCode}<br>Morton-Code (Binär): ${binaryMortonCode}`;
-    resultDiv.classList.remove("hidden");
+    return mortonCode;
 }

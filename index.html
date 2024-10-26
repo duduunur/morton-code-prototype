@@ -25,34 +25,33 @@
     <div class="select-group">
         <label for="dimension">Dimension:</label>
         <select id="dimension" onchange="toggleCoordinateFields(); displayMaxCoord();">
-            <option value="2">2D</option>
-            <option value="3">3D</option>
+            <option value="2">2D (x, y)</option>
+            <option value="3">3D (x, y, z)</option>
         </select>
     </div>
     
     <div class="select-group">
         <label for="layout">Layout:</label>
-        <select id="layout">
-            <option value="xy">xyz</option>
-            <option value="xyz">zyx</option>
+        <select id="layout" class="hidden" onchange="toggleCoordinateFields();">
+            <option value="xyz">x, y, z</option>
+            <option value="zyx">z, y, x</option>
         </select>
     </div>
     
     <div id="coordinateInputs">
-        <label for="x">x:</label>
+        <label for="x">x-Koordinate:</label>
         <input type="number" id="x" placeholder="Wert für x">
         
-        <label for="y">y:</label>
+        <label for="y">y-Koordinate:</label>
         <input type="number" id="y" placeholder="Wert für y">
         
         <div id="zInput" class="hidden">
-            <label for="z">z:</label>
+            <label for="z">z-Koordinate:</label>
             <input type="number" id="z" placeholder="Wert für z">
         </div>
     </div>
 
     <button onclick="calculateMortonCode()">Berechnen</button>
-
 
     <div id="result" class="result hidden"></div>
 </div>
