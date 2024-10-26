@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morton-Code-Berechner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2>Morton-Code-Berechner</h2>
+
+<div class="container">
+    <div class="select-group">
+        <label for="bitLength">Bitlänge:</label>
+        <select id="bitLength" onchange="displayMaxCoord()">
+            <option value="" disabled selected>Wählen Sie die Bitlänge</option>
+            <option value="16">16</option>
+            <option value="32">32</option>
+            <option value="64">64</option>
+        </select>
+        <div id="maxCoord" class="max-coord hidden"></div>
+    </div>
+    
+    <div class="select-group">
+        <label for="dimension">Dimension:</label>
+        <select id="dimension" onchange="toggleCoordinateFields(); displayMaxCoord();">
+            <option value="2">2D</option>
+            <option value="3">3D</option>
+        </select>
+    </div>
+    
+    <div class="select-group">
+        <label for="layout">Layout:</label>
+        <select id="layout">
+            <option value="xy">xyz</option>
+            <option value="xyz">zyx</option>
+        </select>
+    </div>
+    
+    <div id="coordinateInputs">
+        <label for="x">x:</label>
+        <input type="number" id="x" placeholder="Wert für x">
+        
+        <label for="y">y:</label>
+        <input type="number" id="y" placeholder="Wert für y">
+        
+        <div id="zInput" class="hidden">
+            <label for="z">z:</label>
+            <input type="number" id="z" placeholder="Wert für z">
+        </div>
+    </div>
+
+    <button onclick="calculateMortonCode()">Berechnen</button>
+
+
+    <div id="result" class="result hidden"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

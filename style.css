@@ -1,0 +1,55 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f0f0f0;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 600px;
+}
+
+.select-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#maxCoord {
+    padding: 5px;
+    font-size: 0.9em;
+}
+
+#coordinateInputs {
+    display: flex;
+    gap: 10px;
+}
+
+input[type="number"], select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.result {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #e0f7fa;
+    border: 1px solid #00796b;
+    border-radius: 4px;
+}
+
+.hidden {
+    display: none;
+}
