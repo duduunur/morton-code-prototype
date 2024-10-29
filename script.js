@@ -72,7 +72,8 @@ function calculateMortonCode() {
 
     if (dimension === "3") {
         const coords = layout === "xyz" ? [x, y, z] : [z, y, x];
-        mortonCode = interleaveBits(coords, bitLength);
+        //mortonCode = interleaveBits(coords, bitLength);
+        mortonCode = mortonEncodeMagicBits(x,y,z);
     } else {
         mortonCode = interleaveBits([x, y], bitLength);
     }
@@ -94,3 +95,28 @@ function interleaveBits(coords, bitLength) {
 
     return mortonCode;
 }
+
+
+function splitBy3(a) {
+    let x = BigInt(a) & 0x1fffffn; // Nur die ersten 21 Bits verwenden und als BigInt speichern
+    x = (x | (x << 32n)) & 0x1f00000000ffffn;
+    x = (x | (x << 16n)) & 0x1f0000ff0000ffn;
+    x = (x | (x << 8n)) & 0x100f00f00f00f00fn;
+    x = (x | (x << 4n)) & 0x10c30c30c30c30c3n;
+    x = (x | (x << 2n)) & 0x1249249249249249n;
+    return x;
+  }
+  
+  function mortonEncodeMagicBits(x, y, z) {
+    // Umwandlung in BigInt und Zerstreuung der Bits für x, y und z
+    const result = splitBy3(x) | (splitBy3(y) << 1n) | (splitBy3(z) << 2n);
+    return result;
+  }
+  
+  /*
+  // Beispiel: Testen der Funktion
+  const x = 3; // Beispielwerte für x, y und z
+  const y = 5;
+  const z = 7;
+  console.log(mortonEncodeMagicBits(x, y, z).toString(2).padStart(64, "0")); // Ausgabe als 64-Bit-Binärzahl
+*/
