@@ -90,12 +90,12 @@ function calculateMortonCode() {
 }
 
 function interleaveBits(coords, bitLength) {
-    let mortonCode = 0;
+    let mortonCode = BigInt(0);
     const maxBits = bitLength / coords.length;
 
     for (let i = 0; i < maxBits; ++i) {
         for (let j = 0; j < coords.length; ++j) {
-            mortonCode |= ((coords[j] & (1 << i)) << (i * (coords.length - 1) + j));
+            mortonCode |= ((BigInt(coords[j]) >> BigInt(i)) & BigInt(1)) << BigInt(i * coords.length + j);
         }
     }
     return mortonCode;
