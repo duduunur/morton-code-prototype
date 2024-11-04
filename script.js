@@ -16,12 +16,15 @@ function toggleCoordinateFields() {
     const dimension = document.getElementById('dimension').value;
     const layout = document.getElementById('layout');
     const zInput = document.getElementById('zInput');
+    const zLabel = document.getElementById('zLabel');
 
     // Zeige oder verstecke die z-Koordinate basierend auf der Dimension
     if (dimension === '3') {
+        zLabel.classList.remove('hidden');
         zInput.classList.remove('hidden');
         layout.classList.remove('hidden'); // Zeige das Layout-Select-Feld
     } else {
+        zLabel.classList.add('hidden');
         zInput.classList.add('hidden');
         layout.classList.add('hidden'); // Verstecke das Layout-Select-Feld
     }
