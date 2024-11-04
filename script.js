@@ -1,11 +1,11 @@
 function displayMaxCoord() {
-    const bitLength = document.getElementById("bitLength").value;
-    const dimension = document.getElementById("dimension").value;
+    const bitLength = BigInt(document.getElementById("bitLength").value);
+    const dimension = BigInt(document.getElementById("dimension").value);
     const maxCoord = document.getElementById("maxCoord");
 
     if (bitLength) {
-        const maxCoordinate = (1 << (bitLength / dimension)) - 1;
-        maxCoord.innerText = `Maximale Koordinate: ${maxCoordinate}`;
+        const maxCoordinate = (1n << (bitLength / dimension)) - 1n;
+        maxCoord.innerText = `Maximale Koordinate: ${maxCoordinate.toString()}`;
         maxCoord.classList.remove("hidden");
     } else {
         maxCoord.classList.add("hidden");
@@ -72,8 +72,8 @@ function calculateMortonCode() {
 
     if (dimension === "3") {
         const coords = layout === "xyz" ? [x, y, z] : [z, y, x];
-        //mortonCode = interleaveBits(coords, bitLength);
-        mortonCode = mortonEncodeMagicBits(x,y,z);
+        mortonCode = interleaveBits(coords, bitLength);
+        //mortonCode = mortonEncodeMagicBits(x,y,z);
     } else {
         mortonCode = interleaveBits([x, y], bitLength);
     }
@@ -85,14 +85,13 @@ function calculateMortonCode() {
 
 function interleaveBits(coords, bitLength) {
     let mortonCode = 0;
-    const bitsPerCoordinate = bitLength / coords.length;
+    const maxBits = bitLength / coords.length;
 
-    for (let i = 0; i < bitsPerCoordinate; i++) {
+    for (let i = 0; i < maxBits; ++i) {
         for (let j = 0; j < coords.length; j++) {
-            mortonCode |= ((coords[j] >> i) & 1) << (i * coords.length + j);
+            mortonCode |= ((coords[j] & (1 << i)) << (2*i + j));
         }
     }
-
     return mortonCode;
 }
 
