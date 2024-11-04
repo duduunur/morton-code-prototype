@@ -68,19 +68,25 @@ function calculateMortonCode() {
     const y = parseInt(document.getElementById("y").value) || 0;
     const z = dimension === "3" ? (parseInt(document.getElementById("z").value) || 0) : 0;
 
-    let mortonCode = 0;
+    let mortonCode1 = 0; // first method: interleave
+    let mortonCode2 = 0; // second method: magic bits
 
     if (dimension === "3") {
+        console.log("3d, checking layout")
         const coords = layout === "xyz" ? [x, y, z] : [z, y, x];
-        mortonCode = interleaveBits(coords, bitLength);
-        //mortonCode = mortonEncodeMagicBits(x,y,z);
+        mortonCode1 = interleaveBits(coords, bitLength);
+        mortonCode2 = mortonEncodeMagicBits(x,y,z);
     } else {
-        mortonCode = interleaveBits([x, y], bitLength);
+        console.log("2d, interleaving x and y")
+        mortonCode1 = interleaveBits([x, y], bitLength);
     }
 
-    const result = document.getElementById("result");
-    result.innerHTML = `Morton-Code (Dezimal): ${mortonCode}<br>Morton-Code (Binär): ${mortonCode.toString(2)}`;
-    result.classList.remove("hidden");
+    const result1 = document.getElementById("result1");
+    const result2 = document.getElementById("result2");
+    result1.innerHTML = `Interleave(for-loop):<br> Morton-Code (Dezimal): ${mortonCode1}<br>Morton-Code (Binär): ${mortonCode1.toString(2)}`;
+    result2.innerHTML = `Magic Bits:<br>Morton-Code (Dezimal): ${mortonCode2}<br>Morton-Code (Binär): ${mortonCode2.toString(2)}`;
+    result1.classList.remove("hidden");
+    result2.classList.remove("hidden");
 }
 
 function interleaveBits(coords, bitLength) {
@@ -88,13 +94,12 @@ function interleaveBits(coords, bitLength) {
     const maxBits = bitLength / coords.length;
 
     for (let i = 0; i < maxBits; ++i) {
-        for (let j = 0; j < coords.length; j++) {
-            mortonCode |= ((coords[j] & (1 << i)) << (2*i + j));
+        for (let j = 0; j < coords.length; ++j) {
+            mortonCode |= ((coords[j] & (1 << i)) << (i * (coords.length - 1) + j));
         }
     }
     return mortonCode;
 }
-
 
 function splitBy3(a) {
     let x = BigInt(a) & 0x1fffffn; // Nur die ersten 21 Bits verwenden und als BigInt speichern

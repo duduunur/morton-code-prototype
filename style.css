@@ -42,7 +42,12 @@ input[type="number"], select {
     border-radius: 4px;
 }
 
-.result {
+.result1 {
+    margin-top: 20px;
+    padding: 10px;
+}
+
+.result2 {
     margin-top: 20px;
     padding: 10px;
 }
