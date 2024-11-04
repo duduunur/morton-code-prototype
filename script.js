@@ -75,10 +75,11 @@ function calculateMortonCode() {
         console.log("3d, checking layout")
         const coords = layout === "xyz" ? [x, y, z] : [z, y, x];
         mortonCode1 = interleaveBits(coords, bitLength);
-        mortonCode2 = mortonEncodeMagicBits(x,y,z);
+        mortonCode2 = mortonEncodeMagicBits(coords);
     } else {
         console.log("2d, interleaving x and y")
         mortonCode1 = interleaveBits([x, y], bitLength);
+        mortonCode2 = mortonEncodeMagicBits2D(x,y);
     }
 
     const result1 = document.getElementById("result1");
@@ -111,12 +112,27 @@ function splitBy3(a) {
     return x;
   }
   
-  function mortonEncodeMagicBits(x, y, z) {
+  function mortonEncodeMagicBits(coords) {
     // Umwandlung in BigInt und Zerstreuung der Bits für x, y und z
-    const result = splitBy3(x) | (splitBy3(y) << 1n) | (splitBy3(z) << 2n);
+    const result = splitBy3(coords[0]) | (splitBy3(coords[1]) << 1n) | (splitBy3(coords[2]) << 2n);
     return result;
   }
-  
+
+function splitBy2(a) {
+    let x = BigInt(a) & 0xffffffffn; // Nur die ersten 32 Bits verwenden und als BigInt speichern
+    x = (x | (x << 16n)) & 0x0000ffff0000ffffn;
+    x = (x | (x << 8n)) & 0x00ff00ff00ff00ffn;
+    x = (x | (x << 4n)) & 0x0f0f0f0f0f0f0f0fn;
+    x = (x | (x << 2n)) & 0x3333333333333333n;
+    x = (x | (x << 1n)) & 0x5555555555555555n;
+    return x;
+}
+
+function mortonEncodeMagicBits2D(x, y) {
+    // Umwandlung in BigInt und Zerstreuung der Bits für x und y
+    const result = splitBy2(x) | (splitBy2(y) << 1n);
+    return result;
+}
   /*
   // Beispiel: Testen der Funktion
   const x = 3; // Beispielwerte für x, y und z
