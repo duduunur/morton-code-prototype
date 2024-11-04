@@ -95,7 +95,7 @@ function interleaveBits(coords, bitLength) {
 
     for (let i = 0; i < maxBits; ++i) {
         for (let j = 0; j < coords.length; ++j) {
-            mortonCode |= ((BigInt(coords[j]) >> BigInt(i)) & BigInt(1)) << BigInt(i * coords.length + j);
+            mortonCode |= ((BigInt(coords[j]) & (BigInt(1) << BigInt(i))) << BigInt(i * (coords.length - 1) + j));
         }
     }
     return mortonCode;
