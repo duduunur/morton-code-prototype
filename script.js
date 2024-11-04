@@ -24,6 +24,7 @@ function toggleCoordinateFields() {
         zInput.classList.remove('hidden');
         layout.classList.remove('hidden'); // Zeige das Layout-Select-Feld
     } else {
+        layout.value = 'xyz';
         zLabel.classList.add('hidden');
         zInput.classList.add('hidden');
         layout.classList.add('hidden'); // Verstecke das Layout-Select-Feld
