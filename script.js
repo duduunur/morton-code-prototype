@@ -76,12 +76,11 @@ function calculateMortonCode() {
     let mortonCode2 = 0; // second method: magic bits
 
     if (dimension === "3") {
-        console.log("3d, checking layout")
         const coords = layout === "xyz" ? [x, y, z] : [z, y, x];
         mortonCode1 = interleaveBits(coords, bitLength);
         mortonCode2 = mortonEncodeMagicBits(coords);
+        animateInterleaveSteps(coords, bitLength);
     } else {
-        console.log("2d, interleaving x and y")
         mortonCode1 = interleaveBits([x, y], bitLength);
         mortonCode2 = mortonEncodeMagicBits2D(x,y);
     }
@@ -136,6 +135,31 @@ function mortonEncodeMagicBits2D(x, y) {
     // Umwandlung in BigInt und Zerstreuung der Bits für x und y
     const result = splitBy2(x) | (splitBy2(y) << 1n);
     return result;
+}
+
+function animateInterleaveSteps(coords, bitLength) {
+    const stepsContainer = document.getElementById('interleaveSteps');
+    stepsContainer.innerHTML = ''; // Reset container
+
+    let mortonCode = BigInt(0);
+    const maxBits = bitLength / coords.length;
+    const colors = ['color-x', 'color-y', 'color-z'];
+
+    for (let i = 0; i < maxBits; ++i) {
+        for (let j = 0; j < coords.length; ++j) {
+            let bitValue = (BigInt(coords[j]) & (BigInt(1) << BigInt(i)));
+            let shiftedValue = bitValue << BigInt(i * (coords.length - 1) + j);
+            mortonCode |= shiftedValue;
+
+            // Animation: Bit-Schritt anzeigen
+            setTimeout(() => {
+                const bitElement = document.createElement('span');
+                bitElement.classList.add('step-bit', colors[j]);
+                bitElement.textContent = ((shiftedValue > 0n) ? '1' : '0');
+                stepsContainer.appendChild(bitElement);
+            }, 500 * (i * coords.length + j)); // Timing für schrittweise Animation
+        }
+    }
 }
   /*
   // Beispiel: Testen der Funktion

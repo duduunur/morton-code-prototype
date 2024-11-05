@@ -55,3 +55,25 @@ input[type="number"], select {
 .hidden {
     display: none;
 }
+
+.steps-container {
+    display: flex;
+    flex-direction: row-reverse; /* Zeigt den Inhalt von rechts nach links an */
+    justify-content: flex-start;
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    font-family: monospace;
+    white-space: pre;
+    overflow-x: auto;
+}
+
+.step-bit {
+    padding: 0 5px;
+    transition: background-color 0.3s;
+}
+
+.color-x { color: red; }
+.color-y { color: blue; }
+.color-z { color: green; }
