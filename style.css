@@ -25,7 +25,6 @@ label {
     display: flex;
     align-items: center;
     width: 30%;
-
 }
 
 .select-group select {
@@ -40,25 +39,63 @@ label {
     gap: 20px;
 }
 
-#pointA {
-    gap: 10px;
-    padding: 10px;
-}
 
-#maxCoord {
-    padding-block: 20px;
+.displayMaxCoord {
     color: #636363;
+    padding: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    width: 27%;
 }
 
+.pointA {
+    //padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.input-section {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
 #coordinateInputs {
     display: flex;
-    gap: 10px;
+    gap: 5px;
+    align-items: center;
 }
 
-input[type="number"], select {
+input[type="number"], select, button {
+    background-color: white;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
+}
+
+
+.separator-line {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #ddd;
+    margin-top: 10px;
+}
+
+.output-section {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    padding-top: 10px;
+}
+
+.output-divider {
+    width: 1px;
+    background-color: #ddd;
 }
 
 .result1 {

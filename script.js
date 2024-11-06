@@ -23,7 +23,6 @@ function toggleCoordinateFields() {
         layout.disabled = false; // Ermöglicht Auswahl von Layouts
     } else {
         layout.disabled = true; // Sperrt Auswahlfeld
-        layout.value = 'xyz';
         zLabel.classList.add('hidden');
         zInput.classList.add('hidden');
     }
