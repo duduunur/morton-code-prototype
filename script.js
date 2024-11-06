@@ -15,6 +15,7 @@ function displayMaxCoord() {
 function toggleCoordinateFields() {
     const dimension = document.getElementById('dimension').value;
     const layout = document.getElementById('layout');
+    const layoutLabel = document.getElementById('layoutLabel');
     const zInput = document.getElementById('zInput');
     const zLabel = document.getElementById('zLabel');
 
@@ -22,11 +23,13 @@ function toggleCoordinateFields() {
     if (dimension === '3') {
         zLabel.classList.remove('hidden');
         zInput.classList.remove('hidden');
+        layoutLabel.classList.remove('hidden');
         layout.classList.remove('hidden'); // Zeige das Layout-Select-Feld
     } else {
         layout.value = 'xyz';
         zLabel.classList.add('hidden');
         zInput.classList.add('hidden');
+        layoutLabel.classList.add('hidden');
         layout.classList.add('hidden'); // Verstecke das Layout-Select-Feld
     }
 
@@ -79,6 +82,7 @@ function calculateMortonCode() {
         const coords = layout === "xyz" ? [x, y, z] : [z, y, x];
         mortonCode1 = interleaveBits(coords, bitLength);
         mortonCode2 = mortonEncodeMagicBits(coords);
+        displayBinaryCoordinates(coords, bitLength)
         animateInterleaveSteps(coords, bitLength);
     } else {
         mortonCode1 = interleaveBits([x, y], bitLength);
@@ -160,6 +164,31 @@ function animateInterleaveSteps(coords, bitLength) {
             }, 500 * (i * coords.length + j)); // Timing für schrittweise Animation
         }
     }
+}
+
+function displayBinaryCoordinates(coords, bitLength) {
+    const binaryContainer = document.getElementById('binaryCoordinates');
+    binaryContainer.innerHTML = ''; // Reset container
+    const maxBits = bitLength / coords.length;
+
+    const colors = ['color-x', 'color-y', 'color-z'];
+
+    coords.forEach((coord, index) => {
+        const binaryString = coord.toString(2).padStart(maxBits, '0'); // Annahme: 16 Bits für Anzeige
+
+        // Jedes Bit farbig darstellen
+        for (let i = 0; i < maxBits; i++) {
+            const bitElement = document.createElement('span');
+            bitElement.classList.add(colors[index]);
+            bitElement.textContent = binaryString[i];
+            binaryContainer.appendChild(bitElement);
+        }
+
+        // Abstand zwischen den Binärzahlen
+        const spaceElement = document.createElement('span');
+        spaceElement.textContent = ' ';
+        binaryContainer.appendChild(spaceElement);
+    });
 }
   /*
   // Beispiel: Testen der Funktion

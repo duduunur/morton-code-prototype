@@ -77,3 +77,8 @@ input[type="number"], select {
 .color-x { color: red; }
 .color-y { color: blue; }
 .color-z { color: green; }
+
+.binary-coordinates {
+    font-family: monospace;
+    margin-bottom: 10px;
+}
