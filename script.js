@@ -5,7 +5,7 @@ function displayMaxCoord() {
 
     if (bitLength) {
         const maxCoordinate = (1n << (bitLength / dimension)) - 1n;
-        maxCoord.innerText = `Maximale Koordinate: ${maxCoordinate.toString()}`;
+        maxCoord.innerText = `Maximum Coordinate Value (Decimal): ${maxCoordinate.toString()}`;
         maxCoord.classList.remove("hidden");
     } else {
         maxCoord.classList.add("hidden");
@@ -190,10 +190,3 @@ function displayBinaryCoordinates(coords, bitLength) {
         binaryContainer.appendChild(spaceElement);
     });
 }
-  /*
-  // Beispiel: Testen der Funktion
-  const x = 3; // Beispielwerte für x, y und z
-  const y = 5;
-  const z = 7;
-  console.log(mortonEncodeMagicBits(x, y, z).toString(2).padStart(64, "0")); // Ausgabe als 64-Bit-Binärzahl
-*/

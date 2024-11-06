@@ -9,7 +9,7 @@ h2 {
 }
 
 label {
-    font-weight: bold;
+    font-weight: thin;
     margin-right: 10px;
 }
 
@@ -27,7 +27,6 @@ label {
 }
 
 #maxCoord {
-    padding: 5px;
     font-size: 0.9em;
 }
 

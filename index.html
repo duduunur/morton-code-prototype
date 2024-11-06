@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +19,6 @@
             <option value="32">32</option>
             <option value="64">64</option>
         </select>
-        <div id="maxCoord" class="max-coord hidden"></div>
     </div>
     
     <div class="select-group">
@@ -34,26 +33,28 @@
     <div class="select-group">
         <label for="layout"  id="layoutLabel" class="hidden">layout:</label>
         <select id="layout" class="hidden" onchange="toggleCoordinateFields();">
-            <option value="" disabled selected>select</option>
             <option value="xyz">x, y, z</option>
             <option value="zyx">z, y, x</option>
         </select>
     </div>
+
+    <div id="maxCoord" class="max-coord hidden"></div>
     
     <div id="coordinateInputs">
-        <label for="x">x-Koordinate:</label>
-        <input type="number" id="x" placeholder="Wert für x">
+        <label for="x">x:</label>
+        <input type="number" id="x">
         
-        <label for="y">y-Koordinate:</label>
-        <input type="number" id="y" placeholder="Wert für y">
+        <label for="y">y:</label>
+        <input type="number" id="y">
         
         <div id="zInput" class="hidden">
-            <label for="z" id="zLabel">z-Koordinate:</label>
-            <input type="number" id="z" placeholder="Wert für z">
+            <label for="z" id="zLabel">z:</label>
+            <input type="number" id="z">
         </div>
+       
     </div>
+    <button onclick="calculateMortonCode()">calculate</button>
 
-    <button onclick="calculateMortonCode()">Berechnen</button>
 
     <div id="result1" class="result hidden"></div>
     <div id="result2" class="result hidden"></div>
