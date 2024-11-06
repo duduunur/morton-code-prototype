@@ -34,12 +34,13 @@
             </div>
 
             <div class="select-group">
-                <label for="layout" id="layoutLabel" class="hidden">layout:</label>
-                <select id="layout" class="hidden" onchange="toggleCoordinateFields();">
+                <label for="layout" id="layoutLabel">layout:</label>
+                <select id="layout" onchange="toggleCoordinateFields();">
+                    <option value="" disabled selected>select</option>
                     <option value="xyz">x, y, z</option>
                     <option value="zyx">z, y, x</option>
                 </select>
-            </div>
+            </div>            
         </div>
 
         <div class="DisplayMaxCoord">

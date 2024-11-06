@@ -12,29 +12,25 @@ function displayMaxCoord() {
 function toggleCoordinateFields() {
     const dimension = document.getElementById('dimension').value;
     const layout = document.getElementById('layout');
-    const layoutLabel = document.getElementById('layoutLabel');
     const zInput = document.getElementById('zInput');
     const zLabel = document.getElementById('zLabel');
 
     clearCoordinateInputs();
 
-    // Zeige oder verstecke die z-Koordinate basierend auf der Dimension
     if (dimension === '3') {
         zLabel.classList.remove('hidden');
         zInput.classList.remove('hidden');
-        layoutLabel.classList.remove('hidden');
-        layout.classList.remove('hidden'); // Zeige das Layout-Select-Feld
+        layout.disabled = false; // Ermöglicht Auswahl von Layouts
     } else {
+        layout.disabled = true; // Sperrt Auswahlfeld
         layout.value = 'xyz';
         zLabel.classList.add('hidden');
         zInput.classList.add('hidden');
-        layoutLabel.classList.add('hidden');
-        layout.classList.add('hidden'); // Verstecke das Layout-Select-Feld
     }
 
-    // Anpassen der Eingabereihenfolge basierend auf dem Layout
     updateCoordinateInputOrder(layout.value);
 }
+
 
 function clearCoordinateInputs() {
     document.getElementById("x").value = "";
