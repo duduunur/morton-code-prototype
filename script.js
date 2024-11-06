@@ -57,6 +57,7 @@ function updateCoordinateInputOrder(layout) {
     const xInput = document.getElementById('x');
     const yInput = document.getElementById('y');
     const zInput = document.getElementById('zInput');
+    const calculateButton = document.getElementById('calculateButton');
 
     // Entferne alle Koordinaten-Labels und Eingabefelder
     const coordinateInputs = document.getElementById('coordinateInputs');
@@ -69,6 +70,7 @@ function updateCoordinateInputOrder(layout) {
         coordinateInputs.appendChild(yInput);
         coordinateInputs.appendChild(zLabel);
         coordinateInputs.appendChild(zInput);
+        coordinateInputs.appendChild(calculateButton);
     } else if (layout === 'zyx') {
         coordinateInputs.appendChild(zLabel);
         coordinateInputs.appendChild(zInput);
@@ -76,6 +78,7 @@ function updateCoordinateInputOrder(layout) {
         coordinateInputs.appendChild(yInput);
         coordinateInputs.appendChild(xLabel);
         coordinateInputs.appendChild(xInput);
+        coordinateInputs.appendChild(calculateButton);
     }
 }
 

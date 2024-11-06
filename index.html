@@ -38,8 +38,11 @@
         </select>
     </div>
 
-    <div id="maxCoord" class="max-coord hidden"></div>
+    <div class="select-group">
+        <div id="maxCoord" class="max-coord hidden"></div>
+    </div>
     
+    <div id="pointA">
     <div id="coordinateInputs">
         <label for="x">x:</label>
         <input type="number" id="x">
@@ -51,10 +54,12 @@
             <label for="z" id="zLabel">z:</label>
             <input type="number" id="z">
         </div>
-       
-    </div>
-    <button onclick="calculateMortonCode()">calculate</button>
 
+        <div id="calculateButton"> 
+            <button onclick="calculateMortonCode()">calculate</button> 
+        </div>
+    </div>
+    </div>
 
     <div id="result1" class="result hidden"></div>
     <div id="result2" class="result hidden"></div>
