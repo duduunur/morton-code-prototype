@@ -19,6 +19,8 @@ function toggleCoordinateFields() {
     const zInput = document.getElementById('zInput');
     const zLabel = document.getElementById('zLabel');
 
+    clearCoordinateInputs();
+
     // Zeige oder verstecke die z-Koordinate basierend auf der Dimension
     if (dimension === '3') {
         zLabel.classList.remove('hidden');
@@ -35,6 +37,17 @@ function toggleCoordinateFields() {
 
     // Anpassen der Eingabereihenfolge basierend auf dem Layout
     updateCoordinateInputOrder(layout.value);
+}
+
+function clearCoordinateInputs() {
+    document.getElementById("x").value = "";
+    document.getElementById("y").value = "";
+    
+    // Prüfen, ob das z-Eingabefeld sichtbar ist, und es dann auch leeren
+    const zInput = document.getElementById("z");
+    if (zInput) {
+        zInput.value = "";
+    }
 }
 
 function updateCoordinateInputOrder(layout) {
