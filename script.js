@@ -5,10 +5,7 @@ function displayMaxCoord() {
 
     if (bitLength) {
         const maxCoordinate = (1n << (bitLength / dimension)) - 1n;
-        maxCoord.innerText = `Maximum Coordinate Value (Decimal): ${maxCoordinate.toString()}`;
-        maxCoord.classList.remove("hidden");
-    } else {
-        maxCoord.classList.add("hidden");
+        maxCoord.innerText = `Maximum Coordinate Value: ${maxCoordinate.toString()}`;
     }
 }
 

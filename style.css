@@ -1,11 +1,12 @@
 body {
     font-family: Arial, sans-serif;
+    font-size: 11pt;
     margin: 20px;
     background-color: #f0f0f0;
 }
 
 h2 {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 label {
@@ -17,13 +18,26 @@ label {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-width: 600px;
+    max-width: 80%;
 }
 
 .select-group {
     display: flex;
     align-items: center;
-    gap: 10px;
+    width: 30%;
+
+}
+
+.select-group select {
+    margin-left: auto;
+}
+
+.settings {
+    height: 100px; 
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 #pointA {
@@ -32,7 +46,8 @@ label {
 }
 
 #maxCoord {
-    font-size: 0.9em;
+    padding-block: 20px;
+    color: #636363;
 }
 
 #coordinateInputs {

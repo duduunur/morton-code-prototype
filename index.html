@@ -13,35 +13,37 @@
     <h2>Morton Codes / Z-Order</h2>
 
     <div class="container">
-        <div class="select-group">
-            <label for="bitLength">bit length:</label>
-            <select id="bitLength" onchange="displayMaxCoord()">
-                <option value="" disabled selected>select</option>
-                <option value="16">16</option>
-                <option value="32">32</option>
-                <option value="64">64</option>
-            </select>
+        <div class="settings">
+            <div class="select-group">
+                <label for="bitLength">bit length:</label>
+                <select id="bitLength" onchange="displayMaxCoord()">
+                    <option value="" disabled selected>select</option>
+                    <option value="16">16</option>
+                    <option value="32">32</option>
+                    <option value="64">64</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="dimension">dimension:</label>
+                <select id="dimension" onchange="toggleCoordinateFields(); displayMaxCoord();">
+                    <option value="" disabled selected>select</option>
+                    <option value="2">2D</option>
+                    <option value="3">3D</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="layout" id="layoutLabel" class="hidden">layout:</label>
+                <select id="layout" class="hidden" onchange="toggleCoordinateFields();">
+                    <option value="xyz">x, y, z</option>
+                    <option value="zyx">z, y, x</option>
+                </select>
+            </div>
         </div>
 
-        <div class="select-group">
-            <label for="dimension">dimension:</label>
-            <select id="dimension" onchange="toggleCoordinateFields(); displayMaxCoord();">
-                <option value="" disabled selected>select</option>
-                <option value="2">2D</option>
-                <option value="3">3D</option>
-            </select>
-        </div>
-
-        <div class="select-group">
-            <label for="layout" id="layoutLabel" class="hidden">layout:</label>
-            <select id="layout" class="hidden" onchange="toggleCoordinateFields();">
-                <option value="xyz">x, y, z</option>
-                <option value="zyx">z, y, x</option>
-            </select>
-        </div>
-
-        <div class="select-group">
-            <div id="maxCoord" class="max-coord hidden"></div>
+        <div class="DisplayMaxCoord">
+            <div id="maxCoord">Maximum Coordinate Value: </div>
         </div>
 
         <div id="pointA">
