@@ -42,7 +42,7 @@ function toggleCoordinateFields() {
 function clearCoordinateInputs() {
     document.getElementById("x").value = "";
     document.getElementById("y").value = "";
-    
+
     // Prüfen, ob das z-Eingabefeld sichtbar ist, und es dann auch leeren
     const zInput = document.getElementById("z");
     if (zInput) {
@@ -102,7 +102,7 @@ function calculateMortonCode() {
         animateInterleaveSteps(coords, bitLength);
     } else {
         mortonCode1 = interleaveBits([x, y], bitLength);
-        mortonCode2 = mortonEncodeMagicBits2D(x,y);
+        mortonCode2 = mortonEncodeMagicBits2D(x, y);
     }
 
     const result1 = document.getElementById("result1");
@@ -133,13 +133,13 @@ function splitBy3(a) {
     x = (x | (x << 4n)) & 0x10c30c30c30c30c3n;
     x = (x | (x << 2n)) & 0x1249249249249249n;
     return x;
-  }
-  
-  function mortonEncodeMagicBits(coords) {
+}
+
+function mortonEncodeMagicBits(coords) {
     // Umwandlung in BigInt und Zerstreuung der Bits für x, y und z
     const result = splitBy3(coords[0]) | (splitBy3(coords[1]) << 1n) | (splitBy3(coords[2]) << 2n);
     return result;
-  }
+}
 
 function splitBy2(a) {
     let x = BigInt(a) & 0xffffffffn; // Nur die ersten 32 Bits verwenden und als BigInt speichern

@@ -26,6 +26,11 @@ label {
     gap: 10px;
 }
 
+#pointA {
+    gap: 10px;
+    padding: 10px;
+}
+
 #maxCoord {
     font-size: 0.9em;
 }

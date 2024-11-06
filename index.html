@@ -1,73 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Morton Codes / Z-Order</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<h2>Morton Codes / Z-Order</h2>
+    <h2>Morton Codes / Z-Order</h2>
 
-<div class="container">
-    <div class="select-group">
-        <label for="bitLength">bit length:</label>
-        <select id="bitLength" onchange="displayMaxCoord()">
-            <option value="" disabled selected>select</option>
-            <option value="16">16</option>
-            <option value="32">32</option>
-            <option value="64">64</option>
-        </select>
-    </div>
-    
-    <div class="select-group">
-        <label for="dimension">dimension:</label>
-        <select id="dimension" onchange="toggleCoordinateFields(); displayMaxCoord();">
-            <option value="" disabled selected>select</option>
-            <option value="2">2D</option>
-            <option value="3">3D</option>
-        </select>
-    </div>
-    
-    <div class="select-group">
-        <label for="layout"  id="layoutLabel" class="hidden">layout:</label>
-        <select id="layout" class="hidden" onchange="toggleCoordinateFields();">
-            <option value="xyz">x, y, z</option>
-            <option value="zyx">z, y, x</option>
-        </select>
-    </div>
-
-    <div class="select-group">
-        <div id="maxCoord" class="max-coord hidden"></div>
-    </div>
-    
-    <div id="pointA">
-    <div id="coordinateInputs">
-        <label for="x">x:</label>
-        <input type="number" id="x">
-        
-        <label for="y">y:</label>
-        <input type="number" id="y">
-        
-        <div id="zInput" class="hidden">
-            <label for="z" id="zLabel">z:</label>
-            <input type="number" id="z">
+    <div class="container">
+        <div class="select-group">
+            <label for="bitLength">bit length:</label>
+            <select id="bitLength" onchange="displayMaxCoord()">
+                <option value="" disabled selected>select</option>
+                <option value="16">16</option>
+                <option value="32">32</option>
+                <option value="64">64</option>
+            </select>
         </div>
 
-        <div id="calculateButton"> 
-            <button onclick="calculateMortonCode()">calculate</button> 
+        <div class="select-group">
+            <label for="dimension">dimension:</label>
+            <select id="dimension" onchange="toggleCoordinateFields(); displayMaxCoord();">
+                <option value="" disabled selected>select</option>
+                <option value="2">2D</option>
+                <option value="3">3D</option>
+            </select>
         </div>
-    </div>
+
+        <div class="select-group">
+            <label for="layout" id="layoutLabel" class="hidden">layout:</label>
+            <select id="layout" class="hidden" onchange="toggleCoordinateFields();">
+                <option value="xyz">x, y, z</option>
+                <option value="zyx">z, y, x</option>
+            </select>
+        </div>
+
+        <div class="select-group">
+            <div id="maxCoord" class="max-coord hidden"></div>
+        </div>
+
+        <div id="pointA">
+            <div id="coordinateInputs">
+                <label for="x">x:</label>
+                <input type="number" id="x">
+
+                <label for="y">y:</label>
+                <input type="number" id="y">
+
+                <div id="zInput" class="hidden">
+                    <label for="z" id="zLabel">z:</label>
+                    <input type="number" id="z">
+                </div>
+
+                <div id="calculateButton">
+                    <button onclick="calculateMortonCode()">calculate</button>
+                </div>
+            </div>
+            <div id="result1" class="result hidden"></div>
+            <div id="result2" class="result hidden"></div>
+            <div id="binaryCoordinates" class="binary-coordinates"></div>
+            <div id="interleaveSteps" class="steps-container"></div>
+        </div>
+
     </div>
 
-    <div id="result1" class="result hidden"></div>
-    <div id="result2" class="result hidden"></div>
-    <div id="binaryCoordinates" class="binary-coordinates"></div>
-    <div id="interleaveSteps" class="steps-container"></div>
-   
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>
