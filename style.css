@@ -119,34 +119,27 @@ input[type="number"]::-webkit-inner-spin-button {
     margin-top: 10px;
 }
 
-.output-section {
+.output {
     display: flex;
-    width: 100%;
-    align-items: center; /* Zentriert den Divider vertikal */
+    flex-direction: row;
     justify-content: space-between;
-    padding-top: 10px;
-}
-
-.output-divider {
-    width: 1px;
-    height: 100%; /* Füllt die gesamte Höhe des Containers */
-    background-color: #ddd; /* Farbe festlegen */
-    margin: 0 10px; /* Optionaler Abstand zur besseren Sichtbarkeit */
-}
-
-.output-section > .result {
-    width: 50%;
-}
-
-.result1 {
+    gap: 10px; /* optional: fügt Abstand zwischen den Abschnitten hinzu */
+    margin-top: 20px;
+  }
+  
+  .output-section {
+    width: 48%; /* Breite jeder Sektion, sodass sie nebeneinander passen */
+    border: 1px solid #e3e3e3;
+    padding: 10px;
+    background-color: #fbfbfb;
+    display: flex;
+    flex-direction: column; /* Stellt sicher, dass Inhalte innerhalb vertikal gestapelt werden */
+  }
+  
+  .result {
     margin-top: 20px;
     padding: 10px;
-}
-
-.result2 {
-    margin-top: 20px;
-    padding: 10px;
-}
+  }
 
 .hidden {
     display: none;
