@@ -22,6 +22,7 @@ label {
 }
 
 .select-group {
+    position: relative;
     display: flex;
     align-items: center;
     width: 30%;
@@ -29,10 +30,35 @@ label {
 
 .select-group select {
     margin-left: auto;
+    background-color: #ffffff; /* Weißer Hintergrund */
+    color: #4a4a4a; /* Dunkelgraue Schrift */
+    border: none; /* Dünner grauer Rand */
+    padding: 4px 24px 4px 8px; /* Platz für den Pfeil */
+    border-radius: 10px;
+    appearance: none; /* Entfernt das Browser-Standard-Styling */
+    content: "⌄"; /* Unicode für den Pfeil nach unten */
+    font-size: 10pt;
+    outline: none; /* Entfernt den blauen Fokusrahmen */
+}
+
+/* Pfeil-Styling */
+.select-group::after {
+    content: "⌄"; /* Unicode für den Pfeil nach unten */
+    position: absolute;
+    right: 7px; /* Abstand vom rechten Rand */
+    bottom: 6px;
+    color: #4a4a4a; /* Farbe für den Pfeil */
+    pointer-events: none; /* Ignoriert Klicks auf den Pfeil */
+    font-size: 12px;
+}
+
+/* Wenn das Select-Element deaktiviert ist */
+.select-group select:disabled {
+    color: white; /* Textfarbe für "x,y" */
 }
 
 .settings {
-    height: 100px; 
+    height: 120px; 
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -62,12 +88,12 @@ label {
     padding: 20px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
     width: 100%;
 }
 #coordinateInputs {
     display: flex;
-    gap: 5px;
+    gap: 10px;
     align-items: center;
 }
 
@@ -76,6 +102,13 @@ input[type="number"], select, button {
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    font-size: 11px;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 
@@ -89,13 +122,20 @@ input[type="number"], select, button {
 .output-section {
     display: flex;
     width: 100%;
-    gap: 10px;
+    align-items: center; /* Zentriert den Divider vertikal */
+    justify-content: space-between;
     padding-top: 10px;
 }
 
 .output-divider {
     width: 1px;
-    background-color: #ddd;
+    height: 100%; /* Füllt die gesamte Höhe des Containers */
+    background-color: #ddd; /* Farbe festlegen */
+    margin: 0 10px; /* Optionaler Abstand zur besseren Sichtbarkeit */
+}
+
+.output-section > .result {
+    width: 50%;
 }
 
 .result1 {
