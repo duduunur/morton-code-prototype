@@ -154,9 +154,10 @@ function animateInterleaveSteps(coords, bitLength) {
     stepsContainer.innerHTML = ''; // Reset container
 
     let mortonCode = BigInt(0);
-    const maxBits = bitLength / coords.length;
+    const maxBits = parseInt(bitLength / coords.length);
     const colors = ['color-x', 'color-y', 'color-z'];
 
+    console.log(maxBits);
     for (let i = 0; i < maxBits; ++i) {
         for (let j = 0; j < coords.length; ++j) {
             let bitValue = (BigInt(coords[j]) & (BigInt(1) << BigInt(i)));
@@ -169,7 +170,7 @@ function animateInterleaveSteps(coords, bitLength) {
                 bitElement.classList.add('step-bit', colors[j]);
                 bitElement.textContent = ((shiftedValue > 0n) ? '1' : '0');
                 stepsContainer.appendChild(bitElement);
-            }, 500 * (i * coords.length + j)); // Timing für schrittweise Animation
+            }, 400 * (i * coords.length + j)); // Timing für schrittweise Animation
         }
     }
 }
@@ -194,7 +195,7 @@ function displayBinaryCoordinates(coords, bitLength) {
 
         // Abstand zwischen den Binärzahlen
         const spaceElement = document.createElement('span');
-        spaceElement.textContent = ' ';
+        spaceElement.innerHTML = ' <br>';
         binaryContainer.appendChild(spaceElement);
     });
 }
