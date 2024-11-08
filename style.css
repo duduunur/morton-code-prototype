@@ -121,15 +121,35 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .output {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: row; // die divs in eine zeile 
+    justify-content: space-between; // abstände gleichmäßig
     gap: 10px; /* optional: fügt Abstand zwischen den Abschnitten hinzu */
     margin-top: 20px;
+    font-family: monospace;
+    font-size: 10pt;
   }
   
   .output-section {
     width: 48%; /* Breite jeder Sektion, sodass sie nebeneinander passen */
     border: 1px solid #e3e3e3;
+    padding: 10px;
+    background-color: #fbfbfb;
+    display: flex;
+    flex-direction: row; /* Stellt sicher, dass Inhalte innerhalb vertikal gestapelt werden */
+    justify-content: space-between; // abstände gleichmäßig
+    
+  }
+
+  .labels {
+    font-family: monospace;
+    font-size: 10pt;
+    text-align: left;
+    margin-right: 10px;
+}
+
+  .result-section {
+    width: 79%; /* Breite jeder Sektion, sodass sie nebeneinander passen */
+    border: 1px solid pink;
     padding: 10px;
     background-color: #fbfbfb;
     display: flex;
@@ -168,7 +188,9 @@ input[type="number"]::-webkit-inner-spin-button {
 .color-z { color: green; }
 
 .binary-coordinates {
+    border: 1px solid #ddd;
     font-family: monospace;
+    font-size: 10pt;
     margin-bottom: 10px;
     text-align: right; /* Rechtsbündige Ausrichtung */
 }

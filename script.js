@@ -74,6 +74,34 @@ function updateCoordinateInputOrder(layout) {
     }
 }
 
+function updateCoordinateLabels(dimension, layout) {
+    const coordinateLabels = document.getElementById("coordinateLabels");
+    const zLabel = document.getElementById("zLabel");
+
+    // Setze die Labels basierend auf Dimension und Layout
+    if (dimension === "3") {
+        if (layout === "xyz") {
+            coordinateLabels.innerHTML = "x:<br>y:<br>z:<br>morton-code:";
+        } else if (layout === "zyx") {
+            coordinateLabels.innerHTML = "z:<br>y:<br>x:<br>morton-code:";
+        }
+    } else { // 2D
+        coordinateLabels.innerHTML = "x:<br>y:<br>morton-code:";
+    }
+}
+
+document.getElementById("dimension").addEventListener("change", (e) => {
+    const dimension = e.target.value;
+    const layout = document.getElementById("layout").value;
+    updateCoordinateLabels(dimension, layout);
+});
+
+document.getElementById("layout").addEventListener("change", (e) => {
+    const dimension = document.getElementById("dimension").value;
+    const layout = e.target.value;
+    updateCoordinateLabels(dimension, layout);
+});
+
 
 function calculateMortonCode() {
     const bitLength = parseInt(document.getElementById("bitLength").value);
@@ -170,7 +198,7 @@ function animateInterleaveSteps(coords, bitLength) {
                 bitElement.classList.add('step-bit', colors[j]);
                 bitElement.textContent = ((shiftedValue > 0n) ? '1' : '0');
                 stepsContainer.appendChild(bitElement);
-            }, 400 * (i * coords.length + j)); // Timing für schrittweise Animation
+            }, 200 * (i * coords.length + j)); // Timing für schrittweise Animation
         }
     }
 }
