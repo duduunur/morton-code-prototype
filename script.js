@@ -104,6 +104,9 @@ document.getElementById("layout").addEventListener("change", (e) => {
 
 
 function calculateMortonCode() {
+    // Sperre die Felder und den Button
+     disableInputs();
+
     const bitLength = parseInt(document.getElementById("bitLength").value);
     const dimension = document.getElementById("dimension").value;
     const layout = document.getElementById("layout").value;
@@ -119,7 +122,7 @@ function calculateMortonCode() {
         mortonCode1 = interleaveBits(coords, bitLength);
         mortonCode2 = mortonEncodeMagicBits(coords);
         displayBinaryCoordinates(coords, bitLength)
-        animateInterleaveSteps(coords, bitLength);
+        animateInterleaveSteps(coords, bitLength, enableInputs);
     } else {
         mortonCode1 = interleaveBits([x, y], bitLength);
         mortonCode2 = mortonEncodeMagicBits2D(x, y);
@@ -131,6 +134,30 @@ function calculateMortonCode() {
     result2.innerHTML = `Magic Bits:<br>Morton-Code (Dezimal): ${mortonCode2}<br>Morton-Code (Binär): ${mortonCode2.toString(2)}`;
     result1.classList.remove("hidden");
     result2.classList.remove("hidden");
+}
+
+// Hilfsfunktion zum Sperren der Eingabefelder
+function disableInputs() {
+    document.getElementById('bitLength').disabled = true;
+    document.getElementById('dimension').disabled = true;
+    document.getElementById('layout').disabled = true;
+    document.getElementById('x').disabled = true;
+    document.getElementById('y').disabled = true;
+    const z = document.getElementById('z');
+    if (z) z.disabled = true;
+    document.getElementById('calculateButton').querySelector('button').disabled = true;
+}
+
+// Hilfsfunktion zum Entsperren der Eingabefelder
+function enableInputs() {
+    document.getElementById('bitLength').disabled = false;
+    document.getElementById('dimension').disabled = false;
+    document.getElementById('layout').disabled = false;
+    document.getElementById('x').disabled = false;
+    document.getElementById('y').disabled = false;
+    const z = document.getElementById('z');
+    if (z) z.disabled = false;
+    document.getElementById('calculateButton').querySelector('button').disabled = false;
 }
 
 function interleaveBits(coords, bitLength) {
@@ -177,7 +204,7 @@ function mortonEncodeMagicBits2D(x, y) {
     return result;
 }
 
-function animateInterleaveSteps(coords, bitLength) {
+function animateInterleaveSteps(coords, bitLength, callback) {
     const stepsContainer = document.getElementById('interleaveSteps');
     stepsContainer.innerHTML = ''; // Reset container
 
@@ -185,9 +212,8 @@ function animateInterleaveSteps(coords, bitLength) {
     const maxBits = parseInt(bitLength / coords.length);
     const colors = ['color-x', 'color-y', 'color-z'];
 
-    console.log(maxBits);
-    for (let i = 0; i < maxBits; ++i) {
-        for (let j = 0; j < coords.length; ++j) {
+    for (let i = 0; i < maxBits; ++i) { // i ist der aktuelle bitIndex innnerhalb jeder Koordinate 
+        for (let j = 0; j < coords.length; ++j) { // j ist der Index der aktuellen Koordinate (0 für x, 1 für y, 2 für z)
             let bitValue = (BigInt(coords[j]) & (BigInt(1) << BigInt(i)));
             let shiftedValue = bitValue << BigInt(i * (coords.length - 1) + j);
             mortonCode |= shiftedValue;
@@ -198,7 +224,13 @@ function animateInterleaveSteps(coords, bitLength) {
                 bitElement.classList.add('step-bit', colors[j]);
                 bitElement.textContent = ((shiftedValue > 0n) ? '1' : '0');
                 stepsContainer.appendChild(bitElement);
-            }, 200 * (i * coords.length + j)); // Timing für schrittweise Animation
+
+                // Wenn die Animation am Ende ist, callback aufrufen
+                if (i === maxBits - 1 && j === coords.length - 1) {
+                    callback(); // Eingaben entsperren
+                }
+
+            }, 200 * (i * coords.length +j)); // Timing für schrittweise Animation (200 mal der nächste bit im Morton Code)
         }
     }
 }
