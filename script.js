@@ -76,7 +76,7 @@ function updateCoordinateInputOrder(layout) {
 
 function updateCoordinateLabels(dimension, layout) {
     const coordinateLabels = document.getElementById("coordinateLabels");
-    const zLabel = document.getElementById("zLabel");
+    //const zLabel = document.getElementById("zLabel");
 
     // Setze die Labels basierend auf Dimension und Layout
     if (dimension === "3") {

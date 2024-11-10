@@ -44,6 +44,7 @@ label {
 /* Pfeil-Styling */
 .select-group::after {
     content: "⌄"; /* Unicode für den Pfeil nach unten */
+    //color: white;
     position: absolute;
     right: 7px; /* Abstand vom rechten Rand */
     bottom: 6px;
@@ -149,7 +150,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
   .result-section {
     width: 79%; /* Breite jeder Sektion, sodass sie nebeneinander passen */
-    border: 1px solid pink;
+    //border: 1px solid pink;
     padding: 10px;
     background-color: #fbfbfb;
     display: flex;
@@ -171,7 +172,7 @@ input[type="number"]::-webkit-inner-spin-button {
     justify-content: flex-start;
     //margin-top: 20px;
     //padding: 10px;
-    border: 1px solid #ddd;
+    //border: 1px solid #ddd;
     //background-color: #f9f9f9;
     font-family: monospace;
     white-space: pre;
@@ -188,7 +189,7 @@ input[type="number"]::-webkit-inner-spin-button {
 .color-z { color: green; }
 
 .binary-coordinates {
-    border: 1px solid #ddd;
+    //border: 1px solid #ddd;
     font-family: monospace;
     font-size: 10pt;
     margin-bottom: 10px;

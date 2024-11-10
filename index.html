@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Morton Codes / Z-Order</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
     <h2>Morton Codes / Z-Order</h2>
 
     <div class="container">
+        <!-- Settings Section -->
         <div class="settings">
             <div class="select-group">
                 <label for="bitLength">bit length:</label>
@@ -43,10 +41,12 @@
             </div>
         </div>
 
+        <!-- Maximum Coordinate Display -->
         <div class="displayMaxCoord">
             <div id="maxCoord">Maximum Coordinate Value: </div>
         </div>
 
+        <!-- Input Section for Coordinates -->
         <div class="pointA">
             <div class="input-section">
                 <span class="label">a:</span>
@@ -64,17 +64,23 @@
                     </div>
                 </div>
             </div>
+
             <hr class="separator-line">
+
+            <!-- Output Section -->
             <div class="output">
+                <!-- Coordinate Labels Section -->
                 <div class="output-section">
                     <div class="labels">
-                        <p id="coordinateLabels">x:<br>y:<br><span id="zLabel"></span>morton-code:</p>
+                        <p id="coordinateLabels"></p>
                     </div>
                     <div class="result-section">
                         <div id="binaryCoordinates" class="binary-coordinates"></div>
                         <div id="interleaveSteps" class="steps-container"></div>
                     </div>
                 </div>
+
+                <!-- Additional Output Section -->
                 <div class="output-section">
                     <div id="result2" class="result"></div>
                 </div>
@@ -84,5 +90,4 @@
 
     <script src="script.js"></script>
 </body>
-
 </html>
