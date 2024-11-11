@@ -1,12 +1,12 @@
+// Maximalen Koordinatenwert ausrechnen und darstellen 
 function displayMaxCoord() {
     const bitLength = BigInt(document.getElementById("bitLength").value);
     const dimension = BigInt(document.getElementById("dimension").value);
+    //maxCoord verweist auf das HTML-Element, in dem das Ergebnis angezeigt wird
     const maxCoord = document.getElementById("maxCoord");
 
-    if (bitLength) {
-        const maxCoordinate = (1n << (bitLength / dimension)) - 1n;
-        maxCoord.innerText = `Maximum Coordinate Value: ${maxCoordinate.toString()}`;
-    }
+    const maxCoordinate = (1n << (bitLength / dimension)) - 1n; //1n << x verschiebt die Zahl 1 um x Bit nach links, was äquivalent zu 2^x ist 
+    maxCoord.innerText = `Maximum Coordinate Value: ${maxCoordinate.toString()}`;
 }
 
 function toggleCoordinateFields() {
@@ -90,6 +90,7 @@ function updateCoordinateLabels(dimension, layout) {
     }
 }
 
+// Event Listener um die Coordinateneingabe zu aktualisieren
 document.getElementById("dimension").addEventListener("change", (e) => {
     const dimension = e.target.value;
     const layout = document.getElementById("layout").value;
@@ -119,18 +120,28 @@ function calculateMortonCode() {
 
     if (dimension === "3") {
         const coords = layout === "xyz" ? [x, y, z] : [z, y, x];
+        // interleave for-loop
         mortonCode1 = interleaveBits(coords, bitLength);
+
+        // interleave Magic Bits 
         mortonCode2 = mortonEncodeMagicBits(coords);
-        displayBinaryCoordinates(coords, bitLength)
+
+        // animation 
+        displayBinaryCoordinates(coords, bitLength);
         animateInterleaveSteps(coords, bitLength, enableInputs);
     } else {
+        displayBinaryCoordinates([x, y], bitLength);
+        animateInterleaveSteps([x, y], bitLength, enableInputs);
+         // interleave for-loop
         mortonCode1 = interleaveBits([x, y], bitLength);
+
+         // interleave Magic Bits 
         mortonCode2 = mortonEncodeMagicBits2D(x, y);
     }
 
     const result1 = document.getElementById("result1");
     const result2 = document.getElementById("result2");
-    result1.innerHTML = `Interleave(for-loop):<br> Morton-Code (Dezimal): ${mortonCode1}<br>Morton-Code (Binär): ${mortonCode1.toString(2)}`;
+    //result1.innerHTML = `Interleave(for-loop):<br> Morton-Code (Dezimal): ${mortonCode1}<br>Morton-Code (Binär): ${mortonCode1.toString(2)}`;
     result2.innerHTML = `Magic Bits:<br>Morton-Code (Dezimal): ${mortonCode2}<br>Morton-Code (Binär): ${mortonCode2.toString(2)}`;
     result1.classList.remove("hidden");
     result2.classList.remove("hidden");
@@ -162,16 +173,65 @@ function enableInputs() {
 
 function interleaveBits(coords, bitLength) {
     let mortonCode = BigInt(0);
-    const maxBits = bitLength / coords.length;
+    const maxBits = parseInt(bitLength / coords.length);
+    const totalBits = maxBits * coords.length; // Gesamtanzahl der Bits für das Padding
 
+    // Ziel-Container im Interface für die Anzeige der Schritte
+    const resultContainer = document.getElementById("result1");
+    resultContainer.innerHTML = ''; // Vorherigen Inhalt löschen
+
+    // Hilfsfunktion zum Formatieren der Binärwerte mit führenden Nullen
+    
+    function formatBinary(value) {
+        return value.toString(2).padStart(Number(totalBits), '0');
+    }
+
+    // Hilfsfunktion für das Hervorheben der Bits von x, y und z
+    function colorizeBits(binaryStr) {
+        let coloredStr = '';
+        for (let k = 0; k < binaryStr.length; k++) {
+            const colorClass = k % coords.length === 0 ? 'color-x' :
+                               k % coords.length === 1 ? 'color-y' : 'color-z';
+            coloredStr += `<span class="${colorClass}">${binaryStr[k]}</span>`;
+        }
+        return coloredStr;
+    }
+
+    // Iteration über die Bits und Koordinaten
     for (let i = 0; i < maxBits; ++i) {
         for (let j = 0; j < coords.length; ++j) {
-            mortonCode |= ((BigInt(coords[j]) & (BigInt(1) << BigInt(i))) << BigInt(i * (coords.length - 1) + j));
+            const currentBit = (BigInt(coords[j]) & (BigInt(1) << BigInt(i)));
+            const shiftedBit = currentBit << BigInt(i * (coords.length - 1) + j);
+            
+            // Aktualisieren von Morton-Code
+            mortonCode |= shiftedBit;
+
+            // Schritt-Container erstellen und farbkodierte Bits anzeigen
+            const stepDiv = document.createElement("div");
+            stepDiv.classList.add("step-bit");
+            stepDiv.innerHTML = `
+                <p><strong>Bit position ${i}, coordinate ${j} (${['x', 'y', 'z'][j]}):</strong></p>
+                <p>Current Bit: <span>${formatBinary(currentBit)}</span></p>
+                <p>Shifted Bit: <span>${formatBinary(shiftedBit)}</span></p>
+                <p>Morton Code: <span>${colorizeBits(formatBinary(mortonCode))}</span></p>
+            `;
+
+            // Schritt in den Ergebniscontainer einfügen
+            resultContainer.appendChild(stepDiv);
         }
     }
+
+    // Finale Ausgabe des Morton-Codes
+    const finalResult = document.createElement("div");
+    finalResult.style.backgroundColor = "#c8e6c9"; // Grün für das Endergebnis
+    finalResult.innerHTML = `<p><strong>Final Morton Code:</strong> ${colorizeBits(formatBinary(mortonCode))} (decimal: ${mortonCode.toString()})</p>`;
+    resultContainer.appendChild(finalResult);
+
     return mortonCode;
 }
 
+
+// Interleave mit Magic Bits
 function splitBy3(a) {
     let x = BigInt(a) & 0x1fffffn; // Nur die ersten 21 Bits verwenden und als BigInt speichern
     x = (x | (x << 32n)) & 0x1f00000000ffffn;

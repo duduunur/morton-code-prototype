@@ -80,7 +80,7 @@ label {
 
 .pointA {
     //padding: 20px;
-    border: 1px solid #ccc;
+    border: 1px solid purple;
     border-radius: 5px;
     background-color: #f9f9f9;
 }
@@ -121,6 +121,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .output {
+    border: 1px solid green;
     display: flex;
     flex-direction: row; // die divs in eine zeile 
     justify-content: space-between; // abstände gleichmäßig
@@ -132,13 +133,22 @@ input[type="number"]::-webkit-inner-spin-button {
   
   .output-section {
     width: 48%; /* Breite jeder Sektion, sodass sie nebeneinander passen */
-    border: 1px solid #e3e3e3;
+    border: 1px solid blue;
+    padding: 10px;
+    background-color: #fbfbfb;
+    display: flex;
+    flex-direction: column; /* Stellt sicher, dass Inhalte innerhalb vertikal gestapelt werden */
+    justify-content: space-between; // abstände gleichmäßig
+    
+  }
+
+  .animation-section {
+    border: 1px solid yellow;
     padding: 10px;
     background-color: #fbfbfb;
     display: flex;
     flex-direction: row; /* Stellt sicher, dass Inhalte innerhalb vertikal gestapelt werden */
     justify-content: space-between; // abstände gleichmäßig
-    
   }
 
   .labels {
@@ -150,7 +160,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
   .result-section {
     width: 79%; /* Breite jeder Sektion, sodass sie nebeneinander passen */
-    //border: 1px solid pink;
+    border: 1px solid pink;
     padding: 10px;
     background-color: #fbfbfb;
     display: flex;
