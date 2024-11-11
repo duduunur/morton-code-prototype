@@ -124,7 +124,7 @@ function calculateMortonCode() {
         mortonCode1 = interleaveBits(coords, bitLength);
 
         // interleave Magic Bits 
-        mortonCode2 = mortonEncodeMagicBits(coords);
+        mortonCode2 = displayMortonEncoding(coords)
 
         // animation 
         displayBinaryCoordinates(coords, bitLength);
@@ -136,13 +136,13 @@ function calculateMortonCode() {
         mortonCode1 = interleaveBits([x, y], bitLength);
 
          // interleave Magic Bits 
-        mortonCode2 = mortonEncodeMagicBits2D(x, y);
+        mortonCode2 = displayMortonEncoding([x, y])
     }
 
     const result1 = document.getElementById("result1");
     const result2 = document.getElementById("result2");
     //result1.innerHTML = `Interleave(for-loop):<br> Morton-Code (Dezimal): ${mortonCode1}<br>Morton-Code (Binär): ${mortonCode1.toString(2)}`;
-    result2.innerHTML = `Magic Bits:<br>Morton-Code (Dezimal): ${mortonCode2}<br>Morton-Code (Binär): ${mortonCode2.toString(2)}`;
+    //result2.innerHTML = `Magic Bits:<br>Morton-Code (Dezimal): ${mortonCode2}<br>Morton-Code (Binär): ${mortonCode2.toString(2)}`;
     result1.classList.remove("hidden");
     result2.classList.remove("hidden");
 }
@@ -255,6 +255,64 @@ for (let i = 0; i < maxBits; ++i) {
 
 
 // Interleave mit Magic Bits
+
+// Masken für die verschiedenen Dimensionen
+const magicBitsMasks = {
+    2: [0xffffffffn, 0x0000ffff0000ffffn, 0x00ff00ff00ff00ffn, 0x0f0f0f0f0f0f0f0fn, 0x3333333333333333n, 0x5555555555555555n],
+    3: [0x1fffffn, 0x1f00000000ffffn, 0x1f0000ff0000ffn, 0x100f00f00f00f00fn, 0x10c30c30c30c30c3n, 0x1249249249249249n]
+};
+
+// Generalized splitBy function for 2D and 3D
+function splitByBits(a, dimension) {
+    const steps = [];
+    let x = BigInt(a) & magicBitsMasks[dimension][0];
+    steps.push(x.toString(2).padStart(dimension === 2 ? 32 : 64, '0')); // 32 Bits für 2D, 64 Bits für 3D
+
+    for (let i = 1; i < magicBitsMasks[dimension].length; i++) {
+        const shiftAmount = BigInt(dimension === 2 ? 32 / Math.pow(2, i) : 64 / Math.pow(2, i));
+        x = (x | (x << shiftAmount)) & magicBitsMasks[dimension][i];
+        steps.push(x.toString(2).padStart(dimension === 2 ? 32 : 64, '0'));
+    }
+
+    return { result: x, steps };
+}
+
+// Generalized Morton encoding function for both 2D and 3D
+function mortonEncodeMagicBits(coords) {
+    const dimension = coords.length; // 2 for 2D, 3 for 3D
+    const bitSplits = coords.map(coord => splitByBits(coord, dimension));
+    const result = bitSplits.reduce((acc, { result }, index) => acc | (result << BigInt(index)), 0n);
+    return { mortonCode: result, steps: bitSplits };
+}
+
+// Function to display the steps
+function displayMortonEncoding(coords) {
+    const { mortonCode, steps } = mortonEncodeMagicBits(coords);
+
+    const dimension = coords.length;
+    const binaryCoordinates = coords.map((coord, index) => `
+        <div class="binary">${['x', 'y', 'z'][index]} = ${coord} = ${coord.toString(2).padStart(16, '0')}</div>
+    `).join('');
+
+    const bitSteps = steps.map((stepInfo, index) => `
+        <h3>Bits for ${['x', 'y', 'z'][index]}:</h3>
+        ${stepInfo.steps.map((step, i) => `<div class="binary">After step ${i + 1}: ${step}</div>`).join('')}
+    `).join('');
+
+    const combination = `<div class="binary">Morton Code: ${mortonCode.toString(2).padStart(dimension === 2 ? 32 : 64, '0')} (${mortonCode})</div>`;
+
+    document.getElementById('result2').innerHTML = `<h2>Morton Code: ${mortonCode.toString(2)} (${mortonCode})</h2>`;
+    document.getElementById('steps').innerHTML = `
+        <h2>Calculation Steps</h2>
+        ${binaryCoordinates}
+        ${bitSteps}
+        <h3>Combination:</h3>
+        ${combination}
+    `;
+}
+
+
+/*
 function splitBy3(a) {
     let x = BigInt(a) & 0x1fffffn; // Nur die ersten 21 Bits verwenden und als BigInt speichern
     x = (x | (x << 32n)) & 0x1f00000000ffffn;
@@ -286,6 +344,8 @@ function mortonEncodeMagicBits2D(x, y) {
     const result = splitBy2(x) | (splitBy2(y) << 1n);
     return result;
 }
+
+*/
 
 function animateInterleaveSteps(coords, bitLength, callback) {
     const stepsContainer = document.getElementById('interleaveSteps');
