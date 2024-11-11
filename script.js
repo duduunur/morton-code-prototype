@@ -271,13 +271,13 @@ function splitByBits(a, dimension) {
     const steps = [];
     const bitLength = document.getElementById("bitLength").value;
     let x = BigInt(a) & magicBitsMasks[dimension][0];
-    steps.push(x.toString(2).padStart(bitLength, '0'));
-    console.log(bitLength);
+    const maxBits = parseInt(bitLength / dimension);
+    steps.push(x.toString(2).padStart((maxBits*dimension), '0'));
 
     for (let i = 1; i < magicBitsMasks[dimension].length; i++) {
         const shiftAmount = BigInt(dimension === 2 ? 32 / Math.pow(2, i) : 64 / Math.pow(2, i));
         x = (x | (x << shiftAmount)) & magicBitsMasks[dimension][i];
-        steps.push(x.toString(2).padStart(bitLength, '0'));
+        steps.push(x.toString(2).padStart((maxBits*dimension), '0'));
     }
 
     return { result: x, steps };
@@ -299,25 +299,59 @@ function mortonEncodeMagicBits(coords) {
 function displayMortonEncoding(coords) {
     const { mortonCode, steps } = mortonEncodeMagicBits(coords);
     const bitLength = document.getElementById("bitLength").value;
+    const dimension = document.getElementById("dimension").value;
 
-    const dimension = coords.length;
-    const binaryCoordinates = coords.map((coord, index) => `
-        <div class="binary">${['x', 'y', 'z'][index]} = ${coord} = ${coord.toString(2).padStart(bitLength/dimension, '0')}</div>
-    `).join('');
+    const maxBits = parseInt(bitLength / dimension);
 
-    const bitSteps = steps.map((stepInfo, index) => `
-        <h3>Bits for ${['x', 'y', 'z'][index]}:</h3>
-        ${stepInfo.steps.map((step, i) => `<div class="binary">After step ${i + 1}: ${step}</div>`).join('')}
-    `).join('');
+    const binaryCoordinates = coords.map((coord, index) => {
+        const colorClass = index === 0 ? 'color-x' : index === 1 ? 'color-y' : 'color-z';
+        const binaryString = coord.toString(2).padStart(maxBits, '0')
+            .split('')
+            .map(bit => `<span class="${colorClass}">${bit}</span>`)
+            .join('');
+        return `<div class="binary">${['x', 'y', 'z'][index]} = ${binaryString}</div>`;
+    }).join('');
+    
 
-    const combination = `<div class="binary">Morton Code: ${mortonCode.toString(2).padStart(bitLength, '0')} (${mortonCode})</div>`;
+    const bitSteps = steps.map((stepInfo, index) => {
+        const colorClass = index === 0 ? 'color-x' : index === 1 ? 'color-y' : 'color-z';
+        return `
+            <h4>Bits for ${['x', 'y', 'z'][index]}:</h4>
+            ${stepInfo.steps.map((step, i) => {
+                // Jedes Bit in der Binärdarstellung einfärben
+                const coloredStep = step
+                    .split('')
+                    .map(bit => `<span class="${colorClass}">${bit}</span>`)
+                    .join('');
+                return `<div class="binary">After step ${i + 1}: ${coloredStep}</div>`;
+            }).join('')}
+        `;
+    }).join('');
+    
+
+    const combination = `
+    <div class="binary">Morton Code: ${
+        mortonCode.toString(2)
+            .padStart(maxBits * dimension, '0')
+            .split('')
+            .map((bit, index, arr) => {
+                // Berechne die Position von rechts
+                const reversedIndex = arr.length - 1 - index;
+                const colorClass = reversedIndex % dimension === 0 ? 'color-x' :
+                                   reversedIndex % dimension === 1 ? 'color-y' : 'color-z';
+                return `<span class="${colorClass}">${bit}</span>`;
+            })
+            .join('')
+    } (${mortonCode})</div>
+`;
+
+
 
     //document.getElementById('result2').innerHTML = `<h2>Morton Code: ${mortonCode.toString(2)} (${mortonCode})</h2>`;
     document.getElementById('steps').innerHTML = `
-        <h2>Magic-bits</h2>
         ${binaryCoordinates}
         ${bitSteps}
-        <h3>Combination:</h3>
+        <h4>Combination:</h4>
         ${combination}
     `;
 }
@@ -392,7 +426,7 @@ function animateInterleaveSteps(coords, bitLength, callback) {
 function displayBinaryCoordinates(coords, bitLength) {
     const binaryContainer = document.getElementById('binaryCoordinates');
     binaryContainer.innerHTML = ''; // Reset container
-    const maxBits = bitLength / coords.length;
+    const maxBits = parseInt(bitLength / coords.length);
 
     const colors = ['color-x', 'color-y', 'color-z'];
 
