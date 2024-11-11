@@ -173,7 +173,7 @@ function enableInputs() {
 
 function interleaveBits(coords, bitLength) {
     let mortonCode = BigInt(0);
-    const maxBits = parseInt(bitLength / coords.length);
+    const maxBits = parseInt(bitLength / coords.length); // maximale anzahl bits pro koordinate 
     const totalBits = maxBits * coords.length; // Gesamtanzahl der Bits für das Padding
 
     // Ziel-Container im Interface für die Anzeige der Schritte
@@ -186,44 +186,67 @@ function interleaveBits(coords, bitLength) {
         return value.toString(2).padStart(Number(totalBits), '0');
     }
 
-    // Hilfsfunktion für das Hervorheben der Bits von x, y und z
     function colorizeBits(binaryStr) {
         let coloredStr = '';
-        for (let k = 0; k < binaryStr.length; k++) {
-            const colorClass = k % coords.length === 0 ? 'color-x' :
-                               k % coords.length === 1 ? 'color-y' : 'color-z';
-            coloredStr += `<span class="${colorClass}">${binaryStr[k]}</span>`;
+        const length = binaryStr.length;
+    
+        // Schleife von rechts nach links durch die Bits
+        for (let k = length - 1; k >= 0; k--) {
+            const colorClass = (length - 1 - k) % coords.length === 0 ? 'color-x' :
+                               (length - 1 - k) % coords.length === 1 ? 'color-y' : 'color-z';
+    
+            // Das Bit wird der gefärbten Zeichenkette am Anfang hinzugefügt
+            coloredStr = `<span class="${colorClass}">${binaryStr[k]}</span>` + coloredStr;
         }
+        
         return coloredStr;
+    } 
+
+    // Hilfsfunktion zum Formatieren und Einfärben der Bits
+function formatAndColorizeBits(value, colorClass) {
+    return formatBinary(value)
+        .split('')
+        .map(bit => bit === '1' 
+            ? `<span class="${colorClass}">1</span>` 
+            : `<span style="color: black;">0</span>`)
+        .join('');
+}
+
+// Iteration über die Bits und Koordinaten
+for (let i = 0; i < maxBits; ++i) {
+    for (let j = 0; j < coords.length; ++j) {
+        const currentBit = (BigInt(coords[j]) & (BigInt(1) << BigInt(i)));
+        const shiftedBit = currentBit << BigInt(i * (coords.length - 1) + j);
+        
+        // Aktualisieren von Morton-Code
+        mortonCode |= shiftedBit;
+
+        // Wählen der entsprechenden Farbe basierend auf j-Wert
+        const colorClass = j === 0 ? 'color-x' : j === 1 ? 'color-y' : 'color-z';
+
+        // Formatierte Ausgabe des currentBit und shiftedBit mit farbigen 1 und schwarzen 0
+        const formattedCurrentBit = formatAndColorizeBits(currentBit, colorClass);
+        const formattedShiftedBit = formatAndColorizeBits(shiftedBit, colorClass);
+
+        // Schritt-Container erstellen und farbkodierte Bits anzeigen
+        const stepDiv = document.createElement("div");
+        stepDiv.classList.add("step-bit");
+
+        stepDiv.innerHTML = `
+            <p><strong>Bit position ${i}, coordinate ${['x', 'y', 'z'][j]}:</strong></p>
+            <p>Current Bit: <span>${formattedCurrentBit}</span></p>
+            <p>Shifted Bit: <span>${formattedShiftedBit}</span></p>
+            <p>Morton Code: <span>${colorizeBits(formatBinary(mortonCode))}</span></p>
+        `;
+
+        // Schritt in den Ergebniscontainer einfügen
+        resultContainer.appendChild(stepDiv);
     }
+}
 
-    // Iteration über die Bits und Koordinaten
-    for (let i = 0; i < maxBits; ++i) {
-        for (let j = 0; j < coords.length; ++j) {
-            const currentBit = (BigInt(coords[j]) & (BigInt(1) << BigInt(i)));
-            const shiftedBit = currentBit << BigInt(i * (coords.length - 1) + j);
-            
-            // Aktualisieren von Morton-Code
-            mortonCode |= shiftedBit;
-
-            // Schritt-Container erstellen und farbkodierte Bits anzeigen
-            const stepDiv = document.createElement("div");
-            stepDiv.classList.add("step-bit");
-            stepDiv.innerHTML = `
-                <p><strong>Bit position ${i}, coordinate ${j} (${['x', 'y', 'z'][j]}):</strong></p>
-                <p>Current Bit: <span>${formatBinary(currentBit)}</span></p>
-                <p>Shifted Bit: <span>${formatBinary(shiftedBit)}</span></p>
-                <p>Morton Code: <span>${colorizeBits(formatBinary(mortonCode))}</span></p>
-            `;
-
-            // Schritt in den Ergebniscontainer einfügen
-            resultContainer.appendChild(stepDiv);
-        }
-    }
 
     // Finale Ausgabe des Morton-Codes
     const finalResult = document.createElement("div");
-    finalResult.style.backgroundColor = "#c8e6c9"; // Grün für das Endergebnis
     finalResult.innerHTML = `<p><strong>Final Morton Code:</strong> ${colorizeBits(formatBinary(mortonCode))} (decimal: ${mortonCode.toString()})</p>`;
     resultContainer.appendChild(finalResult);
 
