@@ -103,6 +103,7 @@ document.getElementById("layout").addEventListener("change", (e) => {
     updateCoordinateLabels(dimension, layout);
 });
 
+// ---------------------------------------- Calculate Morton Code --------------------------------------------------------------
 
 function calculateMortonCode() {
     // Sperre die Felder und den Button
@@ -170,6 +171,9 @@ function enableInputs() {
     if (z) z.disabled = false;
     document.getElementById('calculateButton').querySelector('button').disabled = false;
 }
+
+// ---------------------------------------------- Interleave mit For-Schleife ----------------------------------------------------------
+
 
 function interleaveBits(coords, bitLength) {
     let mortonCode = BigInt(0);
@@ -254,7 +258,7 @@ for (let i = 0; i < maxBits; ++i) {
 }
 
 
-// Interleave mit Magic Bits
+// ---------------------------------------------- Interleave mit Magic Bits ----------------------------------------------------------
 
 // Masken für die verschiedenen Dimensionen
 const magicBitsMasks = {
@@ -265,13 +269,15 @@ const magicBitsMasks = {
 // Generalized splitBy function for 2D and 3D
 function splitByBits(a, dimension) {
     const steps = [];
+    const bitLength = document.getElementById("bitLength").value;
     let x = BigInt(a) & magicBitsMasks[dimension][0];
-    steps.push(x.toString(2).padStart(dimension === 2 ? 32 : 64, '0')); // 32 Bits für 2D, 64 Bits für 3D
+    steps.push(x.toString(2).padStart(bitLength, '0'));
+    console.log(bitLength);
 
     for (let i = 1; i < magicBitsMasks[dimension].length; i++) {
         const shiftAmount = BigInt(dimension === 2 ? 32 / Math.pow(2, i) : 64 / Math.pow(2, i));
         x = (x | (x << shiftAmount)) & magicBitsMasks[dimension][i];
-        steps.push(x.toString(2).padStart(dimension === 2 ? 32 : 64, '0'));
+        steps.push(x.toString(2).padStart(bitLength, '0'));
     }
 
     return { result: x, steps };
@@ -280,7 +286,11 @@ function splitByBits(a, dimension) {
 // Generalized Morton encoding function for both 2D and 3D
 function mortonEncodeMagicBits(coords) {
     const dimension = coords.length; // 2 for 2D, 3 for 3D
+
+    // Bits splitten
     const bitSplits = coords.map(coord => splitByBits(coord, dimension));
+
+    // Ergebnis 
     const result = bitSplits.reduce((acc, { result }, index) => acc | (result << BigInt(index)), 0n);
     return { mortonCode: result, steps: bitSplits };
 }
@@ -288,10 +298,11 @@ function mortonEncodeMagicBits(coords) {
 // Function to display the steps
 function displayMortonEncoding(coords) {
     const { mortonCode, steps } = mortonEncodeMagicBits(coords);
+    const bitLength = document.getElementById("bitLength").value;
 
     const dimension = coords.length;
     const binaryCoordinates = coords.map((coord, index) => `
-        <div class="binary">${['x', 'y', 'z'][index]} = ${coord} = ${coord.toString(2).padStart(16, '0')}</div>
+        <div class="binary">${['x', 'y', 'z'][index]} = ${coord} = ${coord.toString(2).padStart(bitLength/dimension, '0')}</div>
     `).join('');
 
     const bitSteps = steps.map((stepInfo, index) => `
@@ -299,11 +310,11 @@ function displayMortonEncoding(coords) {
         ${stepInfo.steps.map((step, i) => `<div class="binary">After step ${i + 1}: ${step}</div>`).join('')}
     `).join('');
 
-    const combination = `<div class="binary">Morton Code: ${mortonCode.toString(2).padStart(dimension === 2 ? 32 : 64, '0')} (${mortonCode})</div>`;
+    const combination = `<div class="binary">Morton Code: ${mortonCode.toString(2).padStart(bitLength, '0')} (${mortonCode})</div>`;
 
-    document.getElementById('result2').innerHTML = `<h2>Morton Code: ${mortonCode.toString(2)} (${mortonCode})</h2>`;
+    //document.getElementById('result2').innerHTML = `<h2>Morton Code: ${mortonCode.toString(2)} (${mortonCode})</h2>`;
     document.getElementById('steps').innerHTML = `
-        <h2>Calculation Steps</h2>
+        <h2>Magic-bits</h2>
         ${binaryCoordinates}
         ${bitSteps}
         <h3>Combination:</h3>
@@ -386,7 +397,7 @@ function displayBinaryCoordinates(coords, bitLength) {
     const colors = ['color-x', 'color-y', 'color-z'];
 
     coords.forEach((coord, index) => {
-        const binaryString = coord.toString(2).padStart(maxBits, '0'); // Annahme: 16 Bits für Anzeige
+        const binaryString = coord.toString(2).padStart(maxBits, '0'); // mit Nullen füllen bis bitlänge
 
         // Jedes Bit farbig darstellen
         for (let i = 0; i < maxBits; i++) {
