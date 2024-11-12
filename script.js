@@ -125,7 +125,7 @@ function calculateMortonCode() {
         mortonCode1 = interleaveBits(coords, bitLength);
 
         // interleave Magic Bits 
-        mortonCode2 = displayMortonEncoding(coords)
+        mortonCode2 = displayMagicBits(coords)
 
         // animation 
         displayBinaryCoordinates(coords, bitLength);
@@ -137,7 +137,7 @@ function calculateMortonCode() {
         mortonCode1 = interleaveBits([x, y], bitLength);
 
          // interleave Magic Bits 
-        mortonCode2 = displayMortonEncoding([x, y])
+        mortonCode2 = displayMagicBits([x, y])
     }
 
     const result1 = document.getElementById("result1");
@@ -260,49 +260,87 @@ for (let i = 0; i < maxBits; ++i) {
 
 // ---------------------------------------------- Interleave mit Magic Bits ----------------------------------------------------------
 
-// Masken für die verschiedenen Dimensionen
-const magicBitsMasks = {
-    2: [0xffffffffn, 0x0000ffff0000ffffn, 0x00ff00ff00ff00ffn, 0x0f0f0f0f0f0f0f0fn, 0x3333333333333333n, 0x5555555555555555n],
-    3: [0x1fffffn, 0x1f00000000ffffn, 0x1f0000ff0000ffn, 0x100f00f00f00f00fn, 0x10c30c30c30c30c3n, 0x1249249249249249n]
-};
-
-// Generalized splitBy function for 2D and 3D
-function splitByBits(a, dimension) {
+// 3D Split-Funktion mit Berechnungsschritten
+function splitBy3(a) {
     const steps = [];
-    const bitLength = document.getElementById("bitLength").value;
-    let x = BigInt(a) & magicBitsMasks[dimension][0];
-    const maxBits = parseInt(bitLength / dimension);
-    steps.push(x.toString(2).padStart((maxBits*dimension), '0'));
+    let x = BigInt(a) & 0x1fffffn; // Nur die ersten 21 Bits verwenden
+    steps.push(x.toString(2).padStart(64, '0'));
 
-    for (let i = 1; i < magicBitsMasks[dimension].length; i++) {
-        const shiftAmount = BigInt(dimension === 2 ? 32 / Math.pow(2, i) : 64 / Math.pow(2, i));
-        x = (x | (x << shiftAmount)) & magicBitsMasks[dimension][i];
-        steps.push(x.toString(2).padStart((maxBits*dimension), '0'));
-    }
+    x = (x | (x << 32n)) & 0x1f00000000ffffn;
+    steps.push(x.toString(2).padStart(64, '0'));
+
+    x = (x | (x << 16n)) & 0x1f0000ff0000ffn;
+    steps.push(x.toString(2).padStart(64, '0'));
+
+    x = (x | (x << 8n)) & 0x100f00f00f00f00fn;
+    steps.push(x.toString(2).padStart(64, '0'));
+
+    x = (x | (x << 4n)) & 0x10c30c30c30c30c3n;
+    steps.push(x.toString(2).padStart(64, '0'));
+
+    x = (x | (x << 2n)) & 0x1249249249249249n;
+    steps.push(x.toString(2).padStart(64, '0'));
 
     return { result: x, steps };
 }
 
-// Generalized Morton encoding function for both 2D and 3D
-function mortonEncodeMagicBits(coords) {
-    const dimension = coords.length; // 2 for 2D, 3 for 3D
+// Morton-Encoding für 3D mit Magic Bits und Schrittausgabe
+function mortonEncodeMagicBits3D(x,y,z) {
+    const xSplit = splitBy3(x);
+    const ySplit = splitBy3(y);
+    const zSplit = splitBy3(z);
 
-    // Bits splitten
-    const bitSplits = coords.map(coord => splitByBits(coord, dimension));
+    // Kombinieren der Ergebnisse für x, y und z (mit entsprechenden Verschiebungen)
+    const result = xSplit.result | (ySplit.result << 1n) | (zSplit.result << 2n);
 
-    // Ergebnis 
-    const result = bitSplits.reduce((acc, { result }, index) => acc | (result << BigInt(index)), 0n);
-    return { mortonCode: result, steps: bitSplits };
+    return { mortonCode: result, steps: [xSplit, ySplit, zSplit] };
 }
 
-// Function to display the steps
-function displayMortonEncoding(coords) {
-    const { mortonCode, steps } = mortonEncodeMagicBits(coords);
-    const bitLength = document.getElementById("bitLength").value;
-    const dimension = document.getElementById("dimension").value;
+// 2D Split-Funktion mit Berechnungsschritten
+function splitBy2(a) {
+    const steps = [];
+    let x = BigInt(a) & 0xffffffffn; // Nur die ersten 32 Bits verwenden
+    steps.push(x.toString(2).padStart(64, '0'));
 
+    x = (x | (x << 16n)) & 0x0000ffff0000ffffn;
+    steps.push(x.toString(2).padStart(64, '0'));
+
+    x = (x | (x << 8n)) & 0x00ff00ff00ff00ffn;
+    steps.push(x.toString(2).padStart(64, '0'));
+
+    x = (x | (x << 4n)) & 0x0f0f0f0f0f0f0f0fn;
+    steps.push(x.toString(2).padStart(64, '0'));
+
+    x = (x | (x << 2n)) & 0x3333333333333333n;
+    steps.push(x.toString(2).padStart(64, '0'));
+
+    x = (x | (x << 1n)) & 0x5555555555555555n;
+    steps.push(x.toString(2).padStart(64, '0'));
+
+    return { result: x, steps };
+}
+
+// Morton-Encoding für 2D mit Magic Bits und Schrittausgabe
+function mortonEncodeMagicBits2D(x, y) {
+    const xSplit = splitBy2(x);
+    const ySplit = splitBy2(y);
+    const result = xSplit.result | (ySplit.result << 1n);
+
+    return { mortonCode: result, steps: [xSplit, ySplit] };
+}
+
+// Anzeige der Schritte für Morton-Encoding (2D oder 3D)
+function displayMagicBits(coords) {
+    const bitLength = document.getElementById("bitLength").value;
+    const dimension = coords.length;
     const maxBits = parseInt(bitLength / dimension);
 
+    // Morton-Encoding entsprechend Dimension (2D oder 3D)
+    const { mortonCode, steps } = dimension === 2
+        ? mortonEncodeMagicBits2D(coords[0], coords[1])
+        : mortonEncodeMagicBits3D(coords[0], coords[1], coords[2]);
+
+    // Formatierung der Koordinaten
     const binaryCoordinates = coords.map((coord, index) => {
         const colorClass = index === 0 ? 'color-x' : index === 1 ? 'color-y' : 'color-z';
         const binaryString = coord.toString(2).padStart(maxBits, '0')
@@ -311,14 +349,13 @@ function displayMortonEncoding(coords) {
             .join('');
         return `<div class="binary">${['x', 'y', 'z'][index]} = ${binaryString}</div>`;
     }).join('');
-    
 
+    // Schritte formatieren und farbig kodieren
     const bitSteps = steps.map((stepInfo, index) => {
         const colorClass = index === 0 ? 'color-x' : index === 1 ? 'color-y' : 'color-z';
         return `
             <h4>Bits for ${['x', 'y', 'z'][index]}:</h4>
             ${stepInfo.steps.map((step, i) => {
-                // Jedes Bit in der Binärdarstellung einfärben
                 const coloredStep = step
                     .split('')
                     .map(bit => `<span class="${colorClass}">${bit}</span>`)
@@ -327,15 +364,14 @@ function displayMortonEncoding(coords) {
             }).join('')}
         `;
     }).join('');
-    
 
+    // Kombination (Morton-Code)
     const combination = `
     <div class="binary">Morton Code: ${
         mortonCode.toString(2)
             .padStart(maxBits * dimension, '0')
             .split('')
             .map((bit, index, arr) => {
-                // Berechne die Position von rechts
                 const reversedIndex = arr.length - 1 - index;
                 const colorClass = reversedIndex % dimension === 0 ? 'color-x' :
                                    reversedIndex % dimension === 1 ? 'color-y' : 'color-z';
@@ -343,11 +379,8 @@ function displayMortonEncoding(coords) {
             })
             .join('')
     } (${mortonCode})</div>
-`;
+    `;
 
-
-
-    //document.getElementById('result2').innerHTML = `<h2>Morton Code: ${mortonCode.toString(2)} (${mortonCode})</h2>`;
     document.getElementById('steps').innerHTML = `
         ${binaryCoordinates}
         ${bitSteps}
