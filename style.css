@@ -78,6 +78,11 @@ label {
     width: 27%;
 }
 
+.coordError {
+    color: red; 
+    display: none;
+}
+
 .pointA {
     //padding: 20px;
     border: 1px solid #ddd;
