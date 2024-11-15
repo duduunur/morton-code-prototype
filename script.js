@@ -104,35 +104,8 @@ function updateCoordinateInputOrder(layout) {
     }
 }
 
-function updateCoordinateLabels(dimension, layout) {
-    const coordinateLabels = document.getElementById("coordinateLabels");
 
-    // Setze die Labels basierend auf Dimension und Layout
-    if (dimension === "3") {
-        if (layout === "xyz") {
-            coordinateLabels.innerHTML = "x:<br>y:<br>z:<br>morton-code:";
-        } else if (layout === "zyx") {
-            coordinateLabels.innerHTML = "z:<br>y:<br>x:<br>morton-code:";
-        }
-    } else { // 2D
-        coordinateLabels.innerHTML = "x:<br>y:<br>morton-code:";
-    }
-}
-
-// Event Listener um die Coordinateneingabe zu aktualisieren
-document.getElementById("dimension").addEventListener("change", (e) => {
-    const dimension = e.target.value;
-    const layout = document.getElementById("layout").value;
-    updateCoordinateLabels(dimension, layout);
-});
-
-document.getElementById("layout").addEventListener("change", (e) => {
-    const dimension = document.getElementById("dimension").value;
-    const layout = e.target.value;
-    updateCoordinateLabels(dimension, layout);
-});
-
-// ---------------------------------------- Calculate Morton Code --------------------------------------------------------------
+// -------------------------------------------------- Calculate Morton Code --------------------------------------------------------------
 
 function calculateMortonCode() {
     document.getElementById("result1").innerHTML = '';
@@ -161,13 +134,13 @@ function calculateMortonCode() {
         mortonCode1 = interleaveBits(coords, bitLength);
 
         // interleave Magic Bits 
-        mortonCode2 = displayMagicBits(coords)
+        mortonCode2 = displayMagicBits(coords, bitLength)
     } else {
          // interleave for-loop
         mortonCode1 = interleaveBits([x, y], bitLength);
 
          // interleave Magic Bits 
-        mortonCode2 = displayMagicBits([x, y])
+        mortonCode2 = displayMagicBits([x, y], bitLength)
     }
 }
 
@@ -259,34 +232,34 @@ for (let i = 0; i < maxBits; ++i) {
 // ---------------------------------------------- Interleave mit Magic Bits ----------------------------------------------------------
 
 // 3D Split-Funktion mit Berechnungsschritten
-function splitBy3(a) {
+function splitBy3(a, bitLength) {
     const steps = [];
     let x = BigInt(a) & 0x1fffffn; // Nur die ersten 21 Bits verwenden
-    steps.push(x.toString(2).padStart(64, '0'));
+    steps.push(x.toString(2).padStart(bitLength, '0'));
 
     x = (x | (x << 32n)) & 0x1f00000000ffffn;
-    steps.push(x.toString(2).padStart(64, '0'));
+    steps.push(x.toString(2).padStart(bitLength, '0'));
 
     x = (x | (x << 16n)) & 0x1f0000ff0000ffn;
-    steps.push(x.toString(2).padStart(64, '0'));
+    steps.push(x.toString(2).padStart(bitLength, '0'));
 
     x = (x | (x << 8n)) & 0x100f00f00f00f00fn;
-    steps.push(x.toString(2).padStart(64, '0'));
+    steps.push(x.toString(2).padStart(bitLength, '0'));
 
     x = (x | (x << 4n)) & 0x10c30c30c30c30c3n;
-    steps.push(x.toString(2).padStart(64, '0'));
+    steps.push(x.toString(2).padStart(bitLength, '0'));
 
     x = (x | (x << 2n)) & 0x1249249249249249n;
-    steps.push(x.toString(2).padStart(64, '0'));
+    steps.push(x.toString(2).padStart(bitLength, '0'));
 
     return { result: x, steps };
 }
 
 // Morton-Encoding für 3D mit Magic Bits und Schrittausgabe
-function mortonEncodeMagicBits3D(x,y,z) {
-    const xSplit = splitBy3(x);
-    const ySplit = splitBy3(y);
-    const zSplit = splitBy3(z);
+function mortonEncodeMagicBits3D(x,y,z, bitLength) {
+    const xSplit = splitBy3(x, bitLength);
+    const ySplit = splitBy3(y, bitLength);
+    const zSplit = splitBy3(z, bitLength);
 
     // Kombinieren der Ergebnisse für x, y und z (mit entsprechenden Verschiebungen)
     const result = xSplit.result | (ySplit.result << 1n) | (zSplit.result << 2n);
@@ -295,50 +268,49 @@ function mortonEncodeMagicBits3D(x,y,z) {
 }
 
 // 2D Split-Funktion mit Berechnungsschritten
-function splitBy2(a) {
+function splitBy2(a, bitLength) {
     const steps = [];
     let x = BigInt(a) & 0xffffffffn; // Nur die ersten 32 Bits verwenden
-    steps.push(x.toString(2).padStart(64, '0'));
+    steps.push(x.toString(2).padStart(bitLength, '0'));
 
     x = (x | (x << 16n)) & 0x0000ffff0000ffffn;
-    steps.push(x.toString(2).padStart(64, '0'));
+    steps.push(x.toString(2).padStart(bitLength, '0'));
 
     x = (x | (x << 8n)) & 0x00ff00ff00ff00ffn;
-    steps.push(x.toString(2).padStart(64, '0'));
+    steps.push(x.toString(2).padStart(bitLength, '0'));
 
     x = (x | (x << 4n)) & 0x0f0f0f0f0f0f0f0fn;
-    steps.push(x.toString(2).padStart(64, '0'));
+    steps.push(x.toString(2).padStart(bitLength, '0'));
 
     x = (x | (x << 2n)) & 0x3333333333333333n;
-    steps.push(x.toString(2).padStart(64, '0'));
+    steps.push(x.toString(2).padStart(bitLength, '0'));
 
     x = (x | (x << 1n)) & 0x5555555555555555n;
-    steps.push(x.toString(2).padStart(64, '0'));
+    steps.push(x.toString(2).padStart(bitLength, '0'));
 
     return { result: x, steps };
 }
 
 // Morton-Encoding für 2D mit Magic Bits und Schrittausgabe
-function mortonEncodeMagicBits2D(x, y) {
-    const xSplit = splitBy2(x);
-    const ySplit = splitBy2(y);
+function mortonEncodeMagicBits2D(x, y, bitLength) {
+    const xSplit = splitBy2(x, bitLength);
+    const ySplit = splitBy2(y, bitLength);
     const result = xSplit.result | (ySplit.result << 1n);
 
     return { mortonCode: result, steps: [xSplit, ySplit] };
 }
 
 // Anzeige der Schritte für Morton-Encoding (2D oder 3D)
-function displayMagicBits(coords) {
-    const bitLength = document.getElementById("bitLength").value;
+function displayMagicBits(coords, bitLength) {
     const dimension = coords.length;
     const maxBits = parseInt(bitLength / dimension);
 
     // Morton-Encoding entsprechend Dimension (2D oder 3D)
     const { mortonCode, steps } = dimension === 2
-        ? mortonEncodeMagicBits2D(coords[0], coords[1])
-        : mortonEncodeMagicBits3D(coords[0], coords[1], coords[2]);
+        ? mortonEncodeMagicBits2D(coords[0], coords[1], bitLength)
+        : mortonEncodeMagicBits3D(coords[0], coords[1], coords[2], bitLength);
 
-    // Formatierung der Koordinaten
+    // Formatierung der Koordinaten (Farben)
     const binaryCoordinates = coords.map((coord, index) => {
         const colorClass = index === 0 ? 'color-x' : index === 1 ? 'color-y' : 'color-z';
         const binaryString = coord.toString(2).padStart(maxBits, '0')
@@ -379,6 +351,8 @@ function displayMagicBits(coords) {
     } (${mortonCode})</div>
     `;
 
+
+    //AUSGABE
     document.getElementById('steps').innerHTML = `
         ${binaryCoordinates}
         ${bitSteps}
