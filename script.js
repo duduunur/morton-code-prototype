@@ -156,6 +156,16 @@ function interleaveBits(coords, bitLength) {
     const resultContainer = document.getElementById("result1");
     resultContainer.innerHTML = ''; // Vorherigen Inhalt löschen
 
+     // display coordinates in binary and colorized
+    const binaryCoordinates = coords.map((coord, index) => {
+        const colorClass = index === 0 ? 'color-x' : index === 1 ? 'color-y' : 'color-z';
+        const binaryString = coord.toString(2).padStart(maxBits, '0')
+            .split('')
+            .map(bit => `<span class="${colorClass}">${bit}</span>`)
+            .join('');
+        return `<div class="binary">${['x', 'y', 'z'][index]} = ${binaryString} (decimal: ${coord})</div>`;
+    }).join('');
+
     // Hilfsfunktion zum Formatieren der Binärwerte mit führenden Nullen
     
     function formatBinary(value) {
@@ -187,6 +197,12 @@ function formatAndColorizeBits(value, colorClass) {
             : `<span style="color: black;">0</span>`)
         .join('');
 }
+
+// display input coordinates
+const coordinates = document.createElement("div");
+coordinates.innerHTML = `${binaryCoordinates}`;
+resultContainer.appendChild(coordinates);
+
 
 // Iteration über die Bits und Koordinaten
 for (let i = 0; i < maxBits; ++i) {
@@ -310,14 +326,14 @@ function displayMagicBits(coords, bitLength) {
         ? mortonEncodeMagicBits2D(coords[0], coords[1], bitLength)
         : mortonEncodeMagicBits3D(coords[0], coords[1], coords[2], bitLength);
 
-    // Formatierung der Koordinaten (Farben)
+    // display coordinates in binary and colorized
     const binaryCoordinates = coords.map((coord, index) => {
         const colorClass = index === 0 ? 'color-x' : index === 1 ? 'color-y' : 'color-z';
         const binaryString = coord.toString(2).padStart(maxBits, '0')
             .split('')
             .map(bit => `<span class="${colorClass}">${bit}</span>`)
             .join('');
-        return `<div class="binary">${['x', 'y', 'z'][index]} = ${binaryString}</div>`;
+        return `<div class="binary">${['x', 'y', 'z'][index]} = ${binaryString} (decimal: ${coord})</div>`;
     }).join('');
 
     // Schritte formatieren und farbig kodieren
@@ -348,7 +364,7 @@ function displayMagicBits(coords, bitLength) {
                 return `<span class="${colorClass}">${bit}</span>`;
             })
             .join('')
-    } (${mortonCode})</div>
+    } (decimal: ${mortonCode})</div>
     `;
 
 
