@@ -15,28 +15,56 @@ function displayMaxCoord() {
 
     // Fehlernachricht ausblenden
     document.getElementById("coordError").style.display = "none";
+    checkCoordinateLimits();
 }
 
 // Funktion zur Überprüfung, ob die Benutzereingaben die maximalen Werte überschreiten
 function checkCoordinateLimits() {
-    const x = BigInt(document.getElementById("x").value || 0);
-    const y = BigInt(document.getElementById("y").value || 0);
+    const xInput = document.getElementById("x");
+    const yInput = document.getElementById("y");
     const zInput = document.getElementById("z"); // z-Eingabe optional
     const coordError = document.getElementById("coordError");
 
-    // Prüfen, ob z vorhanden und ausgefüllt ist
+    const x = BigInt(xInput.value || 0);
+    const y = BigInt(yInput.value || 0);
     const z = zInput && zInput.value ? BigInt(zInput.value) : null;
 
-    // Prüfen, ob die Koordinaten den Maximalwert überschreiten
-    if (x > maxCoordinateValue || y > maxCoordinateValue || (z !== null && z > maxCoordinateValue)) {
-        coordError.style.display = "block";
-        coordError.innerText = `Coordinate exceeds the maximum allowed value!`;
-        return false; // Falls die Koordinaten zu groß sind
+    let hasError = false; // Flag, ob ein Fehler aufgetreten ist
+
+    // Überprüfe jede Koordinate und passe den Stil entsprechend an
+    if (x > maxCoordinateValue) {
+        xInput.style.border = "1px solid red";
+        hasError = true;
+    } else {
+        xInput.style.border = ""; // Entferne den roten Rahmen
     }
 
-    // Fehlernachricht ausblenden, falls die Eingaben korrekt sind
+    if (y > maxCoordinateValue) {
+        yInput.style.border = "1px solid red";
+        hasError = true;
+    } else {
+        yInput.style.border = ""; // Entferne den roten Rahmen
+    }
+
+    if (zInput && z !== null) {
+        if (z > maxCoordinateValue) {
+            zInput.style.border = "1px solid red";
+            hasError = true;
+        } else {
+            zInput.style.border = ""; // Entferne den roten Rahmen
+        }
+    }
+
+    // Wenn ein Fehler aufgetreten ist, zeige die Fehlermeldung
+    if (hasError) {
+        coordError.style.display = "block";
+        coordError.innerText = `Coordinate exceeds the maximum allowed value!`;
+        return false; // Fehlerhafte Eingabe
+    }
+
+    // Fehlernachricht ausblenden und Rahmen zurücksetzen
     coordError.style.display = "none";
-    return true; // Falls die Koordinaten innerhalb des zulässigen Bereichs liegen
+    return true; // Eingaben sind gültig
 }
 
 function toggleCoordinateFields() {
