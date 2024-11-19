@@ -277,26 +277,68 @@ for (let i = 0; i < maxBits; ++i) {
 
 // 3D Split-Funktion mit Berechnungsschritten
 function splitBy3(a, bitLength) {
-    const steps = [];
-    let x = BigInt(a) & 0x1fffffn; // Nur die ersten 21 Bits verwenden
-    steps.push(x.toString(2).padStart(bitLength, '0'));
 
-    x = (x | (x << 32n)) & 0x1f00000000ffffn;
-    steps.push(x.toString(2).padStart(bitLength, '0'));
-
-    x = (x | (x << 16n)) & 0x1f0000ff0000ffn;
-    steps.push(x.toString(2).padStart(bitLength, '0'));
-
-    x = (x | (x << 8n)) & 0x100f00f00f00f00fn;
-    steps.push(x.toString(2).padStart(bitLength, '0'));
-
-    x = (x | (x << 4n)) & 0x10c30c30c30c30c3n;
-    steps.push(x.toString(2).padStart(bitLength, '0'));
-
-    x = (x | (x << 2n)) & 0x1249249249249249n;
-    steps.push(x.toString(2).padStart(bitLength, '0'));
-
-    return { result: x, steps };
+    if (bitLength === 64) {
+        const steps = [];
+        //const mask = BigInt((1 << 5) - 1);
+        let x = BigInt(a);
+        //steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 32n)) & 0x1f00000000ffffn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 16n)) & 0x1f0000ff0000ffn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 8n)) & 0x100f00f00f00f00fn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 4n)) & 0x10c30c30c30c30c3n;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 2n)) & 0x1249249249249249n;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        return { result: x, steps };
+    } else if (bitLength === 32) {
+        const steps = [];
+        //const mask = BigInt((1 << 5) - 1);
+        let x = BigInt(a);
+        //steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 16n)) & 0x30000ffn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 8n)) & 0x0300f00fn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 4n)) & 0x30c30c3n;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 2n)) & 0x9249249n;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        return { result: x, steps };
+    } else if (bitLength === 16) {
+        const steps = [];
+        //const mask = BigInt((1 << 5) - 1);
+        let x = BigInt(a);
+        //steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 8n)) & 0x0300F00Fn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 4n)) & 0x030C30C3n;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 2n)) & 0x09249249n;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        return { result: x, steps };
+    } else {
+        console.log("Bitlänge ungültig");
+        return {result: 0, steps};
+    }
 }
 
 // Morton-Encoding für 3D mit Magic Bits und Schrittausgabe
@@ -314,7 +356,7 @@ function mortonEncodeMagicBits3D(x,y,z, bitLength) {
 // 2D Split-Funktion mit Berechnungsschritten
 function splitBy2(a, bitLength) {
     const steps = [];
-    let x = BigInt(a) & 0xffffffffn; // Nur die ersten 32 Bits verwenden
+    //let x = BigInt(a) & 0xffffffffn; // Nur die ersten 32 Bits verwenden
     steps.push(x.toString(2).padStart(bitLength, '0'));
 
     x = (x | (x << 16n)) & 0x0000ffff0000ffffn;
