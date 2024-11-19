@@ -277,13 +277,11 @@ for (let i = 0; i < maxBits; ++i) {
 
 // 3D Split-Funktion mit Berechnungsschritten
 function splitBy3(a, bitLength) {
+    const steps = [];
+    let x = BigInt(a);
 
     if (bitLength === 64) {
-        const steps = [];
-        //const mask = BigInt((1 << 5) - 1);
-        let x = BigInt(a);
-        //steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 32n)) & 0x1f00000000ffffn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
     
@@ -300,12 +298,9 @@ function splitBy3(a, bitLength) {
         steps.push(x.toString(2).padStart(bitLength, '0'));
     
         return { result: x, steps };
-    } else if (bitLength === 32) {
-        const steps = [];
-        //const mask = BigInt((1 << 5) - 1);
-        let x = BigInt(a);
-        //steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
+    } else if (bitLength === 32) {    
+
         x = (x | (x << 16n)) & 0x30000ffn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
     
@@ -319,12 +314,9 @@ function splitBy3(a, bitLength) {
         steps.push(x.toString(2).padStart(bitLength, '0'));
     
         return { result: x, steps };
+
     } else if (bitLength === 16) {
-        const steps = [];
-        //const mask = BigInt((1 << 5) - 1);
-        let x = BigInt(a);
-        //steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 8n)) & 0x0300F00Fn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
     
@@ -335,6 +327,7 @@ function splitBy3(a, bitLength) {
         steps.push(x.toString(2).padStart(bitLength, '0'));
     
         return { result: x, steps };
+
     } else {
         console.log("Bitlänge ungültig");
         return {result: 0, steps};
@@ -356,25 +349,66 @@ function mortonEncodeMagicBits3D(x,y,z, bitLength) {
 // 2D Split-Funktion mit Berechnungsschritten
 function splitBy2(a, bitLength) {
     const steps = [];
-    //let x = BigInt(a) & 0xffffffffn; // Nur die ersten 32 Bits verwenden
-    steps.push(x.toString(2).padStart(bitLength, '0'));
+    let x = BigInt(a);
 
-    x = (x | (x << 16n)) & 0x0000ffff0000ffffn;
-    steps.push(x.toString(2).padStart(bitLength, '0'));
+    if (bitLength === 64) {
 
-    x = (x | (x << 8n)) & 0x00ff00ff00ff00ffn;
-    steps.push(x.toString(2).padStart(bitLength, '0'));
+        x = (x | (x << 32n)) & 0x00000000FFFFFFFFn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 16n)) & 0x0000FFFF0000FFFFn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 8n)) & 0x00FF00FF00FF00FFn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 4n)) & 0x0F0F0F0F0F0F0F0Fn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 2n)) & 0x3333333333333333n;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
 
-    x = (x | (x << 4n)) & 0x0f0f0f0f0f0f0f0fn;
-    steps.push(x.toString(2).padStart(bitLength, '0'));
+        x = (x | (x << 1n)) & 0x5555555555555555n;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        return { result: x, steps };
 
-    x = (x | (x << 2n)) & 0x3333333333333333n;
-    steps.push(x.toString(2).padStart(bitLength, '0'));
+    } else if (bitLength === 32) {    
 
-    x = (x | (x << 1n)) & 0x5555555555555555n;
-    steps.push(x.toString(2).padStart(bitLength, '0'));
+        x = (x | (x << 16n)) & 0x0000ffffn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 8n)) & 0x00ff00ffn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 4n)) & 0x0f0f0f0fn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 2n)) & 0x33333333n;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
 
-    return { result: x, steps };
+        x = (x | (x << 1n)) & 0x55555555n;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        return { result: x, steps };
+
+    } else if (bitLength === 16) {
+
+        x = (x | (x << 4n)) & 0x0F0Fn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 2n)) & 0x3333n;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        x = (x | (x << 1n)) & 0x5555n;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
+    
+        return { result: x, steps };
+        
+    } else {
+        console.log("Bitlänge ungültig");
+        return {result: 0, steps};
+    }
 }
 
 // Morton-Encoding für 2D mit Magic Bits und Schrittausgabe
