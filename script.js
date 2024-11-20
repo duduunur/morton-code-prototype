@@ -136,7 +136,7 @@ function updateCoordinateInputOrder(layout) {
 // -------------------------------------------------- Calculate Morton Code --------------------------------------------------------------
 
 function calculateMortonCode() {
-    document.getElementById("result1").innerHTML = '';
+    document.getElementById("resultForLoop").innerHTML = '';
     document.getElementById("steps").innerHTML = '';
 
 
@@ -153,53 +153,56 @@ function calculateMortonCode() {
     const y = parseInt(document.getElementById("y").value) || 0;
     const z = dimension === "3" ? (parseInt(document.getElementById("z").value) || 0) : 0;
 
-    let mortonCode1 = 0; // first method: interleave
-    let mortonCode2 = 0; // second method: magic bits
 
     if (dimension === "3") {
         const coords = layout === "xyz" ? [x, y, z] : [z, y, x];
         // interleave for-loop
-        mortonCode1 = interleaveBits(coords, bitLength);
+        interleaveForLoop(coords, bitLength);
 
         // interleave Magic Bits 
-        mortonCode2 = displayMagicBits(coords, bitLength)
+        displayMagicBits(coords, bitLength)
     } else {
          // interleave for-loop
-        mortonCode1 = interleaveBits([x, y], bitLength);
+        interleaveForLoop([x, y], bitLength);
 
          // interleave Magic Bits 
-        mortonCode2 = displayMagicBits([x, y], bitLength)
+        displayMagicBits([x, y], bitLength)
     }
 }
 
 // ---------------------------------------------- Interleave mit For-Schleife ----------------------------------------------------------
 
 
-function interleaveBits(coords, bitLength) {
+function interleaveForLoop(coords, bitLength) {
     let mortonCode = BigInt(0);
-    const maxBits = parseInt(bitLength / coords.length); // maximale anzahl bits pro koordinate 
-    const totalBits = maxBits * coords.length; // Gesamtanzahl der Bits für das Padding
+    const bitsPerCoord = parseInt(bitLength / coords.length); // Anzahl der Bits pro Koordinate 
+    const bitsMortonCode = bitsPerCoord * coords.length; // Bitlänge Morton Code  
 
     // Ziel-Container im Interface für die Anzeige der Schritte
-    const resultContainer = document.getElementById("result1");
+    const resultContainer = document.getElementById("resultForLoop");
     resultContainer.innerHTML = ''; // Vorherigen Inhalt löschen
 
-     // display coordinates in binary and colorized
+     // format input coordinates
     const binaryCoordinates = coords.map((coord, index) => {
-        const colorClass = index === 0 ? 'color-x' : index === 1 ? 'color-y' : 'color-z';
-        const binaryString = coord.toString(2).padStart(maxBits, '0')
+        const colorClass = index === 0 ? 'color-x' : index === 1 ? 'color-y' : 'color-z'; // colors
+        const binaryString = coord.toString(2).padStart(bitsPerCoord, '0') // binary and padding
             .split('')
-            .map(bit => `<span class="${colorClass}">${bit}</span>`)
+            .map(bit => `<span class="${colorClass}">${bit}</span>`) // colorize
             .join('');
-        return `<div class="binary">${['x', 'y', 'z'][index]} = ${binaryString} (decimal: ${coord})</div>`;
+        return `<div class="binary">${['x', 'y', 'z'][index]} = ${binaryString} (decimal: ${coord})</div>`; // display
     }).join('');
 
-    // Hilfsfunktion zum Formatieren der Binärwerte mit führenden Nullen
-    
+    // display input coordinates
+    const coordinates = document.createElement("div");
+    coordinates.innerHTML = `${binaryCoordinates}`;
+    resultContainer.appendChild(coordinates);
+
+    // Morton Code mit Nullen Füllen 
     function formatBinary(value) {
-        return value.toString(2).padStart(Number(totalBits), '0');
+        return value.toString(2).padStart(Number(bitsMortonCode), '0');
     }
 
+    // Morton Code färben
     function colorizeBits(binaryStr) {
         let coloredStr = '';
         const length = binaryStr.length;
@@ -216,24 +219,21 @@ function interleaveBits(coords, bitLength) {
         return coloredStr;
     } 
 
-    // Hilfsfunktion zum Formatieren und Einfärben der Bits
-function formatAndColorizeBits(value, colorClass) {
-    return formatBinary(value)
-        .split('')
-        .map(bit => bit === '1' 
-            ? `<span class="${colorClass}">1</span>` 
-            : `<span style="color: black;">0</span>`)
-        .join('');
-}
-
-// display input coordinates
-const coordinates = document.createElement("div");
-coordinates.innerHTML = `${binaryCoordinates}`;
-resultContainer.appendChild(coordinates);
+    // Current Bit und shifted bit formatieren
+    function formatAndColorizeBits(value, colorClass, bitPosition, bitsMortonCode) {
+        const binaryString = value.toString(2).padStart(bitsMortonCode, '0'); // mit Nullen Füllen 
+        return binaryString
+            .split('')
+            .map((bit, index) => index === bitsMortonCode - bitPosition - 1
+                ? `<span class="${colorClass}">${bit}</span>` // Nur das betrachtete Bit färben
+                : `<span style="color: black;">${bit}</span>` // Andere Bits bleiben schwarz
+            )
+            .join('');
+    }
 
 
 // Iteration über die Bits und Koordinaten
-for (let i = 0; i < maxBits; ++i) {
+for (let i = 0; i < bitsPerCoord; ++i) {
     for (let j = 0; j < coords.length; ++j) {
         const currentBit = (BigInt(coords[j]) & (BigInt(1) << BigInt(i)));
         const shiftedBit = currentBit << BigInt(i * (coords.length - 1) + j);
@@ -244,9 +244,13 @@ for (let i = 0; i < maxBits; ++i) {
         // Wählen der entsprechenden Farbe basierend auf j-Wert
         const colorClass = j === 0 ? 'color-x' : j === 1 ? 'color-y' : 'color-z';
 
-        // Formatierte Ausgabe des currentBit und shiftedBit mit farbigen 1 und schwarzen 0
-        const formattedCurrentBit = formatAndColorizeBits(currentBit, colorClass);
-        const formattedShiftedBit = formatAndColorizeBits(shiftedBit, colorClass);
+        // Formatierte Ausgabe des aktuellen Bits und des verschobenen Bits
+        const formattedCurrentBit = formatAndColorizeBits(
+            BigInt(coords[j]), colorClass, i, bitsPerCoord
+        );
+        const formattedShiftedBit = formatAndColorizeBits(
+            shiftedBit, colorClass, i * (coords.length - 1) + j, bitsMortonCode
+        );
 
         // Schritt-Container erstellen und farbkodierte Bits anzeigen
         const stepDiv = document.createElement("div");
