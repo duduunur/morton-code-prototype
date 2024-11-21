@@ -603,7 +603,7 @@ function toggleCode(codeContainerId, HeaderId, buttonId, resultContainerId, code
 
     console.log(dimension)
 
-    if (dimension === "2") {
+    if (dimension === "2" && code === magicBitsCode) {
         code = magicBitsCode2D;
         console.log("ture");
     }
