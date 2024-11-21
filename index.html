@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Morton Codes / Z-Order</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <h2>Morton Codes / Z-Order</h2>
 
@@ -71,19 +73,35 @@
             <div class="output">
                 <!-- For-Loop -->
                 <div class="output-section">
-                    <h3>For-Loop</h3>
+                    <div id="forLoopCodeContainer" class="hidden code-container"></div>
+                    <div id="forLoopHeader" class="header-section">
+                        <h3>For-Loop</h3>
+                        <button id="show-code-btn" class="show-code-btn"
+                            onclick="toggleCode('magicBitsCodeContainer', 'magicBitsHeader', 'show-code-btn', 'steps', forLoopCode)">View
+                            Code</button>
+                    </div>
                     <div id="resultForLoop" class="resultForLoop"></div>
                 </div>
-                
+
                 <!-- Magic Bits -->
                 <div class="output-section">
-                    <h3>Magic-Bits</h3>
+                    <div id="magicBitsCodeContainer" class="hidden code-container"></div>
+                    <div id="magicBitsHeader" class="header-section">
+                        <h3>Magic-Bits</h3>
+                        <button id="show-code-btn2" class="show-code-btn"
+                            onclick="toggleCode('forLoopCodeContainer', 'forLoopHeader','show-code-btn2','resultForLoop', magicBitsCode)">View
+                            Code</button>
+                    </div>
+
                     <div id="steps" class="result"></div>
                 </div>
             </div>
         </div>
     </div>
+    </div>
 
     <script src="script.js"></script>
+    
 </body>
+
 </html>

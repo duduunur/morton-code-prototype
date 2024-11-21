@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     font-size: 11pt;
-    margin: 20px;
+    margin: 45px;
     background-color: #f0f0f0;
 }
 
@@ -110,6 +110,10 @@ input[type="number"], select, button {
     border-radius: 4px;
     font-size: 11px;
     outline: none; /* Entfernt den blauen Fokusrahmen */
+    cursor: pointer;
+}
+button:hover {
+    background: #efefef;
 }
 
 input[type="number"]::-webkit-outer-spin-button,
@@ -128,6 +132,7 @@ input[type="number"]::-webkit-inner-spin-button {
     //margin-top: 20px;
     font-family: monospace;
     font-size: 10pt;
+    padding: 10px;
   }
   
   .output-section {
@@ -202,4 +207,43 @@ input[type="number"]::-webkit-inner-spin-button {
     font-size: 10pt;
     margin-bottom: 10px;
     //text-align: right; /* Rechtsbündige Ausrichtung */
+}
+
+.show-code-btn {
+    background-color: white;
+    color: #3c3c3c;
+    border: 1px solid #ccc;
+    //padding: 5px;
+    //font-size: 10pt;
+    cursor: pointer;
+    border-radius: 4px;
+    margin: 12px;
+    outline: none; /* Entfernt den blauen Fokusrahmen */
+    min-width: 80px; /* Mindestbreite für Konsistenz */
+    text-align: center; /* Text zentrieren */
+}
+
+.show-code-btn:hover {
+    background-color: #e5e5e5;
+    border: none;
+    //color: white;
+}
+
+.code-container {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    position: relative;
+    //font-size: 10pt;
+}
+
+
+.header-section {
+    display:flex;
+    justify-content:space-between; /* Verteilung */
+}
+.hidden {
+    display: none;
 }

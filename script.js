@@ -482,3 +482,147 @@ function displayMagicBits(coords, bitLength) {
         ${combination}
     `;
 }
+
+// ----------------------------------------------- Quellcode anzeigen -------------------------------------------------------
+
+const forLoopCode = `<h3>For Loop Algorithm</h3>
+
+function interleave(coords, bitLength) {
+    const bitsPerCoord = bitLength / coords.length; 
+
+    for (let i = 0; i < bitsPerCoord; ++i) {
+        for (let j = 0; j < coords.length; ++j) {
+            const currentBit = (coords[j] & (1 << i));
+            const shiftedBit = currentBit << (i * (coords.length - 1) + j);
+        
+            mortonCode |= shiftedBit;
+        }
+    } 
+}
+
+`;
+
+const magicBitsCode = `<h3>Magic Bits Algorithm (3D)</h3>
+
+function splitBy3(x, bitLength) {
+
+    if (bitLength === 64) {
+
+        x = (x | (x << 32n)) & 0x1f00000000ffff;
+        x = (x | (x << 16n)) & 0x1f0000ff0000ff;
+        x = (x | (x << 8n)) & 0x100f00f00f00f00f;
+        x = (x | (x << 4n)) & 0x10c30c30c30c30c3;
+        x = (x | (x << 2n)) & 0x1249249249249249;
+
+        return x;
+
+    } else if (bitLength === 32) {    
+
+        x = (x | (x << 16n)) & 0x30000ff;
+        x = (x | (x << 8n)) & 0x0300f00f;
+        x = (x | (x << 4n)) & 0x30c30c3;
+        x = (x | (x << 2n)) & 0x9249249;
+
+        return x;
+
+    } else if (bitLength === 16) {
+
+        x = (x | (x << 8n)) & 0x0300F00F;
+        x = (x | (x << 4n)) & 0x030C30C3;
+        x = (x | (x << 2n)) & 0x09249249;
+    
+        return x;
+    }
+}
+
+function encodeMagicBits3D(x,y,z, bitLength) {
+    const xSplit = splitBy3(x, bitLength);
+    const ySplit = splitBy3(y, bitLength);
+    const zSplit = splitBy3(z, bitLength);
+
+    const result = xSplit.result 
+                | (ySplit.result << 1n) 
+                | (zSplit.result << 2n);
+
+
+    return result;
+}
+`;
+
+const magicBitsCode2D = `<h3>Magic Bits Algorithm (2D)</h3>
+
+function splitBy2(x, bitLength) {
+
+    if (bitLength === 64) {
+
+        x = (x | (x << 32n)) & 0x00000000FFFFFFFF;
+        x = (x | (x << 16n)) & 0x0000FFFF0000FFFF;
+        x = (x | (x << 8n)) & 0x00FF00FF00FF00FF;
+        x = (x | (x << 4n)) & 0x0F0F0F0F0F0F0F0F;
+        x = (x | (x << 2n)) & 0x3333333333333333;
+        x = (x | (x << 1n)) & 0x5555555555555555;
+
+        return result;
+
+    } else if (bitLength === 32) {    
+
+        x = (x | (x << 16n)) & 0x0000ffff;
+        x = (x | (x << 8n)) & 0x00ff00ff;
+        x = (x | (x << 4n)) & 0x0f0f0f0f;
+        x = (x | (x << 2n)) & 0x33333333;
+        x = (x | (x << 1n)) & 0x55555555;
+    
+        return result;
+
+    } else if (bitLength === 16) {
+
+        x = (x | (x << 4n)) & 0x0F0F;
+        x = (x | (x << 2n)) & 0x3333;
+        x = (x | (x << 1n)) & 0x5555;
+
+        return result;
+    }
+}
+
+function encodeMagicBits2D(x, y, bitLength) {
+    const xSplit = splitBy2(x, bitLength);
+    const ySplit = splitBy2(y, bitLength);
+    const result = xSplit.result | (ySplit.result << 1n);
+
+    return result;
+}
+`;
+
+
+function toggleCode(codeContainerId, HeaderId, buttonId, resultContainerId, code) {
+    const codeContainer = document.getElementById(codeContainerId);
+    const resultContainer = document.getElementById(resultContainerId);
+    const headerContainer = document.getElementById(HeaderId);
+    const button = document.getElementById(buttonId);
+    const dimension = document.getElementById("dimension").value;
+
+    console.log(dimension)
+
+    if (dimension === "2") {
+        code = magicBitsCode2D;
+        console.log("ture");
+    }
+
+    // Wenn der Codecontainer sichtbar ist, ausblenden und das Ergebnis anzeigen
+    if (!codeContainer.classList.contains("hidden")) {
+        codeContainer.classList.add("hidden");
+        headerContainer.classList.remove("hidden");
+        resultContainer.classList.remove("hidden");
+        codeContainer.innerHTML = ''; // Code entfernen
+        button.innerText = "View Code";
+    } else {
+        // Andernfalls den Codecontainer anzeigen und das Ergebnis ausblenden
+        codeContainer.classList.remove("hidden");
+        headerContainer.classList.add("hidden");
+        resultContainer.classList.add("hidden");
+        codeContainer.innerHTML = `
+            <pre class="code">${code}</pre>
+        `;
+        button.innerText = "Hide Code";
+    }
+}
