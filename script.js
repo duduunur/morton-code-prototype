@@ -220,14 +220,12 @@ function interleaveForLoop(coords, bitLength) {
     } 
 
     // Current Bit und shifted bit formatieren
-    function formatAndColorizeBits(value, colorClass, bitPosition, bitsMortonCode) {
-        const binaryString = value.toString(2).padStart(bitsMortonCode, '0'); // mit Nullen Füllen 
-        return binaryString
+    function formatAndColorizeBits(value, colorClass) {
+        return formatBinary(value)
             .split('')
-            .map((bit, index) => index === bitsMortonCode - bitPosition - 1
-                ? `<span class="${colorClass}">${bit}</span>` // Nur das betrachtete Bit färben
-                : `<span style="color: black;">${bit}</span>` // Andere Bits bleiben schwarz
-            )
+            .map(bit => bit === '1' 
+                ? `<span class="${colorClass}">1</span>` 
+                : `<span style="color: black;">0</span>`)
             .join('');
     }
 
@@ -246,10 +244,10 @@ for (let i = 0; i < bitsPerCoord; ++i) {
 
         // Formatierte Ausgabe des aktuellen Bits und des verschobenen Bits
         const formattedCurrentBit = formatAndColorizeBits(
-            BigInt(coords[j]), colorClass, i, bitsPerCoord
+            currentBit, colorClass
         );
         const formattedShiftedBit = formatAndColorizeBits(
-            shiftedBit, colorClass, i * (coords.length - 1) + j, bitsMortonCode
+            shiftedBit, colorClass
         );
 
         // Schritt-Container erstellen und farbkodierte Bits anzeigen

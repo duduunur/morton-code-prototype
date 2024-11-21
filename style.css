@@ -120,7 +120,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
 
 .output {
-    border: 1px solid green;
+    //border: 1px solid green;
     display: flex;
     flex-direction: row; // die divs in eine zeile 
     justify-content: space-between; // abstände gleichmäßig
@@ -158,7 +158,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
   .result-section {
     width: 79%; /* Breite jeder Sektion, sodass sie nebeneinander passen */
-    border: 1px solid pink;
+    //border: 1px solid pink;
     padding: 10px;
     background-color: #fbfbfb;
     display: flex;
@@ -168,10 +168,6 @@ input[type="number"]::-webkit-inner-spin-button {
   .result {
     margin-top: 10px;
     padding: 10px;
-  }
-
-  .resultForLoop {
-    border: 1px solid pink;
   }
 
 .hidden {
@@ -201,7 +197,7 @@ input[type="number"]::-webkit-inner-spin-button {
 .color-z { color: green; }
 
 .binary{
-    border: 1px solid yellow;
+    //border: 1px solid yellow;
     font-family: monospace;
     font-size: 10pt;
     margin-bottom: 10px;
