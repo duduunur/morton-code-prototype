@@ -140,7 +140,7 @@ function calculateMortonCode() {
     document.getElementById("steps").innerHTML = '';
 
 
-     // Überprüfe die Koordinaten vor der Berechnung
+    // Überprüfe die Koordinaten vor der Berechnung
     if (checkCoordinateLimits() == false) {
         console.log("no calculation");
         return;
@@ -162,10 +162,10 @@ function calculateMortonCode() {
         // interleave Magic Bits 
         displayMagicBits(coords, bitLength)
     } else {
-         // interleave for-loop
+        // interleave for-loop
         interleaveForLoop([x, y], bitLength);
 
-         // interleave Magic Bits 
+        // interleave Magic Bits 
         displayMagicBits([x, y], bitLength)
     }
 }
@@ -182,7 +182,7 @@ function interleaveForLoop(coords, bitLength) {
     const resultContainer = document.getElementById("resultForLoop");
     resultContainer.innerHTML = ''; // Vorherigen Inhalt löschen
 
-     // format input coordinates
+    // format input coordinates
     const binaryCoordinates = coords.map((coord, index) => {
         const colorClass = index === 0 ? 'color-x' : index === 1 ? 'color-y' : 'color-z'; // colors
         const binaryString = coord.toString(2).padStart(bitsPerCoord, '0') // binary and padding
@@ -206,65 +206,65 @@ function interleaveForLoop(coords, bitLength) {
     function colorizeBits(binaryStr) {
         let coloredStr = '';
         const length = binaryStr.length;
-    
+
         // Schleife von rechts nach links durch die Bits
         for (let k = length - 1; k >= 0; k--) {
             const colorClass = (length - 1 - k) % coords.length === 0 ? 'color-x' :
-                               (length - 1 - k) % coords.length === 1 ? 'color-y' : 'color-z';
-    
+                (length - 1 - k) % coords.length === 1 ? 'color-y' : 'color-z';
+
             // Das Bit wird der gefärbten Zeichenkette am Anfang hinzugefügt
             coloredStr = `<span class="${colorClass}">${binaryStr[k]}</span>` + coloredStr;
         }
-        
+
         return coloredStr;
-    } 
+    }
 
     // Current Bit und shifted bit formatieren
     function formatAndColorizeBits(value, colorClass) {
         return formatBinary(value)
             .split('')
-            .map(bit => bit === '1' 
-                ? `<span class="${colorClass}">1</span>` 
+            .map(bit => bit === '1'
+                ? `<span class="${colorClass}">1</span>`
                 : `<span style="color: black;">0</span>`)
             .join('');
     }
 
 
-// Iteration über die Bits und Koordinaten
-for (let i = 0; i < bitsPerCoord; ++i) {
-    for (let j = 0; j < coords.length; ++j) {
-        const currentBit = (BigInt(coords[j]) & (BigInt(1) << BigInt(i)));
-        const shiftedBit = currentBit << BigInt(i * (coords.length - 1) + j);
-        
-        // Aktualisieren von Morton-Code
-        mortonCode |= shiftedBit;
+    // Iteration über die Bits und Koordinaten
+    for (let i = 0; i < bitsPerCoord; ++i) {
+        for (let j = 0; j < coords.length; ++j) {
+            const currentBit = (BigInt(coords[j]) & (BigInt(1) << BigInt(i)));
+            const shiftedBit = currentBit << BigInt(i * (coords.length - 1) + j);
 
-        // Wählen der entsprechenden Farbe basierend auf j-Wert
-        const colorClass = j === 0 ? 'color-x' : j === 1 ? 'color-y' : 'color-z';
+            // Aktualisieren von Morton-Code
+            mortonCode |= shiftedBit;
 
-        // Formatierte Ausgabe des aktuellen Bits und des verschobenen Bits
-        const formattedCurrentBit = formatAndColorizeBits(
-            currentBit, colorClass
-        );
-        const formattedShiftedBit = formatAndColorizeBits(
-            shiftedBit, colorClass
-        );
+            // Wählen der entsprechenden Farbe basierend auf j-Wert
+            const colorClass = j === 0 ? 'color-x' : j === 1 ? 'color-y' : 'color-z';
 
-        // Schritt-Container erstellen und farbkodierte Bits anzeigen
-        const stepDiv = document.createElement("div");
-        stepDiv.classList.add("step-bit");
+            // Formatierte Ausgabe des aktuellen Bits und des verschobenen Bits
+            const formattedCurrentBit = formatAndColorizeBits(
+                currentBit, colorClass
+            );
+            const formattedShiftedBit = formatAndColorizeBits(
+                shiftedBit, colorClass
+            );
 
-        stepDiv.innerHTML = `
+            // Schritt-Container erstellen und farbkodierte Bits anzeigen
+            const stepDiv = document.createElement("div");
+            stepDiv.classList.add("step-bit");
+
+            stepDiv.innerHTML = `
             <p><strong>Bit position ${i}, coordinate ${['x', 'y', 'z'][j]}:</strong></p>
             <p>Current Bit: <span>${formattedCurrentBit}</span></p>
             <p>Shifted Bit: <span>${formattedShiftedBit}</span></p>
             <p>Morton Code: <span>${colorizeBits(formatBinary(mortonCode))}</span></p>
         `;
 
-        // Schritt in den Ergebniscontainer einfügen
-        resultContainer.appendChild(stepDiv);
+            // Schritt in den Ergebniscontainer einfügen
+            resultContainer.appendChild(stepDiv);
+        }
     }
-}
 
     // Finale Ausgabe des Morton-Codes
     const finalResult = document.createElement("div");
@@ -286,58 +286,58 @@ function splitBy3(a, bitLength) {
 
         x = (x | (x << 32n)) & 0x1f00000000ffffn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 16n)) & 0x1f0000ff0000ffn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 8n)) & 0x100f00f00f00f00fn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 4n)) & 0x10c30c30c30c30c3n;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 2n)) & 0x1249249249249249n;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         return { result: x, steps };
 
-    } else if (bitLength === 32) {    
+    } else if (bitLength === 32) {
 
         x = (x | (x << 16n)) & 0x30000ffn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 8n)) & 0x0300f00fn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 4n)) & 0x30c30c3n;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 2n)) & 0x9249249n;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         return { result: x, steps };
 
     } else if (bitLength === 16) {
 
         x = (x | (x << 8n)) & 0x0300F00Fn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 4n)) & 0x030C30C3n;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 2n)) & 0x09249249n;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         return { result: x, steps };
 
     } else {
         console.log("Bitlänge ungültig");
-        return {result: 0, steps};
+        return { result: 0, steps };
     }
 }
 
 // Morton-Encoding für 3D mit Magic Bits und Schrittausgabe
-function mortonEncodeMagicBits3D(x,y,z, bitLength) {
+function mortonEncodeMagicBits3D(x, y, z, bitLength) {
     const xSplit = splitBy3(x, bitLength);
     const ySplit = splitBy3(y, bitLength);
     const zSplit = splitBy3(z, bitLength);
@@ -357,59 +357,59 @@ function splitBy2(a, bitLength) {
 
         x = (x | (x << 32n)) & 0x00000000FFFFFFFFn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 16n)) & 0x0000FFFF0000FFFFn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 8n)) & 0x00FF00FF00FF00FFn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 4n)) & 0x0F0F0F0F0F0F0F0Fn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 2n)) & 0x3333333333333333n;
         steps.push(x.toString(2).padStart(bitLength, '0'));
 
         x = (x | (x << 1n)) & 0x5555555555555555n;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         return { result: x, steps };
 
-    } else if (bitLength === 32) {    
+    } else if (bitLength === 32) {
 
         x = (x | (x << 16n)) & 0x0000ffffn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 8n)) & 0x00ff00ffn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 4n)) & 0x0f0f0f0fn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 2n)) & 0x33333333n;
         steps.push(x.toString(2).padStart(bitLength, '0'));
 
         x = (x | (x << 1n)) & 0x55555555n;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         return { result: x, steps };
 
     } else if (bitLength === 16) {
 
         x = (x | (x << 4n)) & 0x0F0Fn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 2n)) & 0x3333n;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         x = (x | (x << 1n)) & 0x5555n;
         steps.push(x.toString(2).padStart(bitLength, '0'));
-    
+
         return { result: x, steps };
-        
+
     } else {
         console.log("Bitlänge ungültig");
-        return {result: 0, steps};
+        return { result: 0, steps };
     }
 }
 
@@ -448,29 +448,28 @@ function displayMagicBits(coords, bitLength) {
         return `
             <h4>Bits for ${['x', 'y', 'z'][index]}:</h4>
             ${stepInfo.steps.map((step, i) => {
-                const coloredStep = step
-                    .split('')
-                    .map(bit => `<span class="${colorClass}">${bit}</span>`)
-                    .join('');
-                return `<div class="binary">After step ${i + 1}: ${coloredStep}</div>`;
-            }).join('')}
+            const coloredStep = step
+                .split('')
+                .map(bit => `<span class="${colorClass}">${bit}</span>`)
+                .join('');
+            return `<div class="binary">After step ${i + 1}: ${coloredStep}</div>`;
+        }).join('')}
         `;
     }).join('');
 
     // Kombination (Morton-Code)
     const combination = `
-    <div class="binary">Morton Code: ${
-        mortonCode.toString(2)
+    <div class="binary">Morton Code: ${mortonCode.toString(2)
             .padStart(maxBits * dimension, '0')
             .split('')
             .map((bit, index, arr) => {
                 const reversedIndex = arr.length - 1 - index;
                 const colorClass = reversedIndex % dimension === 0 ? 'color-x' :
-                                   reversedIndex % dimension === 1 ? 'color-y' : 'color-z';
+                    reversedIndex % dimension === 1 ? 'color-y' : 'color-z';
                 return `<span class="${colorClass}">${bit}</span>`;
             })
             .join('')
-    } (decimal: ${mortonCode})</div>
+        } (decimal: ${mortonCode})</div>
     `;
 
 
@@ -601,28 +600,34 @@ function toggleCode(codeContainerId, HeaderId, buttonId, resultContainerId, code
     const button = document.getElementById(buttonId);
     const dimension = document.getElementById("dimension").value;
 
-    console.log(dimension)
-
     if (dimension === "2" && code === magicBitsCode) {
         code = magicBitsCode2D;
-        console.log("ture");
     }
 
-    // Wenn der Codecontainer sichtbar ist, ausblenden und das Ergebnis anzeigen
-    if (!codeContainer.classList.contains("hidden")) {
-        codeContainer.classList.add("hidden");
-        headerContainer.classList.remove("hidden");
-        resultContainer.classList.remove("hidden");
-        codeContainer.innerHTML = ''; // Code entfernen
-        button.innerText = "View Code";
-    } else {
-        // Andernfalls den Codecontainer anzeigen und das Ergebnis ausblenden
-        codeContainer.classList.remove("hidden");
-        headerContainer.classList.add("hidden");
-        resultContainer.classList.add("hidden");
-        codeContainer.innerHTML = `
-            <pre class="code">${code}</pre>
+    codeContainer.classList.remove("hidden");
+    headerContainer.classList.add("hidden");
+    resultContainer.classList.add("hidden");
+    codeContainer.innerHTML = `
+        <button class="close-btn" onclick="closeCode('${codeContainerId}', '${HeaderId}', '${resultContainerId}', '${buttonId}')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        </button>
+        <pre class="code">${code}</pre>
         `;
-        button.innerText = "Hide Code";
-    }
+    button.classList.add("hidden");
+}
+
+function closeCode(codeContainerId, HeaderId, resultContainerId, buttonId) {
+    const codeContainer = document.getElementById(codeContainerId);
+    const resultContainer = document.getElementById(resultContainerId);
+    const headerContainer = document.getElementById(HeaderId);
+    const button = document.getElementById(buttonId);
+
+    codeContainer.classList.add("hidden");
+    headerContainer.classList.remove("hidden");
+    resultContainer.classList.remove("hidden");
+    button.classList.remove("hidden");
+    codeContainer.innerHTML = ''; // Code entfernen
 }
