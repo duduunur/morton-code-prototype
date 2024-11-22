@@ -501,7 +501,7 @@ function interleave(coords, bitLength) {
 
 `;
 
-const magicBitsCode = `<h3>Magic Bits Algorithm (3D)</h3>
+const magicBitsCode = `Magic Bits Algorithm 3D
 
 function splitBy3(x, bitLength) {
 
@@ -548,7 +548,7 @@ function encodeMagicBits3D(x,y,z, bitLength) {
 }
 `;
 
-const magicBitsCode2D = `<h3>Magic Bits Algorithm (2D)</h3>
+const magicBitsCode2D = `Magic Bits Algorithm 2D
 
 function splitBy2(x, bitLength) {
 
@@ -614,9 +614,10 @@ function toggleCode(codeContainerId, HeaderId, buttonId, resultContainerId, code
             <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
         </button>
-        <pre class="code">${code}</pre>
+        <pre><code class="language-javascript">${code}</code></pre>
         `;
     button.classList.add("hidden");
+    Prism.highlightAll();
 }
 
 function closeCode(codeContainerId, HeaderId, resultContainerId, buttonId) {

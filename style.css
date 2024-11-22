@@ -139,19 +139,10 @@ input[type="number"]::-webkit-inner-spin-button {
     width: 50%; /* Breite jeder Sektion, sodass sie nebeneinander passen */
     border: 1px solid #ddd;
     padding: 10px;
-    background-color: #fbfbfb;
+    background-color: white;
     display: flex;
     flex-direction: column; /* Stellt sicher, dass Inhalte innerhalb vertikal gestapelt werden */
     //justify-content: space-between; // abstände gleichmäßig
-  }
-
-  .animation-section {
-    //border: 1px solid yellow;
-    padding: 10px;
-    background-color: #fbfbfb;
-    display: flex;
-    flex-direction: row; /* Stellt sicher, dass Inhalte innerhalb vertikal gestapelt werden */
-    justify-content: space-between; // abstände gleichmäßig
   }
 
   .labels {
@@ -219,7 +210,7 @@ input[type="number"]::-webkit-inner-spin-button {
     border-radius: 4px;
     margin: 12px;
     outline: none; /* Entfernt den blauen Fokusrahmen */
-    min-width: 80px; /* Mindestbreite für Konsistenz */
+    min-width: 110px; 
     text-align: center; /* Text zentrieren */
 }
 
@@ -230,10 +221,10 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .code-container {
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin: 5px;
+    //background-color: black;
+    //border: 1px solid #ccc;
+    //padding: 10px;
+    //margin: 5px;
     border-radius: 5px;
     position: relative;
     //font-size: 10pt;
@@ -250,8 +241,8 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .close-btn {
     position: absolute;
-    top: 15px;
-    right: 10px;
+    top: 17px;
+    right: 12px;
     background-color: transparent;
     border: none;
     cursor: pointer;
