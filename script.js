@@ -194,10 +194,10 @@ function interleaveForLoop(coords, bitLength) {
 
     // display input coordinates
     const coordinates = document.createElement("div");
-    coordinates.innerHTML = `${binaryCoordinates}`;
+    coordinates.innerHTML = `${binaryCoordinates}<br>`;
     resultContainer.appendChild(coordinates);
 
-    // Morton Code mit Nullen Füllen 
+    // Morton Code und Rechenschritte mit Nullen Füllen 
     function formatBinary(value) {
         return value.toString(2).padStart(Number(bitsMortonCode), '0');
     }
@@ -258,7 +258,7 @@ function interleaveForLoop(coords, bitLength) {
             <p><strong>Bit position ${i}, coordinate ${['x', 'y', 'z'][j]}:</strong></p>
             <p>Current Bit: <span>${formattedCurrentBit}</span></p>
             <p>Shifted Bit: <span>${formattedShiftedBit}</span></p>
-            <p>Morton Code: <span>${colorizeBits(formatBinary(mortonCode))}</span></p>
+            <p>Morton Code: <span>${colorizeBits(formatBinary(mortonCode))}</span></p><br>
         `;
 
             // Schritt in den Ergebniscontainer einfügen

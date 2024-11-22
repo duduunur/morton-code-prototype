@@ -128,7 +128,6 @@ input[type="number"]::-webkit-inner-spin-button {
     display: flex;
     flex-direction: row; // die divs in eine zeile 
     justify-content: space-between; // abstände gleichmäßig
-    //gap: 10px; /* optional: fügt Abstand zwischen den Abschnitten hinzu */
     //margin-top: 20px;
     font-family: monospace;
     font-size: 10pt;
@@ -139,6 +138,7 @@ input[type="number"]::-webkit-inner-spin-button {
     width: 50%; /* Breite jeder Sektion, sodass sie nebeneinander passen */
     border: 1px solid #ddd;
     padding: 10px;
+    margin: 5px;
     background-color: white;
     display: flex;
     flex-direction: column; /* Stellt sicher, dass Inhalte innerhalb vertikal gestapelt werden */
@@ -161,9 +161,11 @@ input[type="number"]::-webkit-inner-spin-button {
     flex-direction: column; /* Stellt sicher, dass Inhalte innerhalb vertikal gestapelt werden */
   }
   
-  .result {
+  .result, .resultForLoop{
     margin-top: 10px;
     padding: 10px;
+    max-height: 500px; /* Maximale Höhe des Fensters */
+    overflow-y: auto;
   }
 
 .hidden {
@@ -188,9 +190,9 @@ input[type="number"]::-webkit-inner-spin-button {
     transition: background-color 0.3s;
 }
 
-.color-x { color: red; }
-.color-y { color: blue; }
-.color-z { color: green; }
+.color-x { color: #DC0909; }
+.color-y { color: #151BB9; }
+.color-z { color: #0C9329; }
 
 .binary{
     //border: 1px solid yellow;
@@ -225,9 +227,10 @@ input[type="number"]::-webkit-inner-spin-button {
     //border: 1px solid #ccc;
     //padding: 10px;
     //margin: 5px;
-    border-radius: 5px;
+    //border-radius: 5px;
     position: relative;
-    //font-size: 10pt;
+    max-height: 550px; /* Maximale Höhe des Fensters */
+    overflow-y: auto;
 }
 
 
