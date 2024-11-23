@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     font-size: 11pt;
-    margin: 45px;
+    margin: 55px;
     background-color: #f0f0f0;
 }
 
@@ -94,7 +94,7 @@ label {
 .pointA, .pointB {
     //padding: 20px;
     margin-bottom: 20px;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #f9f9f9;
 }
@@ -140,7 +140,7 @@ input[type="number"]::-webkit-inner-spin-button {
     justify-content: space-between; // abstände gleichmäßig
     //margin-top: 20px;
     font-family: monospace;
-    font-size: 10pt;
+    font-size: 9pt;
     padding: 10px;
   }
   
@@ -157,7 +157,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
   .labels {
     font-family: monospace;
-    font-size: 10pt;
+    font-size: 9pt;
     text-align: left;
     margin-right: 10px;
 }
@@ -191,6 +191,7 @@ input[type="number"]::-webkit-inner-spin-button {
     //border: 1px solid #ddd;
     //background-color: #f9f9f9;
     font-family: monospace;
+    font-size: 9pt;
     white-space: pre;
     overflow-x: auto;
 }
@@ -207,7 +208,7 @@ input[type="number"]::-webkit-inner-spin-button {
 .binary{
     //border: 1px solid yellow;
     font-family: monospace;
-    font-size: 10pt;
+    font-size: 9pt;
     margin-bottom: 10px;
     //text-align: right; /* Rechtsbündige Ausrichtung */
 }
@@ -241,6 +242,7 @@ input[type="number"]::-webkit-inner-spin-button {
     position: relative;
     max-height: 550px; /* Maximale Höhe des Fensters */
     overflow-y: auto;
+    font-size: 9pt;
 }
 
 
