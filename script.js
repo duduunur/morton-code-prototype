@@ -75,6 +75,7 @@ function toggleCoordinateFields() {
 
     clearCoordinateInputs();
 
+    // Auswahl des Layouts und Z Input zeigen / verstecken 
     if (dimension === '3') {
         zLabel.classList.remove('hidden');
         zInput.classList.remove('hidden');
@@ -85,6 +86,7 @@ function toggleCoordinateFields() {
         zInput.classList.add('hidden');
     }
 
+    // Reihenfolge der Eingabefelder (in Abhängigkeit vom Layout) aktualisieren 
     updateCoordinateInputOrder(layout.value);
 }
 
@@ -149,34 +151,30 @@ function calculateMortonCode() {
     const bitLength = parseInt(document.getElementById("bitLength").value);
     const dimension = document.getElementById("dimension").value;
     const layout = document.getElementById("layout").value;
+
     const x = parseInt(document.getElementById("x").value) || 0;
     const y = parseInt(document.getElementById("y").value) || 0;
     const z = dimension === "3" ? (parseInt(document.getElementById("z").value) || 0) : 0;
 
-
+    let coords = [];
     if (dimension === "3") {
-        const coords = layout === "xyz" ? [x, y, z] : [z, y, x];
-        // interleave for-loop
-        interleaveForLoop(coords, bitLength);
-
-        // interleave Magic Bits 
-        displayMagicBits(coords, bitLength)
+        coords = layout === "xyz" ? [x, y, z] : [z, y, x];
     } else {
-        // interleave for-loop
-        interleaveForLoop([x, y], bitLength);
-
-        // interleave Magic Bits 
-        displayMagicBits([x, y], bitLength)
+        coords = [x,y];
     }
+
+    interleaveForLoop(coords, bitLength, layout);
+    displayMagicBits(coords, bitLength, layout);
 }
 
 // ---------------------------------------------- Interleave mit For-Schleife ----------------------------------------------------------
 
 
-function interleaveForLoop(coords, bitLength) {
+function interleaveForLoop(coords, bitLength, layout) {
     let mortonCode = BigInt(0);
     const bitsPerCoord = parseInt(bitLength / coords.length); // Anzahl der Bits pro Koordinate 
     const bitsMortonCode = bitsPerCoord * coords.length; // Bitlänge Morton Code  
+    console.log(layout)
 
     // Ziel-Container im Interface für die Anzeige der Schritte
     const resultContainer = document.getElementById("resultForLoop");
@@ -189,7 +187,7 @@ function interleaveForLoop(coords, bitLength) {
             .split('')
             .map(bit => `<span class="${colorClass}">${bit}</span>`) // colorize
             .join('');
-        return `<div class="binary">${['x', 'y', 'z'][index]} = ${binaryString} (decimal: ${coord})</div>`; // display
+        return `<div class="binary">${layout[index]} = ${binaryString} (decimal: ${coord})</div>`; // display input coordinates
     }).join('');
 
     // display input coordinates
@@ -255,12 +253,11 @@ function interleaveForLoop(coords, bitLength) {
             stepDiv.classList.add("step-bit");
 
             stepDiv.innerHTML = `
-            <p><strong>Bit position ${i}, coordinate ${['x', 'y', 'z'][j]}:</strong></p>
+            <p><strong>Bit position ${i}, coordinate ${layout[j]}:</strong></p>
             <p>Current Bit: <span>${formattedCurrentBit}</span></p>
             <p>Shifted Bit: <span>${formattedShiftedBit}</span></p>
             <p>Morton Code: <span>${colorizeBits(formatBinary(mortonCode))}</span></p><br>
         `;
-
             // Schritt in den Ergebniscontainer einfügen
             resultContainer.appendChild(stepDiv);
         }
@@ -423,7 +420,7 @@ function mortonEncodeMagicBits2D(x, y, bitLength) {
 }
 
 // Anzeige der Schritte für Morton-Encoding (2D oder 3D)
-function displayMagicBits(coords, bitLength) {
+function displayMagicBits(coords, bitLength, layout) {
     const dimension = coords.length;
     const maxBits = parseInt(bitLength / dimension);
 
@@ -439,22 +436,22 @@ function displayMagicBits(coords, bitLength) {
             .split('')
             .map(bit => `<span class="${colorClass}">${bit}</span>`)
             .join('');
-        return `<div class="binary">${['x', 'y', 'z'][index]} = ${binaryString} (decimal: ${coord})</div>`;
+        return `<div class="binary">${layout[index]} = ${binaryString} (decimal: ${coord})</div>`;
     }).join('');
 
     // Schritte formatieren und farbig kodieren
     const bitSteps = steps.map((stepInfo, index) => {
         const colorClass = index === 0 ? 'color-x' : index === 1 ? 'color-y' : 'color-z';
-        return `
-            <h4>Bits for ${['x', 'y', 'z'][index]}:</h4>
-            ${stepInfo.steps.map((step, i) => {
-            const coloredStep = step
-                .split('')
-                .map(bit => `<span class="${colorClass}">${bit}</span>`)
-                .join('');
-            return `<div class="binary">After step ${i + 1}: ${coloredStep}</div>`;
-        }).join('')}
-        `;
+            return `
+                <h4>Bits for ${layout[index]}:</h4>
+                ${stepInfo.steps.map((step, i) => {
+                const coloredStep = step
+                    .split('')
+                    .map(bit => `<span class="${colorClass}">${bit}</span>`)
+                    .join('');
+                return `<div class="binary">After step ${i + 1}: ${coloredStep}</div>`;
+            }).join('')}
+            `;
     }).join('');
 
     // Kombination (Morton-Code)
