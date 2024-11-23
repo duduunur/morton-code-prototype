@@ -70,6 +70,7 @@ function checkCoordinateLimits() {
 function toggleCoordinateFields() {
     const dimension = document.getElementById('dimension').value;
     const layout = document.getElementById('layout');
+    const layoutContainer = document.getElementById("layoutContainer");
     const zInput = document.getElementById('zInput');
     const zLabel = document.getElementById('zLabel');
 
@@ -79,11 +80,12 @@ function toggleCoordinateFields() {
     if (dimension === '3') {
         zLabel.classList.remove('hidden');
         zInput.classList.remove('hidden');
-        layout.disabled = false; // Ermöglicht Auswahl von Layouts
+        layoutContainer.classList.remove("hidden"); // Zeige das Layout-Feld
     } else {
-        layout.disabled = true; // Sperrt Auswahlfeld
         zLabel.classList.add('hidden');
         zInput.classList.add('hidden');
+        layoutContainer.classList.add("hidden"); // Zeige das Layout-Feld
+        layout.value = 'xyz'; // default layout für 2d
     }
 
     // Reihenfolge der Eingabefelder (in Abhängigkeit vom Layout) aktualisieren 

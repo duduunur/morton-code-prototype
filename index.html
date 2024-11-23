@@ -18,8 +18,7 @@
             <div class="select-group">
                 <label for="bitLength">bit length:</label>
                 <select id="bitLength" onchange="displayMaxCoord()">
-                    <option value="" disabled selected>select</option>
-                    <option value="16">16</option>
+                    <option value="16" selected>16</option>
                     <option value="32">32</option>
                     <option value="64">64</option>
                 </select>
@@ -28,16 +27,14 @@
             <div class="select-group">
                 <label for="dimension">dimension:</label>
                 <select id="dimension" onchange="toggleCoordinateFields(); displayMaxCoord();">
-                    <option value="" disabled selected>select</option>
-                    <option value="2">2D</option>
+                    <option value="2" selected>2D</option>
                     <option value="3">3D</option>
                 </select>
             </div>
 
-            <div class="select-group">
+            <div class="select-group hidden" id="layoutContainer">
                 <label for="layout" id="layoutLabel">layout:</label>
                 <select id="layout" onchange="toggleCoordinateFields(); displayMaxCoord();">
-                    <option value="xyz" disabled selected>select</option>
                     <option value="xyz">x, y, z</option>
                     <option value="zyx">z, y, x</option>
                 </select>
@@ -50,6 +47,7 @@
             <div id="coordError" class="coordError"></div> <!-- Fehlernachricht -->
         </div>
 
+        <body onload="displayMaxCoord()">
 
         <!-- Input Section for Coordinates -->
         <div class="pointA">
