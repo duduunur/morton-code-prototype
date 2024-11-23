@@ -91,12 +91,14 @@ label {
     display: none;
 }
 
-.pointA {
+.pointA, .pointB {
     //padding: 20px;
+    margin-bottom: 20px;
     border: 1px solid #ddd;
     border-radius: 5px;
     background-color: #f9f9f9;
 }
+
 
 .input-section {
     padding: 20px;
@@ -105,7 +107,7 @@ label {
     gap: 20px;
     width: 100%;
 }
-#coordinateInputs {
+.coordinateInputs {
     display: flex;
     gap: 10px;
     align-items: center;
