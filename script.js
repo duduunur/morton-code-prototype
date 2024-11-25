@@ -1,23 +1,17 @@
-// Globale Variable für den maximalen Koordinatenwert
+// Globale Variablen
 let maxCoordinateValue = 0n;
-
-// Globale Variable für morton codes 
 let mortonCodeA = 0n;
 let mortonCodeB = 0n;
 
-// Funktion zur Berechnung und Anzeige des maximalen Koordinatenwerts
 function displayMaxCoord() {
     const bitLength = BigInt(document.getElementById("bitLength").value);
     const dimension = BigInt(document.getElementById("dimension").value);
     const maxCoord = document.getElementById("maxCoord");
 
-    // Berechnung des maximalen Koordinatenwerts
     maxCoordinateValue = (1n << (bitLength / dimension)) - 1n; //1n << x verschiebt die Zahl 1 um x Bit nach links, was äquivalent zu 2^x ist 
 
-    // Anzeige des maximalen Werts
     maxCoord.innerText = `Maximum Coordinate Value: ${maxCoordinateValue.toString()}`;
 
-    // Fehlernachricht ausblenden
     document.getElementById("coordError").style.display = "none";
     checkCoordinateLimits('a');
     checkCoordinateLimits('b');
@@ -29,32 +23,30 @@ function displayMaxCoord() {
     document.getElementById(`b-resultMagicBits`).innerHTML = '';
 }
 
-// Funktion zur Überprüfung, ob die Benutzereingaben die maximalen Werte überschreiten
 function checkCoordinateLimits(pointId) {
     const xInput = document.getElementById(`${pointId}-x`);
     const yInput = document.getElementById(`${pointId}-y`);
-    const zInput = document.getElementById(`${pointId}-z`); // z-Eingabe optional
+    const zInput = document.getElementById(`${pointId}-z`);
     const coordError = document.getElementById("coordError");
 
     const x = BigInt(xInput.value || 0);
     const y = BigInt(yInput.value || 0);
     const z = zInput && zInput.value ? BigInt(zInput.value) : null;
 
-    let hasError = false; // Flag, ob ein Fehler aufgetreten ist
+    let hasError = false;
 
-    // Überprüfe jede Koordinate und passe den Stil entsprechend an
     if (x > maxCoordinateValue) {
         xInput.style.border = "1px solid red";
         hasError = true;
     } else {
-        xInput.style.border = ""; // Entferne den roten Rahmen
+        xInput.style.border = ""; 
     }
 
     if (y > maxCoordinateValue) {
         yInput.style.border = "1px solid red";
         hasError = true;
     } else {
-        yInput.style.border = ""; // Entferne den roten Rahmen
+        yInput.style.border = ""; 
     }
 
     if (zInput && z !== null) {
@@ -62,20 +54,17 @@ function checkCoordinateLimits(pointId) {
             zInput.style.border = "1px solid red";
             hasError = true;
         } else {
-            zInput.style.border = ""; // Entferne den roten Rahmen
+            zInput.style.border = "";
         }
     }
 
-    // Wenn ein Fehler aufgetreten ist, zeige die Fehlermeldung
     if (hasError) {
         coordError.style.display = "block";
         coordError.innerText = `Coordinate exceeds the maximum allowed value!`;
-        return false; // Fehlerhafte Eingabe
+        return false;
     }
-
-    // Fehlernachricht ausblenden und Rahmen zurücksetzen
     coordError.style.display = "none";
-    return true; // Eingaben sind gültig
+    return true;
 }
 
 function toggleCoordinateFields(pointId) {
@@ -87,16 +76,15 @@ function toggleCoordinateFields(pointId) {
 
     clearCoordinateInputs(pointId);
 
-    // Auswahl des Layouts und Z Input zeigen / verstecken 
     if (dimension === '3') {
         zLabel.classList.remove('hidden');
         zInput.classList.remove('hidden');
-        layoutContainer.classList.remove("hidden"); // Zeige das Layout-Feld
+        layoutContainer.classList.remove("hidden");
     } else {
         zLabel.classList.add('hidden');
         zInput.classList.add('hidden');
-        layoutContainer.classList.add("hidden"); // Verstecke das Layout-Feld
-        layout.value = 'xyz'; // Standardlayout für 2D
+        layoutContainer.classList.add("hidden"); 
+        layout.value = 'xyz';
     }
 
     // Reihenfolge der Eingabefelder (in Abhängigkeit vom Layout) aktualisieren 
@@ -107,8 +95,6 @@ function toggleCoordinateFields(pointId) {
 function clearCoordinateInputs(pointId) {
     document.getElementById(`${pointId}-x`).value = "";
     document.getElementById(`${pointId}-y`).value = "";
-
-    // Prüfen, ob das z-Eingabefeld existiert, und es dann auch leeren
     const zInput = document.getElementById(`${pointId}-z`);
     if (zInput) {
         zInput.value = "";
@@ -125,7 +111,6 @@ function updateCoordinateInputOrder(layout, pointId) {
     const zInput = document.getElementById(`${pointId}-zInput`);
     const calculateButton = document.getElementById(`${pointId}-calculateButton`);
 
-    // Entferne alle Koordinaten-Labels und Eingabefelder
     const coordinateInputs = document.getElementById(`${pointId}-coordinateInputs`);
     coordinateInputs.innerHTML = '';
 
@@ -156,7 +141,7 @@ function calculateMortonCode(pointId) {
     document.getElementById(`${pointId}-resultForLoop`).innerHTML = '';
     document.getElementById(`${pointId}-resultMagicBits`).innerHTML = '';
 
-    // Überprüfe die Koordinaten vor der Berechnung
+    // Koordinaten überprüfen
     if (checkCoordinateLimits(pointId) == false) {
         console.log("No calculation for point", pointId);
         return;
@@ -194,25 +179,30 @@ function calculateMortonCode(pointId) {
 
 function interleaveForLoop(coords, bitLength, layout, pointId) {
     let mortonCode = BigInt(0);
-    const bitsPerCoord = parseInt(bitLength / coords.length); // Anzahl der Bits pro Koordinate 
-    const bitsMortonCode = bitsPerCoord * coords.length; // Bitlänge Morton Code  
+    const bitsPerCoord = parseInt(bitLength / coords.length); 
+    const bitsMortonCode = bitsPerCoord * coords.length;
     console.log(layout);
 
-    // Ziel-Container im Interface für die Anzeige der Schritte
     const resultContainer = document.getElementById(`${pointId}-resultForLoop`);
+    resultContainer.innerHTML = '';
+
     const pointContainer = document.getElementById(`point-${pointId}`);
     pointContainer.classList.add("height=500px");
-    resultContainer.innerHTML = ''; // Vorherigen Inhalt löschen
 
     // format input coordinates
-    const binaryCoordinates = coords.map((coord, index) => {
-        const colorClass = index === 0 ? 'color-x' : index === 1 ? 'color-y' : 'color-z'; // Farben basierend auf Index
-        const binaryString = coord.toString(2).padStart(bitsPerCoord, '0') // Binärformatierung mit Padding
-            .split('')
-            .map(bit => `<span class="${colorClass}">${bit}</span>`) // Bits einfärben
-            .join('');
-        return `<div class="binary">${layout[index]} = ${binaryString} (decimal: ${coord})</div>`; // Eingabekoordinaten anzeigen
-    }).join('');
+    let binaryCoordinates = '';
+    for (let i = 0; i < coords.length; i++) {
+        const coord = coords[i];
+        const colorClass = i === 0 ? 'color-x' : i === 1 ? 'color-y' : 'color-z'; // Farben basierend auf Index
+        const binaryString = coord.toString(2).padStart(bitsPerCoord, '0'); // Binärformatierung mit Padding
+    
+        let formattedBits = '';
+        for (let bitIndex = 0; bitIndex < binaryString.length; bitIndex++) {
+            formattedBits += `<span class="${colorClass}">${binaryString[bitIndex]}</span>`; // Bits einfärben
+        }
+    
+        binaryCoordinates += `<div class="binary">${layout[i]} = ${formattedBits} (decimal: ${coord})</div>`; // Eingabekoordinaten anzeigen
+    }
 
     // display input coordinates
     const coordinates = document.createElement("div");
@@ -243,13 +233,20 @@ function interleaveForLoop(coords, bitLength, layout, pointId) {
 
     // Current Bit und shifted bit formatieren
     function formatAndColorizeBits(value, colorClass) {
-        return formatBinary(value)
-            .split('')
-            .map(bit => bit === '1'
-                ? `<span class="${colorClass}">1</span>`
-                : `<span style="color: black;">0</span>`)
-            .join('');
-    }
+        const binaryString = formatBinary(value);
+        let formattedBits = '';
+    
+        for (let i = 0; i < binaryString.length; i++) {
+            const bit = binaryString[i];
+            if (bit === '1') {
+                formattedBits += `<span class="${colorClass}">1</span>`;
+            } else {
+                formattedBits += `<span style="color: black;">0</span>`;
+            }
+        }
+    
+        return formattedBits;
+    }    
 
     // Iteration über die Bits und Koordinaten
     for (let i = 0; i < bitsPerCoord; ++i) {
@@ -277,13 +274,10 @@ function interleaveForLoop(coords, bitLength, layout, pointId) {
             <p>Shifted Bit: <span>${formattedShiftedBit}</span></p>
             <p>Morton Code: <span>${colorizeBits(formatBinary(mortonCode))}</span></p><br>
         `;
-
-            // Schritt in den Ergebniscontainer einfügen
             resultContainer.appendChild(stepDiv);
         }
     }
 
-    // Finale Ausgabe des Morton-Codes
     const finalResult = document.createElement("div");
     finalResult.innerHTML = `<p><strong>Final Morton Code:</strong> ${colorizeBits(formatBinary(mortonCode))} (decimal: ${mortonCode.toString()})</p>`;
     resultContainer.appendChild(finalResult);
@@ -294,7 +288,6 @@ function interleaveForLoop(coords, bitLength, layout, pointId) {
 
 // ---------------------------------------------- Interleave mit Magic Bits ----------------------------------------------------------
 
-// 3D Split-Funktion mit Berechnungsschritten
 function splitBy3(a, bitLength) {
     const steps = [];
     let x = BigInt(a);
@@ -353,19 +346,17 @@ function splitBy3(a, bitLength) {
     }
 }
 
-// Morton-Encoding für 3D mit Magic Bits und Schrittausgabe
 function mortonEncodeMagicBits3D(x, y, z, bitLength) {
     const xSplit = splitBy3(x, bitLength);
     const ySplit = splitBy3(y, bitLength);
     const zSplit = splitBy3(z, bitLength);
 
-    // Kombinieren der Ergebnisse für x, y und z (mit entsprechenden Verschiebungen)
     const result = xSplit.result | (ySplit.result << 1n) | (zSplit.result << 2n);
 
     return { mortonCode: result, steps: [xSplit, ySplit, zSplit] };
 }
 
-// 2D Split-Funktion mit Berechnungsschritten
+
 function splitBy2(a, bitLength) {
     const steps = [];
     let x = BigInt(a);
@@ -430,7 +421,6 @@ function splitBy2(a, bitLength) {
     }
 }
 
-// Morton-Encoding für 2D mit Magic Bits und Schrittausgabe
 function mortonEncodeMagicBits2D(x, y, bitLength) {
     const xSplit = splitBy2(x, bitLength);
     const ySplit = splitBy2(y, bitLength);
@@ -439,7 +429,6 @@ function mortonEncodeMagicBits2D(x, y, bitLength) {
     return { mortonCode: result, steps: [xSplit, ySplit] };
 }
 
-// Anzeige der Schritte für Morton-Encoding (2D oder 3D)
 function displayMagicBits(coords, bitLength, layout, pointId) {
     const resultContainer = document.getElementById(`${pointId}-resultMagicBits`);
     const pointContainer = document.getElementById(`point-${pointId}`);
@@ -447,49 +436,47 @@ function displayMagicBits(coords, bitLength, layout, pointId) {
     const dimension = coords.length;
     const maxBits = parseInt(bitLength / dimension);
 
-    // Morton-Encoding entsprechend Dimension (2D oder 3D)
+    // Berechnung entsprechend Dimension
     const { mortonCode, steps } = dimension === 2
         ? mortonEncodeMagicBits2D(coords[0], coords[1], bitLength)
         : mortonEncodeMagicBits3D(coords[0], coords[1], coords[2], bitLength);
 
     // display coordinates in binary and colorized
-    const binaryCoordinates = coords.map((coord, index) => {
-        const colorClass = index === 0 ? 'color-x' : index === 1 ? 'color-y' : 'color-z';
-        const binaryString = coord.toString(2).padStart(maxBits, '0')
-            .split('')
-            .map(bit => `<span class="${colorClass}">${bit}</span>`)
-            .join('');
-        return `<div class="binary">${layout[index]} = ${binaryString} (decimal: ${coord})</div>`;
-    }).join('');
+    let binaryCoordinates = '';
+    for (let i = 0; i < coords.length; i++) {
+        const coord = coords[i];
+        const colorClass = i === 0 ? 'color-x' : i === 1 ? 'color-y' : 'color-z';
+        const binaryString = `<span class="${colorClass}">${coord.toString(2).padStart(maxBits, '0')}</span>`;
+        binaryCoordinates += `<div class="binary">${layout[i]} = ${binaryString} (decimal: ${coord})</div>`;
+    }
+
 
     // Schritte formatieren und farbig kodieren
-    const bitSteps = steps.map((stepInfo, index) => {
-        const colorClass = index === 0 ? 'color-x' : index === 1 ? 'color-y' : 'color-z';
-        return `
-            <h4>Bits for ${layout[index]}:</h4>
-            ${stepInfo.steps.map((step, i) => {
-                const coloredStep = step
-                    .split('')
-                    .map(bit => `<span class="${colorClass}">${bit}</span>`)
-                    .join('');
-                return `<div class="binary">After step ${i + 1}: ${coloredStep}</div>`;
-            }).join('')}
-        `;
-    }).join('');
+    let bitSteps = '';
+    for (let i = 0; i < steps.length; i++) {
+        const stepInfo = steps[i];
+        const colorClass = i === 0 ? 'color-x' : i === 1 ? 'color-y' : 'color-z';
+        bitSteps += `<h4>Bits for ${layout[i]}:</h4>`;
+        for (let i = 0; i < stepInfo.steps.length; i++) {
+            const step = stepInfo.steps[i];
+            bitSteps += `<div class="binary">After step ${i + 1}: <span class="${colorClass}">${step}</span></div>`;
+        }
+    }
+      
 
     // Kombination (Morton-Code)
+    let mortonCodeBinary = mortonCode.toString(2).padStart(maxBits * dimension, '0');
+    let formattedBits = '';
+
+    for (let i = 0; i < mortonCodeBinary.length; i++) {
+        const reversedIndex = mortonCodeBinary.length - 1 - i;
+        const colorClass = reversedIndex % dimension === 0 ? 'color-x' :
+        reversedIndex % dimension === 1 ? 'color-y' : 'color-z';
+        formattedBits += `<span class="${colorClass}">${mortonCodeBinary[i]}</span>`;
+    }
+
     const combination = `
-    <div class="binary">Morton Code: ${mortonCode.toString(2)
-            .padStart(maxBits * dimension, '0')
-            .split('')
-            .map((bit, index, arr) => {
-                const reversedIndex = arr.length - 1 - index;
-                const colorClass = reversedIndex % dimension === 0 ? 'color-x' :
-                    reversedIndex % dimension === 1 ? 'color-y' : 'color-z';
-                return `<span class="${colorClass}">${bit}</span>`;
-            })
-            .join('')
-        } (decimal: ${mortonCode})</div>
+        <div class="binary">Morton Code: ${formattedBits} (decimal: ${mortonCode})</div>
     `;
 
     resultContainer.innerHTML = `
@@ -659,29 +646,40 @@ function closeCode(codeContainerId, HeaderId, resultContainerId, buttonId) {
 function addition() {
     // Ergebnisse zurücksetzen
     document.getElementById(`resultAddition`).innerHTML = " ";
-    // hole die morton codes
-    console.log(mortonCodeA);
-    console.log(mortonCodeB);
 
     let mortonCodeAbin = mortonCodeA.toString(2).padStart(16, '0');
-    let mortonCodeBbin = mortonCodeB.toString(2).padStart(16, '0');;
+    let mortonCodeBbin = mortonCodeB.toString(2).padStart(16, '0');
 
-    const sum = ((mortonCodeAbin | 0b1010101010101010) + (mortonCodeBbin & 0b0101010101010101) & 0b0101010101010101) |
-                ((mortonCodeAbin | 0b0101010101010101) + (mortonCodeBbin & 0b1010101010101010) & 0b1010101010101010);
+    const sum = ((mortonCodeA | 0xAAAAAAAAAAAAAAAAn) + (mortonCodeB & 0x5555555555555555n) & 0x5555555555555555n) |
+    ((mortonCodeA | 0x5555555555555555n) + (mortonCodeB & 0xAAAAAAAAAAAAAAAAn) & 0xAAAAAAAAAAAAAAAAn);
     
-     // Ergebnisse
-     document.getElementById(`resultAddition`).innerHTML = `${mortonCodeAbin} + ${mortonCodeBbin} = ${mortonCodeA+mortonCodeB} <br>laut wiki 
-     ${mortonCodeAbin} + ${mortonCodeBbin} = ${sum} `;
-
-     //document.getElementById(`resultAddition`).innerHTML = `${sum}`;
-
+    // Ergebnisse
+    document.getElementById(`resultAddition`).innerHTML = 
+        `adding two two dimensional z-values a and b: <br><br>
+        sum    = ((a | 0b10101010) + (b & 0b01010101) & 0b01010101) | <br>
+        ((a | 0b01010101) + (b & 0b10101010) & 0b10101010) <br><br>
+        a = ${mortonCodeAbin} (decimal: ${mortonCodeA})<br>
+        b = ${mortonCodeBbin} (decimal: ${mortonCodeB})<br><br>
+        sum: ${sum.toString(2)} (decimal: ${sum}) 
+    `;
 }
 
 function subtraction() {
     // Ergebnisse zurücksetzen
-    document.getElementById(`resultSubtraction`).innerHTML = `${mortonCodeA} - ${mortonCodeB} = ${mortonCodeA-mortonCodeB}`;
-    // hole die morton codes
-    console.log(mortonCodeA);
-    console.log(mortonCodeB);
+    document.getElementById(`resultSubtraction`).innerHTML = " ";
 
+    let mortonCodeAbin = mortonCodeA.toString(2).padStart(16, '0');
+    let mortonCodeBbin = mortonCodeB.toString(2).padStart(16, '0');
+
+    const diff = ((mortonCodeA & 0x5555555555555555n) - (mortonCodeB & 0x5555555555555555n) & 0x5555555555555555n) |
+    ((mortonCodeA & 0xAAAAAAAAAAAAAAAAn) - (mortonCodeB & 0xAAAAAAAAAAAAAAAAn) & 0xAAAAAAAAAAAAAAAAn);
+    
+    // Ergebnisse
+    document.getElementById(`resultSubtraction`).innerHTML = 
+        `subtracting two two dimensional z-values a and b: <br><br>
+         <br><br>
+        a = ${mortonCodeAbin} (decimal: ${mortonCodeA})<br>
+        b = ${mortonCodeBbin} (decimal: ${mortonCodeB})<br><br>
+        sum: ${diff.toString(2)} (decimal: ${diff}) 
+    `;
 }
