@@ -49,12 +49,12 @@
 
         <body onload="displayMaxCoord()">
 
-<!-------------------------------------------------------------- Point A --------------------------------------------------------------->
+        <!-------------------------------------------------------------- Point A --------------------------------------------------------------->
 
         <!-- Input Section for Coordinates -->
         <div id="point-a" class="point">
             <div class="input-section">
-                <span class="label">a:</span>
+                <span class="label">point a:</span>
                 <div id="a-coordinateInputs" class="coordinateInputs">
                     <label for="a-x">x:</label>
                     <input type="number" id="a-x">
@@ -78,8 +78,8 @@
                     <div id="a-forLoopHeader" class="header-section">
                         <h3>method: for loop</h3>
                         <button id="a-show-code-btn" class="show-code-btn"
-                            onclick="toggleCode('a-magicBitsCodeContainer', 'a-magicBitsHeader', 'a-show-code-btn', 'a-resultMagicBits', forLoopCode)">View
-                            Source Code</button>
+                            onclick="toggleCode('a-magicBitsCodeContainer', 'a-magicBitsHeader', 'a-show-code-btn', 'a-resultMagicBits', forLoopCode)">
+                            show source code</button>
                     </div>
                     <div id="a-resultForLoop" class="resultForLoop"></div>
                 </div>
@@ -90,18 +90,18 @@
                     <div id="a-magicBitsHeader" class="header-section">
                         <h3>method: magic bits</h3>
                         <button id="a-show-code-btn2" class="show-code-btn"
-                            onclick="toggleCode('a-forLoopCodeContainer', 'a-forLoopHeader','a-show-code-btn2','a-resultForLoop', magicBitsCode)">View
-                            Source Code</button>
+                            onclick="toggleCode('a-forLoopCodeContainer', 'a-forLoopHeader','a-show-code-btn2','a-resultForLoop', magicBitsCode)">
+                            show source code</button>
                     </div>
 
                     <div id="a-resultMagicBits" class="result"></div>
                 </div>
             </div>
         </div>
-<!-------------------------------------------------------------- Point B --------------------------------------------------------------->
+        <!-------------------------------------------------------------- Point B --------------------------------------------------------------->
         <div id="point-b" class="point">
             <div class="input-section">
-                <span class="label">b:</span>
+                <span class="label">point b:</span>
                 <div id="b-coordinateInputs" class="coordinateInputs">
                     <label for="b-x">x:</label>
                     <input type="number" id="b-x">
@@ -125,8 +125,8 @@
                     <div id="b-forLoopHeader" class="header-section">
                         <h3>method: for loop</h3>
                         <button id="b-show-code-btn" class="show-code-btn"
-                            onclick="toggleCode('b-magicBitsCodeContainer', 'b-magicBitsHeader', 'b-show-code-btn', 'b-resultMagicBits', forLoopCode)">View
-                            Source Code</button>
+                            onclick="toggleCode('b-magicBitsCodeContainer', 'b-magicBitsHeader', 'b-show-code-btn', 'b-resultMagicBits', forLoopCode)">
+                            show source code</button>
                     </div>
                     <div id="b-resultForLoop" class="resultForLoop"></div>
                 </div>
@@ -137,8 +137,8 @@
                     <div id="b-magicBitsHeader" class="header-section">
                         <h3>method: magic bits</h3>
                         <button id="b-show-code-btn2" class="show-code-btn"
-                            onclick="toggleCode('b-forLoopCodeContainer', 'b-forLoopHeader','b-show-code-btn2','b-resultForLoop', magicBitsCode)">View
-                            Source Code</button>
+                            onclick="toggleCode('b-forLoopCodeContainer', 'b-forLoopHeader','b-show-code-btn2','b-resultForLoop', magicBitsCode)">
+                            show source code</button>
                     </div>
 
                     <div id="b-resultMagicBits" class="result"></div>
@@ -146,8 +146,33 @@
             </div>
         </div>
 
+        <!------------------------------------------------------------------ addition and subtraction --------------------------------------------------------------------->
+        <div id="addition" class="arithmetic">
+            <div class="input-section">
+                <span class="label">a + b</span>
+                <div id="a+b-calculateButton">
+                    <button onclick="addition()">calculate</button>
+                </div>
+            </div>
 
-    </div>
+            <div class="output">
+                <div id="resultAddition" class="resultArithmetic"></div>
+            </div>
+        </div>
+
+        <div id="subtraction" class="arithmetic">
+            <div class="input-section">
+                <span class="label">a - b</span>
+                <div id="a-b-calculateButton">
+                    <button onclick="subtraction()">calculate</button>
+                </div>
+            </div>
+            <div class="output">
+                <div id="resultSubtraction" class="resultArithmetic"></div>
+            </div>
+        </div>
+
+
     </div>
 
     <script src="prism.js"></script>

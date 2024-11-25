@@ -21,6 +21,10 @@ label {
     margin-right: 10px;
 }
 
+.label {
+    font-weight: 700;
+}
+
 .container {
     display: flex;
     flex-direction: column;
@@ -91,7 +95,7 @@ label {
     display: none;
 }
 
-.point {
+.point, .arithmetic {
     //padding: 20px;
     display: flex; /* Flexbox-Layout aktivieren */
     flex-direction: column; /* Elemente vertikal anordnen */
@@ -184,6 +188,16 @@ input[type="number"]::-webkit-inner-spin-button {
     overflow-y: auto;
 }
 
+.resultArithmetic {
+    width: 100%;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 5px;
+    background-color: white;
+    display: flex;
+    flex-direction: column; /* Stellt sicher, dass Inhalte innerhalb vertikal gestapelt werden */
+}
+
 .hidden {
     display: none;
 }
@@ -246,7 +260,7 @@ input[type="number"]::-webkit-inner-spin-button {
     //margin: 5px;
     //border-radius: 5px;
     position: relative;
-    max-height: 550px; /* Maximale Höhe des Fensters */
+    //max-height: 550px; /* Maximale Höhe des Fensters */
     overflow-y: auto;
     font-size: 9pt;
 }

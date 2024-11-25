@@ -1,6 +1,10 @@
 // Globale Variable für den maximalen Koordinatenwert
 let maxCoordinateValue = 0n;
 
+// Globale Variable für morton codes 
+let mortonCodeA = 0n;
+let mortonCodeB = 0n;
+
 // Funktion zur Berechnung und Anzeige des maximalen Koordinatenwerts
 function displayMaxCoord() {
     const bitLength = BigInt(document.getElementById("bitLength").value);
@@ -176,6 +180,13 @@ function calculateMortonCode(pointId) {
     // Berechnungen durchführen
     interleaveForLoop(coords, bitLength, layout, pointId);
     displayMagicBits(coords, bitLength, layout, pointId);
+
+    // morton Codes speichern
+    if (pointId === 'a'){
+        mortonCodeA = interleaveForLoop(coords, bitLength, layout, pointId);
+    } else {
+        mortonCodeB = interleaveForLoop(coords, bitLength, layout, pointId);
+    }
 }
 
 // ---------------------------------------------- Interleave mit For-Schleife ----------------------------------------------------------
@@ -487,6 +498,8 @@ function displayMagicBits(coords, bitLength, layout, pointId) {
         <h4>Combination:</h4>
         ${combination}
     `;
+
+    return combination;
 }
 
 // ----------------------------------------------- Quellcode anzeigen -------------------------------------------------------
@@ -638,4 +651,37 @@ function closeCode(codeContainerId, HeaderId, resultContainerId, buttonId) {
     resultContainer.classList.remove("hidden");
     button.classList.remove("hidden");
     codeContainer.innerHTML = ''; // Code entfernen
+}
+
+
+// ------------------------------------------------------------------- Addition -----------------------------------------------------------------------
+
+function addition() {
+    // Ergebnisse zurücksetzen
+    document.getElementById(`resultAddition`).innerHTML = " ";
+    // hole die morton codes
+    console.log(mortonCodeA);
+    console.log(mortonCodeB);
+
+    let mortonCodeAbin = mortonCodeA.toString(2).padStart(16, '0');
+    let mortonCodeBbin = mortonCodeB.toString(2).padStart(16, '0');;
+
+    const sum = ((mortonCodeAbin | 0b1010101010101010) + (mortonCodeBbin & 0b0101010101010101) & 0b0101010101010101) |
+                ((mortonCodeAbin | 0b0101010101010101) + (mortonCodeBbin & 0b1010101010101010) & 0b1010101010101010);
+    
+     // Ergebnisse
+     document.getElementById(`resultAddition`).innerHTML = `${mortonCodeAbin} + ${mortonCodeBbin} = ${mortonCodeA+mortonCodeB} <br>laut wiki 
+     ${mortonCodeAbin} + ${mortonCodeBbin} = ${sum} `;
+
+     //document.getElementById(`resultAddition`).innerHTML = `${sum}`;
+
+}
+
+function subtraction() {
+    // Ergebnisse zurücksetzen
+    document.getElementById(`resultSubtraction`).innerHTML = `${mortonCodeA} - ${mortonCodeB} = ${mortonCodeA-mortonCodeB}`;
+    // hole die morton codes
+    console.log(mortonCodeA);
+    console.log(mortonCodeB);
+
 }
