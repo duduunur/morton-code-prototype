@@ -20,9 +20,9 @@ function displayMaxCoord() {
 
     // Ergebnis Container leeren
     document.getElementById(`a-resultForLoop`).innerHTML = '';
-    document.getElementById(`a-steps`).innerHTML = '';
+    document.getElementById(`a-resultMagicBits`).innerHTML = '';
     document.getElementById(`b-resultForLoop`).innerHTML = '';
-    document.getElementById(`b-steps`).innerHTML = '';
+    document.getElementById(`b-resultMagicBits`).innerHTML = '';
 }
 
 // Funktion zur Überprüfung, ob die Benutzereingaben die maximalen Werte überschreiten
@@ -150,7 +150,7 @@ function updateCoordinateInputOrder(layout, pointId) {
 function calculateMortonCode(pointId) {
     // Ergebnisse zurücksetzen
     document.getElementById(`${pointId}-resultForLoop`).innerHTML = '';
-    document.getElementById(`${pointId}-steps`).innerHTML = '';
+    document.getElementById(`${pointId}-resultMagicBits`).innerHTML = '';
 
     // Überprüfe die Koordinaten vor der Berechnung
     if (checkCoordinateLimits(pointId) == false) {
@@ -189,6 +189,8 @@ function interleaveForLoop(coords, bitLength, layout, pointId) {
 
     // Ziel-Container im Interface für die Anzeige der Schritte
     const resultContainer = document.getElementById(`${pointId}-resultForLoop`);
+    const pointContainer = document.getElementById(`point-${pointId}`);
+    pointContainer.classList.add("height=500px");
     resultContainer.innerHTML = ''; // Vorherigen Inhalt löschen
 
     // format input coordinates
@@ -428,6 +430,9 @@ function mortonEncodeMagicBits2D(x, y, bitLength) {
 
 // Anzeige der Schritte für Morton-Encoding (2D oder 3D)
 function displayMagicBits(coords, bitLength, layout, pointId) {
+    const resultContainer = document.getElementById(`${pointId}-resultMagicBits`);
+    const pointContainer = document.getElementById(`point-${pointId}`);
+    pointContainer.style.height = '500px';
     const dimension = coords.length;
     const maxBits = parseInt(bitLength / dimension);
 
@@ -476,7 +481,7 @@ function displayMagicBits(coords, bitLength, layout, pointId) {
         } (decimal: ${mortonCode})</div>
     `;
 
-    document.getElementById(`${pointId}-steps`).innerHTML = `
+    resultContainer.innerHTML = `
         ${binaryCoordinates}
         ${bitSteps}
         <h4>Combination:</h4>

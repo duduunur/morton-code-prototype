@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     font-size: 11pt;
-    margin: 55px;
+    margin: 60px;
     background-color: #f0f0f0;
 }
 
@@ -91,14 +91,19 @@ label {
     display: none;
 }
 
-.pointA, .pointB {
+.point {
     //padding: 20px;
+    display: flex; /* Flexbox-Layout aktivieren */
+    flex-direction: column; /* Elemente vertikal anordnen */
+    min-height: 250px;
     margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #f9f9f9;
+    //height: 500px;
+    resize: vertical; /* Ermöglicht vertikales Resizing */
+    overflow: hidden;
 }
-
 
 .input-section {
     padding: 20px;
@@ -142,6 +147,8 @@ input[type="number"]::-webkit-inner-spin-button {
     font-family: monospace;
     font-size: 9pt;
     padding: 10px;
+    flex-grow: 1; /* Nimmt den restlichen Platz ein */
+    overflow-y: auto;
   }
   
   .output-section {
@@ -174,9 +181,8 @@ input[type="number"]::-webkit-inner-spin-button {
   .result, .resultForLoop{
     margin-top: 10px;
     padding: 10px;
-    max-height: 500px; /* Maximale Höhe des Fensters */
     overflow-y: auto;
-  }
+}
 
 .hidden {
     display: none;
