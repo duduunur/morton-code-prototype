@@ -491,7 +491,7 @@ function displayMagicBits(coords, bitLength, layout, pointId) {
 
 // ----------------------------------------------- Quellcode anzeigen -------------------------------------------------------
 
-const forLoopCode = `<h3>For Loop Algorithm</h3>
+const forLoopCode = `For Loop Algorithm
 
 function interleave(coords, bitLength) {
     const bitsPerCoord = bitLength / coords.length; 
@@ -508,92 +508,146 @@ function interleave(coords, bitLength) {
 
 `;
 
-const magicBitsCode = `Magic Bits Algorithm 3D
 
-function splitBy3(x, bitLength) {
+const magicBitsCode3D64 = `Magic Bits Algorithm 3D
 
-    if (bitLength === 64) {
+function splitBy3(x) {
 
-        x = (x | (x << 32n)) & 0x1f00000000ffff;
-        x = (x | (x << 16n)) & 0x1f0000ff0000ff;
-        x = (x | (x << 8n)) & 0x100f00f00f00f00f;
-        x = (x | (x << 4n)) & 0x10c30c30c30c30c3;
-        x = (x | (x << 2n)) & 0x1249249249249249;
+    x = (x | (x << 32)) & 0x1F00000000FFFF;
+    x = (x | (x << 16)) & 0x1F0000FF0000FF;
+    x = (x | (x << 8)) & 0x100F00F00F00F00F;
+    x = (x | (x << 4)) & 0x10C30C30C30C30C3;
+    x = (x | (x << 2)) & 0x1249249249249249;
 
-        return x;
-
-    } else if (bitLength === 32) {    
-
-        x = (x | (x << 16n)) & 0x30000ff;
-        x = (x | (x << 8n)) & 0x0300f00f;
-        x = (x | (x << 4n)) & 0x30c30c3;
-        x = (x | (x << 2n)) & 0x9249249;
-
-        return x;
-
-    } else if (bitLength === 16) {
-
-        x = (x | (x << 8n)) & 0x0300F00F;
-        x = (x | (x << 4n)) & 0x030C30C3;
-        x = (x | (x << 2n)) & 0x09249249;
+    return x;
     
-        return x;
-    }
 }
 
-function encodeMagicBits3D(x,y,z, bitLength) {
-    const xSplit = splitBy3(x, bitLength);
-    const ySplit = splitBy3(y, bitLength);
-    const zSplit = splitBy3(z, bitLength);
+function encodeMagicBits3D(x,y,z) {
+    const xSplit = splitBy3(x);
+    const ySplit = splitBy3(y);
+    const zSplit = splitBy3(z);
 
-    const result = xSplit.result 
-                | (ySplit.result << 1n) 
-                | (zSplit.result << 2n);
-
+    const result = xSplit 
+                | (ySplit << 1) 
+                | (zSplit << 2);
 
     return result;
 }
 `;
 
-const magicBitsCode2D = `Magic Bits Algorithm 2D
+
+const magicBitsCode3D32 = `Magic Bits Algorithm 3D
+
+function splitBy3(x) {
+
+    x = (x | (x << 16)) & 0x30000FF;
+    x = (x | (x << 8)) & 0x0300F00F;
+    x = (x | (x << 4)) & 0x30C30C3;
+    x = (x | (x << 2)) & 0x9249249;
+
+    return x;
+    
+}
+
+function encodeMagicBits3D(x,y,z) {
+    const xSplit = splitBy3(x);
+    const ySplit = splitBy3(y);
+    const zSplit = splitBy3(z);
+
+    const result = xSplit 
+                | (ySplit << 1) 
+                | (zSplit << 2);
+
+    return result;
+}
+`;
+
+const magicBitsCode3D16 = `Magic Bits Algorithm 3D
+
+function splitBy3(x) {
+
+    x = (x | (x << 8)) & 0x0300F00F;
+    x = (x | (x << 4)) & 0x030C30C3;
+    x = (x | (x << 2)) & 0x09249249;
+
+    return x;   
+    
+}
+
+function encodeMagicBits3D(x,y,z) {
+    const xSplit = splitBy3(x);
+    const ySplit = splitBy3(y);
+    const zSplit = splitBy3(z);
+
+    const result = xSplit 
+                | (ySplit << 1) 
+                | (zSplit << 2);
+
+    return result;
+}
+`;
+
+const magicBitsCode2D64 = `Magic Bits Algorithm 2D
 
 function splitBy2(x, bitLength) {
 
-    if (bitLength === 64) {
+    x = (x | (x << 32)) & 0x00000000FFFFFFFF;
+    x = (x | (x << 16)) & 0x0000FFFF0000FFFF;
+    x = (x | (x << 8)) & 0x00FF00FF00FF00FF;
+    x = (x | (x << 4)) & 0x0F0F0F0F0F0F0F0F;
+    x = (x | (x << 2)) & 0x3333333333333333;
+    x = (x | (x << 1)) & 0x5555555555555555;
 
-        x = (x | (x << 32n)) & 0x00000000FFFFFFFF;
-        x = (x | (x << 16n)) & 0x0000FFFF0000FFFF;
-        x = (x | (x << 8n)) & 0x00FF00FF00FF00FF;
-        x = (x | (x << 4n)) & 0x0F0F0F0F0F0F0F0F;
-        x = (x | (x << 2n)) & 0x3333333333333333;
-        x = (x | (x << 1n)) & 0x5555555555555555;
-
-        return result;
-
-    } else if (bitLength === 32) {    
-
-        x = (x | (x << 16n)) & 0x0000ffff;
-        x = (x | (x << 8n)) & 0x00ff00ff;
-        x = (x | (x << 4n)) & 0x0f0f0f0f;
-        x = (x | (x << 2n)) & 0x33333333;
-        x = (x | (x << 1n)) & 0x55555555;
-    
-        return result;
-
-    } else if (bitLength === 16) {
-
-        x = (x | (x << 4n)) & 0x0F0F;
-        x = (x | (x << 2n)) & 0x3333;
-        x = (x | (x << 1n)) & 0x5555;
-
-        return result;
-    }
+    return x;
 }
 
 function encodeMagicBits2D(x, y, bitLength) {
     const xSplit = splitBy2(x, bitLength);
     const ySplit = splitBy2(y, bitLength);
-    const result = xSplit.result | (ySplit.result << 1n);
+    const result = xSplit | (ySplit << 1);
+
+    return result;
+}
+`;
+
+const magicBitsCode2D32 = `Magic Bits Algorithm 2D
+
+function splitBy2(x, bitLength) {
+
+    x = (x | (x << 16)) & 0x0000FFFF;
+    x = (x | (x << 8)) & 0x00FF00FF;
+    x = (x | (x << 4)) & 0x0F0F0F0F;
+    x = (x | (x << 2)) & 0x33333333;
+    x = (x | (x << 1)) & 0x55555555;
+    
+    return x;
+}
+
+function encodeMagicBits2D(x, y, bitLength) {
+    const xSplit = splitBy2(x, bitLength);
+    const ySplit = splitBy2(y, bitLength);
+    const result = xSplit | (ySplit << 1);
+
+    return result;
+}
+`;
+
+const magicBitsCode2D16 = `Magic Bits Algorithm 2D
+
+function splitBy2(x, bitLength) {
+
+    x = (x | (x << 4)) & 0x0F0F;
+    x = (x | (x << 2)) & 0x3333;
+    x = (x | (x << 1)) & 0x5555;
+
+    return x;
+}
+
+function encodeMagicBits2D(x, y, bitLength) {
+    const xSplit = splitBy2(x, bitLength);
+    const ySplit = splitBy2(y, bitLength);
+    const result = xSplit | (ySplit << 1);
 
     return result;
 }
@@ -606,10 +660,17 @@ function toggleCode(codeContainerId, HeaderId, buttonId, resultContainerId, code
     const headerContainer = document.getElementById(HeaderId);
     const button = document.getElementById(buttonId);
     const dimension = document.getElementById("dimension").value;
+    const bitLength = document.getElementById("bitLength").value;
 
-    if (dimension === "2" && code === magicBitsCode) {
-        code = magicBitsCode2D;
-    }
+    if (code === "magicBitsCode") {
+        if (dimension === "2") {
+            code = bitLength === "64" ? magicBitsCode2D64 :
+                   bitLength === "32" ? magicBitsCode2D32 : magicBitsCode2D16;
+        } else if (dimension === "3") {
+            code = bitLength === "64" ? magicBitsCode3D64 :
+                   bitLength === "32" ? magicBitsCode3D32 : magicBitsCode3D16;
+        }
+    }    
 
     codeContainer.classList.remove("hidden");
     headerContainer.classList.add("hidden");
@@ -680,6 +741,6 @@ function subtraction() {
          <br><br>
         a = ${mortonCodeAbin} (decimal: ${mortonCodeA})<br>
         b = ${mortonCodeBbin} (decimal: ${mortonCodeB})<br><br>
-        sum: ${diff.toString(2)} (decimal: ${diff}) 
+        diff: ${diff.toString(2)} (decimal: ${diff}) 
     `;
 }
