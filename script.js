@@ -520,7 +520,6 @@ function splitBy3(x) {
     x = (x | (x << 2)) & 0x1249249249249249;
 
     return x;
-    
 }
 
 function encodeMagicBits3D(x,y,z) {
@@ -547,7 +546,6 @@ function splitBy3(x) {
     x = (x | (x << 2)) & 0x9249249;
 
     return x;
-    
 }
 
 function encodeMagicBits3D(x,y,z) {
@@ -572,7 +570,6 @@ function splitBy3(x) {
     x = (x | (x << 2)) & 0x09249249;
 
     return x;   
-    
 }
 
 function encodeMagicBits3D(x,y,z) {
@@ -590,7 +587,7 @@ function encodeMagicBits3D(x,y,z) {
 
 const magicBitsCode2D64 = `Magic Bits Algorithm 2D
 
-function splitBy2(x, bitLength) {
+function splitBy2(x) {
 
     x = (x | (x << 32)) & 0x00000000FFFFFFFF;
     x = (x | (x << 16)) & 0x0000FFFF0000FFFF;
@@ -602,9 +599,9 @@ function splitBy2(x, bitLength) {
     return x;
 }
 
-function encodeMagicBits2D(x, y, bitLength) {
-    const xSplit = splitBy2(x, bitLength);
-    const ySplit = splitBy2(y, bitLength);
+function encodeMagicBits2D(x, y) {
+    const xSplit = splitBy2(x);
+    const ySplit = splitBy2(y);
     const result = xSplit | (ySplit << 1);
 
     return result;
@@ -613,7 +610,7 @@ function encodeMagicBits2D(x, y, bitLength) {
 
 const magicBitsCode2D32 = `Magic Bits Algorithm 2D
 
-function splitBy2(x, bitLength) {
+function splitBy2(x) {
 
     x = (x | (x << 16)) & 0x0000FFFF;
     x = (x | (x << 8)) & 0x00FF00FF;
@@ -624,9 +621,9 @@ function splitBy2(x, bitLength) {
     return x;
 }
 
-function encodeMagicBits2D(x, y, bitLength) {
-    const xSplit = splitBy2(x, bitLength);
-    const ySplit = splitBy2(y, bitLength);
+function encodeMagicBits2D(x, y) {
+    const xSplit = splitBy2(x);
+    const ySplit = splitBy2(y);
     const result = xSplit | (ySplit << 1);
 
     return result;
@@ -635,7 +632,7 @@ function encodeMagicBits2D(x, y, bitLength) {
 
 const magicBitsCode2D16 = `Magic Bits Algorithm 2D
 
-function splitBy2(x, bitLength) {
+function splitBy2(x) {
 
     x = (x | (x << 4)) & 0x0F0F;
     x = (x | (x << 2)) & 0x3333;
@@ -644,9 +641,9 @@ function splitBy2(x, bitLength) {
     return x;
 }
 
-function encodeMagicBits2D(x, y, bitLength) {
-    const xSplit = splitBy2(x, bitLength);
-    const ySplit = splitBy2(y, bitLength);
+function encodeMagicBits(x, y) {
+    const xSplit = splitBy2(x);
+    const ySplit = splitBy2(y);
     const result = xSplit | (ySplit << 1);
 
     return result;
@@ -708,39 +705,81 @@ function addition() {
     // Ergebnisse zurücksetzen
     document.getElementById(`resultAddition`).innerHTML = " ";
 
-    let mortonCodeAbin = mortonCodeA.toString(2).padStart(16, '0');
-    let mortonCodeBbin = mortonCodeB.toString(2).padStart(16, '0');
+    const dimension = parseInt(document.getElementById("dimension").value); 
+    const bitLength = parseInt(document.getElementById("bitLength").value); 
 
-    const sum = ((mortonCodeA | 0xAAAAAAAAAAAAAAAAn) + (mortonCodeB & 0x5555555555555555n) & 0x5555555555555555n) |
-    ((mortonCodeA | 0x5555555555555555n) + (mortonCodeB & 0xAAAAAAAAAAAAAAAAn) & 0xAAAAAAAAAAAAAAAAn);
-    
-    // Ergebnisse
+    let sum;
+    if (dimension === 2) {
+        const x2_mask = 0xAAAAAAAAAAAAAAAAn;
+        const y2_mask = 0x5555555555555555n;
+
+        const x_sum = (mortonCodeA | y2_mask) + (mortonCodeB & x2_mask);
+        const y_sum = (mortonCodeA | x2_mask) + (mortonCodeB & y2_mask);
+        sum = (x_sum & x2_mask) | (y_sum & y2_mask);
+
+    } else if (dimension === 3) {
+        const x3_mask = 0x4924924924924924n;
+        const y3_mask = 0x2492492492492492n;
+        const z3_mask = 0x9249249249249249n;
+        const xy3_mask = x3_mask | y3_mask;
+        const xz3_mask = x3_mask | z3_mask;
+        const yz3_mask = y3_mask | z3_mask;
+
+        const x_sum = (mortonCodeA | yz3_mask) + (mortonCodeB & x3_mask);
+        const y_sum = (mortonCodeA | xz3_mask) + (mortonCodeB & y3_mask);
+        const z_sum = (mortonCodeA | xy3_mask) + (mortonCodeB & z3_mask);
+        sum = (x_sum & x3_mask) | (y_sum & y3_mask) | (z_sum & z3_mask);
+    } else {
+        document.getElementById(`resultAddition`).innerHTML = "Invalid dimension!";
+        return;
+    }
+
+    // Ergebnisse anzeigen
     document.getElementById(`resultAddition`).innerHTML = 
-        `adding two two dimensional z-values a and b: <br><br>
-        sum    = ((a | 0b10101010) + (b & 0b01010101) & 0b01010101) | <br>
-        ((a | 0b01010101) + (b & 0b10101010) & 0b10101010) <br><br>
-        a = ${mortonCodeAbin} (decimal: ${mortonCodeA})<br>
-        b = ${mortonCodeBbin} (decimal: ${mortonCodeB})<br><br>
-        sum: ${sum.toString(2)} (decimal: ${sum}) 
+        `Adding two ${dimension}D Morton codes a and b: <br><br>
+        a = ${mortonCodeA.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCodeA})<br>
+        b = ${mortonCodeB.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCodeB})<br><br>
+        <strong>sum: ${sum.toString(2)} (decimal: ${sum}) </strong>
     `;
 }
 
 function subtraction() {
-    // Ergebnisse zurücksetzen
+    // Ergebnisse zurücksetzenes
     document.getElementById(`resultSubtraction`).innerHTML = " ";
 
-    let mortonCodeAbin = mortonCodeA.toString(2).padStart(16, '0');
-    let mortonCodeBbin = mortonCodeB.toString(2).padStart(16, '0');
+    const dimension = parseInt(document.getElementById("dimension").value); 
+    const bitLength = parseInt(document.getElementById("bitLength").value); 
 
-    const diff = ((mortonCodeA & 0x5555555555555555n) - (mortonCodeB & 0x5555555555555555n) & 0x5555555555555555n) |
-    ((mortonCodeA & 0xAAAAAAAAAAAAAAAAn) - (mortonCodeB & 0xAAAAAAAAAAAAAAAAn) & 0xAAAAAAAAAAAAAAAAn);
-    
-    // Ergebnisse
+    let diff;
+    if (dimension === 2) {
+        // 2D-Masks
+        const x2_mask = 0xAAAAAAAAAAAAAAAAn;
+        const y2_mask = 0x5555555555555555n;
+
+        const x_diff = (mortonCodeA & x2_mask) - (mortonCodeB & x2_mask);
+        const y_diff = (mortonCodeA & y2_mask) - (mortonCodeB & y2_mask);
+        diff = (x_diff & x2_mask) | (y_diff & y2_mask);
+
+    } else if (dimension === 3) {
+        // 3D-Masks
+        const x3_mask = 0x4924924924924924n;
+        const y3_mask = 0x2492492492492492n;
+        const z3_mask = 0x9249249249249249n;
+
+        const x_diff = (mortonCodeA & x3_mask) - (mortonCodeB & x3_mask);
+        const y_diff = (mortonCodeA & y3_mask) - (mortonCodeB & y3_mask);
+        const z_diff = (mortonCodeA & z3_mask) - (mortonCodeB & z3_mask);
+        diff = (x_diff & x3_mask) | (y_diff & y3_mask) | (z_diff & z3_mask);
+    } else {
+        document.getElementById(`resultSubtraction`).innerHTML = "Invalid dimension!";
+        return;
+    }
+
+    // Ergebnisse anzeigen
     document.getElementById(`resultSubtraction`).innerHTML = 
-        `subtracting two two dimensional z-values a and b: <br><br>
-         <br><br>
-        a = ${mortonCodeAbin} (decimal: ${mortonCodeA})<br>
-        b = ${mortonCodeBbin} (decimal: ${mortonCodeB})<br><br>
-        diff: ${diff.toString(2)} (decimal: ${diff}) 
+        `Subtracting two ${dimension}D Morton codes a and b: <br><br>
+        a = ${mortonCodeA.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCodeA})<br>
+        b = ${mortonCodeB.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCodeB})<br><br>
+        <strong>diff: ${diff.toString(2)} (decimal: ${diff}) </strong>
     `;
 }
