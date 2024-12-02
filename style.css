@@ -44,34 +44,28 @@ label {
 
 .select-group select {
     margin-left: auto;
-    background-color: #ffffff; /* Weißer Hintergrund */
-    color: #4a4a4a; /* Dunkelgraue Schrift */
-    border: none; /* Dünner grauer Rand */
-    padding: 4px 24px 4px 8px; /* Platz für den Pfeil */
+    background-color: #ffffff;
+    color: #4a4a4a; 
+    border: none; 
+    padding: 4px 24px 4px 8px; 
     border-radius: 10px;
-    appearance: none; /* Entfernt das Browser-Standard-Styling */
-    content: "⌄"; /* Unicode für den Pfeil nach unten */
+    appearance: none; 
+    content: "⌄"; 
     font-size: 10pt;
-    outline: none; /* Entfernt den blauen Fokusrahmen */
+    outline: none; 
 }
 
 /* Pfeil-Styling */
 .select-group::after {
-    content: "⌄"; /* Unicode für den Pfeil nach unten */
-    //color: white;
+    content: "⌄"; 
     position: absolute;
-    right: 7px; /* Abstand vom rechten Rand */
+    right: 7px; 
     bottom: 6px;
-    color: #4a4a4a; /* Farbe für den Pfeil */
-    pointer-events: none; /* Ignoriert Klicks auf den Pfeil */
+    color: #4a4a4a; 
+    pointer-events: none; 
     font-size: 12px;
 }
 
-/* Wenn das Select-Element deaktiviert ist */
-.select-group select:disabled {
-    color: white; /* Textfarbe für "x,y" */
-    cursor: auto;
-}
 
 .settings {
     height: 120px; 
@@ -95,16 +89,15 @@ label {
 
 
 .point, .arithmetic {
-    //padding: 20px;
-    display: flex; /* Flexbox-Layout aktivieren */
-    flex-direction: column; /* Elemente vertikal anordnen */
+    display: flex;
+    flex-direction: column; 
     min-height: 250px;
     margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #f9f9f9;
     //height: 500px;
-    resize: vertical; /* Ermöglicht vertikales Resizing */
+    resize: vertical;
     overflow: hidden;
 }
 
@@ -127,9 +120,9 @@ label {
 /* Container für jede Input-Gruppe */
 .input-group {
     //display: flex;
-    flex-direction: column; /* Vertikale Anordnung von Label, Input und Fehler */
-    align-items: flex-start; /* Links ausrichten */
-    gap: 2px; /* Kleiner Abstand zwischen den Elementen */
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 2px;
     height: 45px;
    
 }
@@ -139,8 +132,8 @@ label {
     color: red;
     font-size: 8pt;
     font-weight: 350;
-    margin-top: 5px; /* Kleiner Abstand zwischen Input und Fehler */
-    display: none; /* Standardmäßig versteckt */
+    margin-top: 5px;
+    display: none; 
 }
 
 .subtractionError {
@@ -148,13 +141,12 @@ label {
     font-size: 10pt;
     font-weight: 350;
     padding: 6px;
-    display: none; /* Standardmäßig versteckt */
+    display: none;
 }
 
-/* Abstand zwischen Input-Feldern in der horizontalen Ansicht */
 .coordinateInputs {
     display: flex;
-    gap: 20px; /* Abstand zwischen den Gruppen */
+    gap: 20px;
 }
 
 input, select, button {
@@ -196,13 +188,13 @@ input::-webkit-inner-spin-button {
   }
   
   .output-section {
-    width: 50%; /* Breite jeder Sektion, sodass sie nebeneinander passen */
+    width: 50%;
     border: 1px solid #ddd;
     padding: 10px;
     margin: 5px;
     background-color: white;
     display: flex;
-    flex-direction: column; /* Stellt sicher, dass Inhalte innerhalb vertikal gestapelt werden */
+    flex-direction: column; 
     //justify-content: space-between; // abstände gleichmäßig
   }
 
@@ -214,12 +206,12 @@ input::-webkit-inner-spin-button {
 }
 
   .result-section {
-    width: 79%; /* Breite jeder Sektion, sodass sie nebeneinander passen */
+    width: 79%; 
     //border: 1px solid pink;
     padding: 10px;
     background-color: #fbfbfb;
     display: flex;
-    flex-direction: column; /* Stellt sicher, dass Inhalte innerhalb vertikal gestapelt werden */
+    flex-direction: column; 
   }
   
   .result, .resultForLoop{
@@ -235,7 +227,7 @@ input::-webkit-inner-spin-button {
     margin: 5px;
     background-color: white;
     display: flex;
-    flex-direction: column; /* Stellt sicher, dass Inhalte innerhalb vertikal gestapelt werden */
+    flex-direction: column; 
 }
 
 .hidden {
@@ -244,7 +236,7 @@ input::-webkit-inner-spin-button {
 
 .steps-container {
     display: flex;
-    flex-direction: row-reverse; /* Zeigt den Inhalt von rechts nach links an */
+    flex-direction: row-reverse; 
     justify-content: flex-start;
     //margin-top: 20px;
     //padding: 10px;
@@ -284,7 +276,7 @@ input::-webkit-inner-spin-button {
     margin: 12px;
     outline: none; /* Entfernt den blauen Fokusrahmen */
     min-width: 110px; 
-    text-align: center; /* Text zentrieren */
+    text-align: center; 
 }
 
 .show-code-btn:hover {
