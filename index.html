@@ -44,7 +44,6 @@
 
         <div class="displayMaxCoord">
             <div id="maxCoord">Maximum Coordinate Value: </div>
-            <div id="coordError" class="coordError"></div>
         </div>
 
         <body onload="displayMaxCoord()">
@@ -60,21 +59,21 @@
                         <label for="a-x">x:</label>
                         <div class="input-group">
                             <input id="a-x">
-                            <div id="a-xError" class="coordError"></div>
+                            <div id="a-xError" class="error"></div>
                         </div>
 
                         <!-- Y Coordinate -->
                         <label for="a-y">y:</label>
                         <div class="input-group">
                             <input id="a-y">
-                            <div id="a-yError" class="coordError"></div> 
+                            <div id="a-yError" class="error"></div> 
                         </div>
 
                         <!-- Z Coordinate -->
                         <label for="a-z" id="a-zLabel" class="hidden">z:</label>
                         <div id="a-zInput" class="input-group hidden">
                             <input id="a-z">
-                            <div id="a-zError" class="coordError"></div> 
+                            <div id="a-zError" class="error"></div> 
                         </div>
 
                         <div id="a-calculateButton">
@@ -120,21 +119,21 @@
                         <label for="b-x">x:</label>
                         <div class="input-group">
                             <input id="b-x">
-                            <div id="b-xError" class="coordError"></div>
+                            <div id="b-xError" class="error"></div>
                         </div>
 
                         <!-- Y Coordinate -->
                         <label for="b-y">y:</label>
                         <div class="input-group">
                             <input id="b-y">
-                            <div id="b-yError" class="coordError"></div> 
+                            <div id="b-yError" class="error"></div> 
                         </div>
 
                         <!-- Z Coordinate -->
                         <label for="b-z" id="b-zLabel" class="hidden">z:</label>
                         <div id="b-zInput" class="input-group hidden">
                             <input id="b-z">
-                            <div id="b-zError" class="coordError"></div>
+                            <div id="b-zError" class="error"></div>
                         </div>
                         <div id="b-calculateButton">
                             <button onclick="calculateMortonCode('b')">calculate</button>
@@ -191,6 +190,7 @@
                     <div id="a-b-calculateButton">
                         <button onclick="subtraction()">calculate</button>
                     </div>
+                    <div id="subtractionError" class="subtractionError"></div>
                 </div>
                 <div class="output">
                     <div id="resultSubtraction" class="resultArithmetic"></div>

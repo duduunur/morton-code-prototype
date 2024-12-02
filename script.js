@@ -12,7 +12,6 @@ function displayMaxCoord() {
 
     maxCoord.innerText = `Maximum Coordinate Value: ${maxCoordinateValue.toString()}`;
 
-    document.getElementById("coordError").style.display = "none";
     checkCoordinateLimits('a');
     checkCoordinateLimits('b');
 
@@ -165,8 +164,8 @@ function calculateMortonCode(pointId) {
     // Ergebnisse zurücksetzen
     document.getElementById(`${pointId}-resultForLoop`).innerHTML = '';
     document.getElementById(`${pointId}-resultMagicBits`).innerHTML = '';
-    console.log(document.getElementById(`${pointId}-x`).value);
-    console.log(document.getElementById(`${pointId}-x`).type);
+    //console.log(document.getElementById(`${pointId}-x`).value);
+    //console.log(document.getElementById(`${pointId}-x`).type);
 
 
     // Koordinaten überprüfen
@@ -209,7 +208,7 @@ function interleaveForLoop(coords, bitLength, layout, pointId) {
     let mortonCode = BigInt(0);
     const bitsPerCoord = parseInt(bitLength / coords.length); 
     const bitsMortonCode = bitsPerCoord * coords.length;
-    console.log(layout);
+    //console.log(layout);
 
     const resultContainer = document.getElementById(`${pointId}-resultForLoop`);
     resultContainer.innerHTML = '';
@@ -772,8 +771,13 @@ function addition() {
 }
 
 function subtraction() {
-    // Ergebnisse zurücksetzenes
+    // Ergebnisse zurücksetzen
     document.getElementById(`resultSubtraction`).innerHTML = " ";
+
+    if (checkCoordinatesForSubtraction() == false) {
+        console.log("no subtraction!");
+        return;
+    }
 
     const dimension = parseInt(document.getElementById("dimension").value); 
     const bitLength = parseInt(document.getElementById("bitLength").value); 
@@ -810,4 +814,25 @@ function subtraction() {
         b = ${mortonCodeB.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCodeB})<br><br>
         <strong>diff: ${diff.toString(2)} (decimal: ${diff}) </strong>
     `;
+}
+
+function checkCoordinatesForSubtraction() {
+    const aX = document.getElementById(`a-x`);
+    const aY = document.getElementById(`a-y`);
+    const aZ = document.getElementById(`a-z`);
+    const bX = document.getElementById(`b-x`);
+    const bY = document.getElementById(`b-y`);
+    const bZ = document.getElementById(`b-z`);
+
+    const error = document.getElementById(`subtractionError`);
+
+    if (aX.value < bX.value || aY.value < bY.value || (aZ && bZ && aZ.value < bZ.value)) {
+        error.textContent = "All coordinates of A must be greater than or equal to the corresponding coordinates of B!";
+        error.style.display = "block";
+        return false;
+    }
+
+    error.textContent = "";
+    error.style.display = "none";
+    return true;
 }
