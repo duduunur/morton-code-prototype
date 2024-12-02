@@ -27,44 +27,61 @@ function checkCoordinateLimits(pointId) {
     const xInput = document.getElementById(`${pointId}-x`);
     const yInput = document.getElementById(`${pointId}-y`);
     const zInput = document.getElementById(`${pointId}-z`);
-    const coordError = document.getElementById("coordError");
 
-    const x = BigInt(xInput.value || 0);
-    const y = BigInt(yInput.value || 0);
-    const z = zInput && zInput.value ? BigInt(zInput.value) : null;
+    const xError = document.getElementById(`${pointId}-xError`);
+    const yError = document.getElementById(`${pointId}-yError`);
+    const zError = document.getElementById(`${pointId}-zError`);
+
+    const x = xInput.value;
+    const y = yInput.value;
+    const z = zInput && zInput.value ? zInput.value : null;
 
     let hasError = false;
 
-    if (x > maxCoordinateValue) {
+    // Helper function for invalid input
+    function isInvalidCoordinate(value) {
+        return isNaN(value) || value.includes(".") || value < 0;
+    }
+
+    // Validate X
+    if (isInvalidCoordinate(x) || BigInt(x) > maxCoordinateValue) {
         xInput.style.border = "1px solid red";
+        xError.textContent = "Enter an integer between 0 and "+ maxCoordinateValue;
+        xError.style.display = "block";
         hasError = true;
     } else {
-        xInput.style.border = ""; 
+        xInput.style.border = "";
+        xError.textContent = "";
+        xError.style.display = "none";
     }
 
-    if (y > maxCoordinateValue) {
+    // Validate Y
+    if (isInvalidCoordinate(y) || BigInt(y) > maxCoordinateValue) {
         yInput.style.border = "1px solid red";
+        yError.textContent = "Please enter an integer between 0 and "+ maxCoordinateValue;
+        yError.style.display = "block";
         hasError = true;
     } else {
-        yInput.style.border = ""; 
+        yInput.style.border = "";
+        yError.textContent = "";
+        yError.style.display = "none";
     }
 
+    // Validate Z (if present)
     if (zInput && z !== null) {
-        if (z > maxCoordinateValue) {
+        if (isInvalidCoordinate(z) || BigInt(z) > maxCoordinateValue) {
             zInput.style.border = "1px solid red";
+            zError.textContent = "Please enter an integer between 0 and "+ maxCoordinateValue;
+            zError.style.display = "block";
             hasError = true;
         } else {
             zInput.style.border = "";
+            zError.textContent = "";
+            zError.style.display = "none";
         }
     }
 
-    if (hasError) {
-        coordError.style.display = "block";
-        coordError.innerText = `Coordinate exceeds the maximum allowed value!`;
-        return false;
-    }
-    coordError.style.display = "none";
-    return true;
+    return !hasError;
 }
 
 function toggleCoordinateFields(pointId) {
@@ -73,16 +90,19 @@ function toggleCoordinateFields(pointId) {
     const layoutContainer = document.getElementById("layoutContainer");
     const zInput = document.getElementById(`${pointId}-zInput`);
     const zLabel = document.getElementById(`${pointId}-zLabel`);
+    const zError = document.getElementById(`${pointId}-zError`);
 
     clearCoordinateInputs(pointId);
 
     if (dimension === '3') {
         zLabel.classList.remove('hidden');
         zInput.classList.remove('hidden');
+        zError.classList.remove('hidden');
         layoutContainer.classList.remove("hidden");
     } else {
         zLabel.classList.add('hidden');
         zInput.classList.add('hidden');
+        zError.classList.add('hidden');
         layoutContainer.classList.add("hidden"); 
         layout.value = 'xyz';
     }
@@ -106,29 +126,33 @@ function updateCoordinateInputOrder(layout, pointId) {
     const xLabel = document.querySelector(`label[for="${pointId}-x"]`);
     const yLabel = document.querySelector(`label[for="${pointId}-y"]`);
     const zLabel = document.querySelector(`label[for="${pointId}-z"]`);
-    const xInput = document.getElementById(`${pointId}-x`);
-    const yInput = document.getElementById(`${pointId}-y`);
-    const zInput = document.getElementById(`${pointId}-zInput`);
-    const calculateButton = document.getElementById(`${pointId}-calculateButton`);
 
+    const xGroup = document.querySelector(`#${pointId}-x`).closest('.input-group');
+    const yGroup = document.querySelector(`#${pointId}-y`).closest('.input-group');
+    const zGroup = document.querySelector(`#${pointId}-zInput`);
+
+    const calculateButton = document.getElementById(`${pointId}-calculateButton`);
     const coordinateInputs = document.getElementById(`${pointId}-coordinateInputs`);
+
+    // Container leeren
     coordinateInputs.innerHTML = '';
 
+    // Layout anpassen
     if (layout === 'xyz') {
         coordinateInputs.appendChild(xLabel);
-        coordinateInputs.appendChild(xInput);
+        coordinateInputs.appendChild(xGroup);
         coordinateInputs.appendChild(yLabel);
-        coordinateInputs.appendChild(yInput);
-        coordinateInputs.appendChild(zLabel);
-        coordinateInputs.appendChild(zInput);
+        coordinateInputs.appendChild(yGroup);
+        if (zLabel) coordinateInputs.appendChild(zLabel);
+        if (zGroup) coordinateInputs.appendChild(zGroup);
         if (calculateButton) coordinateInputs.appendChild(calculateButton);
     } else if (layout === 'zyx') {
-        coordinateInputs.appendChild(zLabel);
-        coordinateInputs.appendChild(zInput);
+        if (zLabel) coordinateInputs.appendChild(zLabel);
+        if (zGroup) coordinateInputs.appendChild(zGroup);
         coordinateInputs.appendChild(yLabel);
-        coordinateInputs.appendChild(yInput);
+        coordinateInputs.appendChild(yGroup);
         coordinateInputs.appendChild(xLabel);
-        coordinateInputs.appendChild(xInput);
+        coordinateInputs.appendChild(xGroup);
         if (calculateButton) coordinateInputs.appendChild(calculateButton);
     }
 }
@@ -137,9 +161,13 @@ function updateCoordinateInputOrder(layout, pointId) {
 // -------------------------------------------------- Calculate Morton Code --------------------------------------------------------------
 
 function calculateMortonCode(pointId) {
+
     // Ergebnisse zurücksetzen
     document.getElementById(`${pointId}-resultForLoop`).innerHTML = '';
     document.getElementById(`${pointId}-resultMagicBits`).innerHTML = '';
+    console.log(document.getElementById(`${pointId}-x`).value);
+    console.log(document.getElementById(`${pointId}-x`).type);
+
 
     // Koordinaten überprüfen
     if (checkCoordinateLimits(pointId) == false) {

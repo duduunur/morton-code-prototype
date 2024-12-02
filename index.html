@@ -25,7 +25,8 @@
 
             <div class="select-group">
                 <label for="dimension">dimension:</label>
-                <select id="dimension" onchange="toggleCoordinateFields('a'); toggleCoordinateFields('b'); displayMaxCoord();">
+                <select id="dimension"
+                    onchange="toggleCoordinateFields('a'); toggleCoordinateFields('b'); displayMaxCoord();">
                     <option value="2" selected>2D</option>
                     <option value="3">3D</option>
                 </select>
@@ -33,7 +34,8 @@
 
             <div class="select-group hidden" id="layoutContainer">
                 <label for="layout" id="layoutLabel">layout:</label>
-                <select id="layout" onchange="toggleCoordinateFields('a'); toggleCoordinateFields('b'); displayMaxCoord();">
+                <select id="layout"
+                    onchange="toggleCoordinateFields('a'); toggleCoordinateFields('b'); displayMaxCoord();">
                     <option value="xyz">x, y, z</option>
                     <option value="zyx">z, y, x</option>
                 </select>
@@ -42,138 +44,163 @@
 
         <div class="displayMaxCoord">
             <div id="maxCoord">Maximum Coordinate Value: </div>
-            <div id="coordError" class="coordError"></div> 
+            <div id="coordError" class="coordError"></div>
         </div>
 
         <body onload="displayMaxCoord()">
 
-        <!-------------------------------------------------------------- Point A --------------------------------------------------------------->
+            <!-------------------------------------------------------------- Point A --------------------------------------------------------------->
 
-        <!-- Input Section for Coordinates -->
-        <div id="point-a" class="point">
-            <div class="input-section">
-                <span class="label">point a:</span>
-                <div id="a-coordinateInputs" class="coordinateInputs">
-                    <label for="a-x">x:</label>
-                    <input type="number" id="a-x">
-                    <label for="a-y">y:</label>
-                    <input type="number" id="a-y">
-                    <div id="a-zInput" class="hidden">
-                        <label for="a-z" id="a-zLabel">z:</label>
-                        <input type="number" id="a-z">
+            <!-- Input Section for Coordinates -->
+            <div id="point-a" class="point">
+                <div class="input-section">
+                    <span class="label">point a:</span>
+                    <div id="a-coordinateInputs" class="coordinateInputs">
+                        <!-- X Coordinate -->
+                        <label for="a-x">x:</label>
+                        <div class="input-group">
+                            <input id="a-x">
+                            <div id="a-xError" class="coordError"></div>
+                        </div>
+
+                        <!-- Y Coordinate -->
+                        <label for="a-y">y:</label>
+                        <div class="input-group">
+                            <input id="a-y">
+                            <div id="a-yError" class="coordError"></div> 
+                        </div>
+
+                        <!-- Z Coordinate -->
+                        <label for="a-z" id="a-zLabel" class="hidden">z:</label>
+                        <div id="a-zInput" class="input-group hidden">
+                            <input id="a-z">
+                            <div id="a-zError" class="coordError"></div> 
+                        </div>
+
+                        <div id="a-calculateButton">
+                            <button onclick="calculateMortonCode('a')">calculate</button>
+                        </div>
                     </div>
-                    <div id="a-calculateButton">
-                        <button onclick="calculateMortonCode('a')">calculate</button>
+                </div>
+
+                <!-- Output Section -->
+                <div class="output">
+                    <!-- For-Loop -->
+                    <div class="output-section">
+                        <div id="a-magicBitsCodeContainer" class="hidden code-container"></div>
+                        <div id="a-forLoopHeader" class="header-section">
+                            <h3>method: for loop</h3>
+                            <button id="a-show-code-btn" class="show-code-btn"
+                                onclick="toggleCode('a-forLoopCodeContainer', 'a-magicBitsHeader', 'a-show-code-btn', 'a-resultMagicBits', forLoopCode)">
+                                show source code</button>
+                        </div>
+                        <div id="a-resultForLoop" class="resultForLoop"></div>
+                    </div>
+
+                    <!-- Magic Bits -->
+                    <div class="output-section">
+                        <div id="a-forLoopCodeContainer" class="hidden code-container"></div>
+                        <div id="a-magicBitsHeader" class="header-section">
+                            <h3>method: magic bits</h3>
+                            <button id="a-show-code-btn2" class="show-code-btn"
+                                onclick="toggleCode('a-magicBitsCodeContainer', 'a-forLoopHeader','a-show-code-btn2','a-resultForLoop', 'magicBitsCode')">
+                                show source code</button>
+                        </div>
+
+                        <div id="a-resultMagicBits" class="result"></div>
+                    </div>
+                </div>
+            </div>
+            <!-------------------------------------------------------------- Point B --------------------------------------------------------------->
+            <div id="point-b" class="point">
+                <div class="input-section">
+                    <span class="label">point b:</span>
+                    <div id="b-coordinateInputs" class="coordinateInputs">
+                        <!-- X Coordinate -->
+                        <label for="b-x">x:</label>
+                        <div class="input-group">
+                            <input id="b-x">
+                            <div id="b-xError" class="coordError"></div>
+                        </div>
+
+                        <!-- Y Coordinate -->
+                        <label for="b-y">y:</label>
+                        <div class="input-group">
+                            <input id="b-y">
+                            <div id="b-yError" class="coordError"></div> 
+                        </div>
+
+                        <!-- Z Coordinate -->
+                        <label for="b-z" id="b-zLabel" class="hidden">z:</label>
+                        <div id="b-zInput" class="input-group hidden">
+                            <input id="b-z">
+                            <div id="b-zError" class="coordError"></div>
+                        </div>
+                        <div id="b-calculateButton">
+                            <button onclick="calculateMortonCode('b')">calculate</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Output Section -->
+                <div class="output">
+                    <!-- For-Loop -->
+                    <div class="output-section">
+                        <div id="b-magicBitsCodeContainer" class="hidden code-container"></div>
+                        <div id="b-forLoopHeader" class="header-section">
+                            <h3>method: for loop</h3>
+                            <button id="b-show-code-btn" class="show-code-btn"
+                                onclick="toggleCode('b-forLoopCodeContainer', 'b-magicBitsHeader', 'b-show-code-btn', 'b-resultMagicBits', forLoopCode)">
+                                show source code</button>
+                        </div>
+                        <div id="b-resultForLoop" class="resultForLoop"></div>
+                    </div>
+
+                    <!-- Magic Bits -->
+                    <div class="output-section">
+                        <div id="b-forLoopCodeContainer" class="hidden code-container"></div>
+                        <div id="b-magicBitsHeader" class="header-section">
+                            <h3>method: magic bits</h3>
+                            <button id="b-show-code-btn2" class="show-code-btn"
+                                onclick="toggleCode('b-magicBitsCodeContainer', 'b-forLoopHeader','b-show-code-btn2','b-resultForLoop', 'magicBitsCode')">
+                                show source code</button>
+                        </div>
+
+                        <div id="b-resultMagicBits" class="result"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Output Section -->
-            <div class="output">
-                <!-- For-Loop -->
-                <div class="output-section">
-                    <div id="a-magicBitsCodeContainer" class="hidden code-container"></div>
-                    <div id="a-forLoopHeader" class="header-section">
-                        <h3>method: for loop</h3>
-                        <button id="a-show-code-btn" class="show-code-btn"
-                            onclick="toggleCode('a-forLoopCodeContainer', 'a-magicBitsHeader', 'a-show-code-btn', 'a-resultMagicBits', forLoopCode)">
-                            show source code</button>
-                    </div>
-                    <div id="a-resultForLoop" class="resultForLoop"></div>
-                </div>
-
-                <!-- Magic Bits -->
-                <div class="output-section">
-                    <div id="a-forLoopCodeContainer" class="hidden code-container"></div>
-                    <div id="a-magicBitsHeader" class="header-section">
-                        <h3>method: magic bits</h3>
-                        <button id="a-show-code-btn2" class="show-code-btn"
-                            onclick="toggleCode('a-magicBitsCodeContainer', 'a-forLoopHeader','a-show-code-btn2','a-resultForLoop', 'magicBitsCode')">
-                            show source code</button>
-                    </div>
-
-                    <div id="a-resultMagicBits" class="result"></div>
-                </div>
-            </div>
-        </div>
-        <!-------------------------------------------------------------- Point B --------------------------------------------------------------->
-        <div id="point-b" class="point">
-            <div class="input-section">
-                <span class="label">point b:</span>
-                <div id="b-coordinateInputs" class="coordinateInputs">
-                    <label for="b-x">x:</label>
-                    <input type="number" id="b-x">
-                    <label for="b-y">y:</label>
-                    <input type="number" id="b-y">
-                    <div id="b-zInput" class="hidden">
-                        <label for="b-z" id="b-zLabel">z:</label>
-                        <input type="number" id="b-z">
-                    </div>
-                    <div id="b-calculateButton">
-                        <button onclick="calculateMortonCode('b')">calculate</button>
+            <!------------------------------------------------------------------ addition and subtraction --------------------------------------------------------------------->
+            <div id="addition" class="arithmetic">
+                <div class="input-section">
+                    <span class="label">a + b</span>
+                    <div id="a+b-calculateButton">
+                        <button onclick="addition()">calculate</button>
                     </div>
                 </div>
+
+                <div class="output">
+                    <div id="resultAddition" class="resultArithmetic"></div>
+                </div>
             </div>
 
-            <!-- Output Section -->
-            <div class="output">
-                <!-- For-Loop -->
-                <div class="output-section">
-                    <div id="b-magicBitsCodeContainer" class="hidden code-container"></div>
-                    <div id="b-forLoopHeader" class="header-section">
-                        <h3>method: for loop</h3>
-                        <button id="b-show-code-btn" class="show-code-btn"
-                            onclick="toggleCode('b-forLoopCodeContainer', 'b-magicBitsHeader', 'b-show-code-btn', 'b-resultMagicBits', forLoopCode)">
-                            show source code</button>
+            <div id="subtraction" class="arithmetic">
+                <div class="input-section">
+                    <span class="label">a - b</span>
+                    <div id="a-b-calculateButton">
+                        <button onclick="subtraction()">calculate</button>
                     </div>
-                    <div id="b-resultForLoop" class="resultForLoop"></div>
                 </div>
-
-                <!-- Magic Bits -->
-                <div class="output-section">
-                    <div id="b-forLoopCodeContainer" class="hidden code-container"></div>
-                    <div id="b-magicBitsHeader" class="header-section">
-                        <h3>method: magic bits</h3>
-                        <button id="b-show-code-btn2" class="show-code-btn"
-                            onclick="toggleCode('b-magicBitsCodeContainer', 'b-forLoopHeader','b-show-code-btn2','b-resultForLoop', 'magicBitsCode')">
-                            show source code</button>
-                    </div>
-
-                    <div id="b-resultMagicBits" class="result"></div>
+                <div class="output">
+                    <div id="resultSubtraction" class="resultArithmetic"></div>
                 </div>
             </div>
-        </div>
-
-        <!------------------------------------------------------------------ addition and subtraction --------------------------------------------------------------------->
-        <div id="addition" class="arithmetic">
-            <div class="input-section">
-                <span class="label">a + b</span>
-                <div id="a+b-calculateButton">
-                    <button onclick="addition()">calculate</button>
-                </div>
-            </div>
-
-            <div class="output">
-                <div id="resultAddition" class="resultArithmetic"></div>
-            </div>
-        </div>
-
-        <div id="subtraction" class="arithmetic">
-            <div class="input-section">
-                <span class="label">a - b</span>
-                <div id="a-b-calculateButton">
-                    <button onclick="subtraction()">calculate</button>
-                </div>
-            </div>
-            <div class="output">
-                <div id="resultSubtraction" class="resultArithmetic"></div>
-            </div>
-        </div>
     </div>
 
     <script src="prism.js"></script>
     <script src="script.js"></script>
-   
+
 </body>
 
 </html>
