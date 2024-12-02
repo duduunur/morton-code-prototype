@@ -58,7 +58,7 @@ function checkCoordinateLimits(pointId) {
     // Validate Y
     if (isInvalidCoordinate(y) || BigInt(y) > maxCoordinateValue) {
         yInput.style.border = "1px solid red";
-        yError.textContent = "Please enter an integer between 0 and "+ maxCoordinateValue;
+        yError.textContent = "Enter an integer between 0 and "+ maxCoordinateValue;
         yError.style.display = "block";
         hasError = true;
     } else {
@@ -71,7 +71,7 @@ function checkCoordinateLimits(pointId) {
     if (zInput && z !== null) {
         if (isInvalidCoordinate(z) || BigInt(z) > maxCoordinateValue) {
             zInput.style.border = "1px solid red";
-            zError.textContent = "Please enter an integer between 0 and "+ maxCoordinateValue;
+            zError.textContent = "Enter an integer between 0 and "+ maxCoordinateValue;
             zError.style.display = "block";
             hasError = true;
         } else {
