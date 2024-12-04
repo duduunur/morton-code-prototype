@@ -759,6 +759,18 @@ function addition() {
     // Ergebnisse zurücksetzen
     document.getElementById(`resultAddition`).innerHTML = " ";
 
+    const error = document.getElementById(`additionError`);
+
+    // Prüfen, ob die Morton-Codes existieren
+    if (!mortonCodeA || !mortonCodeB) {
+        error.textContent = "Please calculate Morton Codes for a and b!";
+        error.style.display = "block";
+        return;
+    } else {
+        error.textContent = "";
+        error.style.display = "none";
+    }    
+
     const dimension = parseInt(document.getElementById("dimension").value); 
     const bitLength = parseInt(document.getElementById("bitLength").value); 
     const layout = document.getElementById("layout").value;
@@ -804,6 +816,18 @@ function addition() {
 function subtraction() {
     // Ergebnisse zurücksetzen
     document.getElementById(`resultSubtraction`).innerHTML = " ";
+
+    const error = document.getElementById(`subtractionError`);
+
+    // Prüfen, ob die Morton-Codes existieren
+    if (!mortonCodeA || !mortonCodeB) {
+        error.textContent = "Please calculate Morton Codes for a and b!";
+        error.style.display = "block";
+        return;
+    } else {
+        error.textContent = "";
+        error.style.display = "none";
+    }
 
     if (checkCoordinatesForSubtraction() == false) {
         console.log("no subtraction!");
@@ -862,7 +886,7 @@ function checkCoordinatesForSubtraction() {
     const error = document.getElementById(`subtractionError`);
 
     if (aX < bX || aY < bY || (aZ && bZ && aZ < bZ)) {
-        error.textContent = "All coordinates of A must be greater than or equal to the corresponding coordinates of B!";
+        error.textContent = "Each coordinate of A must be ≥ the corresponding coordinate of B!";
         error.style.display = "block";
         return false;
     }

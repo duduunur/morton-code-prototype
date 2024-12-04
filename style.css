@@ -78,6 +78,7 @@ label {
 
 .displayMaxCoord {
     color: #636363;
+    font-weight: 380;
     padding: 15px;
     margin-top: 15px;
     margin-bottom: 15px;
@@ -136,11 +137,11 @@ label {
     display: none; 
 }
 
-.subtractionError {
+.arithError {
     color: red;
     font-size: 10pt;
     font-weight: 350;
-    padding: 6px;
+    padding-top: 6px;
     display: none;
 }
 
