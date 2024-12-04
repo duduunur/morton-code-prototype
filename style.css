@@ -223,7 +223,7 @@ input::-webkit-inner-spin-button {
 .resultArithmetic {
     width: 100%;
     border: 1px solid #ddd;
-    padding: 10px;
+    padding: 20px;
     margin: 5px;
     background-color: white;
     display: flex;

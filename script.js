@@ -208,7 +208,7 @@ function interleaveForLoop(coords, bitLength, layout, pointId) {
     let mortonCode = BigInt(0);
     const bitsPerCoord = parseInt(bitLength / coords.length); 
     const bitsMortonCode = bitsPerCoord * coords.length;
-    //console.log(layout);
+    console.log(layout);
 
     const resultContainer = document.getElementById(`${pointId}-resultForLoop`);
     resultContainer.innerHTML = '';
@@ -728,12 +728,15 @@ function closeCode(codeContainerId, HeaderId, resultContainerId, buttonId) {
 
 // ------------------------------------------------------------------- Addition -----------------------------------------------------------------------
 
+// to-do: die funktion display coordinates and morton außerhalb der addition und subtraction schreiben und dann in beiden benutzen(dann brauche ich nicht zwei)
+
 function addition() {
     // Ergebnisse zurücksetzen
     document.getElementById(`resultAddition`).innerHTML = " ";
 
     const dimension = parseInt(document.getElementById("dimension").value); 
     const bitLength = parseInt(document.getElementById("bitLength").value); 
+    const layout = document.getElementById("layout").value;
 
     let sum;
     if (dimension === 2) {
@@ -761,12 +764,41 @@ function addition() {
         return;
     }
 
+    // koordinaten und morton codes der punkte anzeigen 
+    function displayCoordinatesAndMorton(pointId, dimension, layout, bitLength) {
+        // Hole die Werte für x, y, z
+        const x = parseInt(document.getElementById(`${pointId}-x`).value);
+        const y = parseInt(document.getElementById(`${pointId}-y`).value);
+        const z = dimension === 3 ? (parseInt(document.getElementById(`${pointId}-z`).value)) : 0;
+        const mortonCode = pointId === "a" ? mortonCodeA : mortonCodeB;
+    
+        // Koordinaten in einem Array speichern
+        const coords = [x, y, z].slice(0, dimension === 3 ? 3 : 2);
+    
+        // Formatierte Binärdarstellung erstellen
+        let binaryCoordinates = '';
+        for (let i = 0; i < coords.length; i++) {
+            const coord = coords[i];
+            const colorClass = i === 0 ? 'color-x' : i === 1 ? 'color-y' : 'color-z'; // Farben basierend auf Index
+            const binaryString = coord.toString(2).padStart(bitLength/dimension, '0');
+    
+            let formattedBits = '';
+            for (let bitIndex = 0; bitIndex < binaryString.length; bitIndex++) {
+                formattedBits += `<span class="${colorClass}">${binaryString[bitIndex]}</span>`; // Bits einfärben
+            }
+    
+            binaryCoordinates += `<div class="binary">${layout[i]} = ${formattedBits} (decimal: ${coord})</div>`; // Eingabekoordinaten anzeigen
+        }
+    
+        document.getElementById(`resultAddition`).innerHTML += `<p>point ${pointId}:</p>${binaryCoordinates}<p>morton code: ${mortonCode.toString(2)} (decimal: ${mortonCode})</p><br>`;
+    }
+    displayCoordinatesAndMorton('a', dimension, layout, bitLength);
+    displayCoordinatesAndMorton('b', dimension, layout, bitLength);
+
+
     // Ergebnisse anzeigen
-    document.getElementById(`resultAddition`).innerHTML = 
-        `Adding two ${dimension}D Morton codes a and b: <br><br>
-        a = ${mortonCodeA.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCodeA})<br>
-        b = ${mortonCodeB.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCodeB})<br><br>
-        <strong>sum: ${sum.toString(2)} (decimal: ${sum}) </strong>
+    document.getElementById(`resultAddition`).innerHTML += 
+        `<strong>a + b = ${sum.toString(2)} (decimal: ${sum}) </strong>
     `;
 }
 
@@ -781,6 +813,9 @@ function subtraction() {
 
     const dimension = parseInt(document.getElementById("dimension").value); 
     const bitLength = parseInt(document.getElementById("bitLength").value); 
+    const layout = document.getElementById("layout").value;
+
+    console.log("dimension " + dimension);
 
     let diff;
     if (dimension === 2) {
@@ -807,26 +842,53 @@ function subtraction() {
         return;
     }
 
-    // Ergebnisse anzeigen
-    document.getElementById(`resultSubtraction`).innerHTML = 
-        `Subtracting two ${dimension}D Morton codes a and b: <br><br>
-        a = ${mortonCodeA.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCodeA})<br>
-        b = ${mortonCodeB.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCodeB})<br><br>
-        <strong>diff: ${diff.toString(2)} (decimal: ${diff}) </strong>
+    // koordinaten und morton codes der punkte anzeigen 
+    function displayCoordinatesAndMorton(pointId, dimension, layout, bitLength) {
+        // Hole die Werte für x, y, z
+        const x = parseInt(document.getElementById(`${pointId}-x`).value);
+        const y = parseInt(document.getElementById(`${pointId}-y`).value);
+        const z = dimension === 3 ? (parseInt(document.getElementById(`${pointId}-z`).value)) : 0;
+        const mortonCode = pointId === "a" ? mortonCodeA : mortonCodeB;
+    
+        // Koordinaten in einem Array speichern
+        const coords = [x, y, z].slice(0, dimension === 3 ? 3 : 2);
+    
+        // Formatierte Binärdarstellung erstellen
+        let binaryCoordinates = '';
+        for (let i = 0; i < coords.length; i++) {
+            const coord = coords[i];
+            const colorClass = i === 0 ? 'color-x' : i === 1 ? 'color-y' : 'color-z'; // Farben basierend auf Index
+            const binaryString = coord.toString(2).padStart(bitLength/dimension, '0');
+    
+            let formattedBits = '';
+            for (let bitIndex = 0; bitIndex < binaryString.length; bitIndex++) {
+                formattedBits += `<span class="${colorClass}">${binaryString[bitIndex]}</span>`; // Bits einfärben
+            }
+    
+            binaryCoordinates += `<div class="binary">${layout[i]} = ${formattedBits} (decimal: ${coord})</div>`; // Eingabekoordinaten anzeigen
+        }
+    
+        document.getElementById(`resultSubtraction`).innerHTML += `<p>point ${pointId}:</p>${binaryCoordinates}<p>morton code: ${mortonCode.toString(2)} (decimal: ${mortonCode})</p><br>`;
+    }
+    displayCoordinatesAndMorton('a', dimension, layout, bitLength);
+    displayCoordinatesAndMorton('b', dimension, layout, bitLength);
+    
+    document.getElementById(`resultSubtraction`).innerHTML += 
+        `<p><strong>a - b = ${diff.toString(2)} (decimal: ${diff}) </strong></p>
     `;
 }
 
 function checkCoordinatesForSubtraction() {
-    const aX = document.getElementById(`a-x`);
-    const aY = document.getElementById(`a-y`);
-    const aZ = document.getElementById(`a-z`);
-    const bX = document.getElementById(`b-x`);
-    const bY = document.getElementById(`b-y`);
-    const bZ = document.getElementById(`b-z`);
+    const aX = parseInt(document.getElementById(`a-x`).value);
+    const aY = parseInt(document.getElementById(`a-y`).value);
+    const aZ = parseInt(document.getElementById(`a-z`).value);
+    const bX = parseInt(document.getElementById(`b-x`).value);
+    const bY = parseInt(document.getElementById(`b-y`).value);
+    const bZ = parseInt(document.getElementById(`b-z`).value);
 
     const error = document.getElementById(`subtractionError`);
 
-    if (aX.value < bX.value || aY.value < bY.value || (aZ && bZ && aZ.value < bZ.value)) {
+    if (aX < bX || aY < bY || (aZ && bZ && aZ < bZ)) {
         error.textContent = "All coordinates of A must be greater than or equal to the corresponding coordinates of B!";
         error.style.display = "block";
         return false;
