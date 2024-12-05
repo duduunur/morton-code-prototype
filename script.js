@@ -1,7 +1,21 @@
 // Globale Variablen
 let maxCoordinateValue = 0n;
-let mortonCodeA = 0n;
-let mortonCodeB = 0n;
+
+const pointA = {
+    id: 'a',
+    x: null,
+    y: null,
+    z: null, // Optional für 3D
+    mortonCode: null
+};
+
+const pointB = {
+    id: 'b',
+    x: null,
+    y: null,
+    z: null, // Optional für 3D
+    mortonCode: null
+};
 
 function displayMaxCoord() {
     const bitLength = BigInt(document.getElementById("bitLength").value);
@@ -160,13 +174,9 @@ function updateCoordinateInputOrder(layout, pointId) {
 // -------------------------------------------------- Calculate Morton Code --------------------------------------------------------------
 
 function calculateMortonCode(pointId) {
-
     // Ergebnisse zurücksetzen
     document.getElementById(`${pointId}-resultForLoop`).innerHTML = '';
     document.getElementById(`${pointId}-resultMagicBits`).innerHTML = '';
-    //console.log(document.getElementById(`${pointId}-x`).value);
-    //console.log(document.getElementById(`${pointId}-x`).type);
-
 
     // Koordinaten überprüfen
     if (checkCoordinateLimits(pointId) == false) {
@@ -190,15 +200,15 @@ function calculateMortonCode(pointId) {
     }
 
     // Berechnungen durchführen
-    interleaveForLoop(coords, bitLength, layout, pointId);
+    const mortonCode = interleaveForLoop(coords, bitLength, layout, pointId);
     displayMagicBits(coords, bitLength, layout, pointId);
 
-    // morton Codes speichern
-    if (pointId === 'a'){
-        mortonCodeA = interleaveForLoop(coords, bitLength, layout, pointId);
-    } else {
-        mortonCodeB = interleaveForLoop(coords, bitLength, layout, pointId);
-    }
+    // Morton-Codes und Koordinaten speichern
+    const point = pointId === 'a' ? pointA : pointB;
+    point.x = x;
+    point.y = y;
+    point.z = dimension === "3" ? z : null; // Z nur speichern, wenn Dimension 3
+    point.mortonCode = mortonCode;
 }
 
 // ---------------------------------------------- Interleave mit For-Schleife ----------------------------------------------------------
@@ -539,7 +549,6 @@ function interleave(coords, bitLength) {
 const magicBitsCode3D64 = `Magic Bits Algorithm 3D
 
 function splitBy3(x) {
-
     x = (x | (x << 32)) & 0x1F00000000FFFF;
     x = (x | (x << 16)) & 0x1F0000FF0000FF;
     x = (x | (x << 8)) & 0x100F00F00F00F00F;
@@ -566,7 +575,6 @@ function encodeMagicBits3D(x,y,z) {
 const magicBitsCode3D32 = `Magic Bits Algorithm 3D
 
 function splitBy3(x) {
-
     x = (x | (x << 16)) & 0x30000FF;
     x = (x | (x << 8)) & 0x0300F00F;
     x = (x | (x << 4)) & 0x30C30C3;
@@ -591,7 +599,6 @@ function encodeMagicBits3D(x,y,z) {
 const magicBitsCode3D16 = `Magic Bits Algorithm 3D
 
 function splitBy3(x) {
-
     x = (x | (x << 8)) & 0x0300F00F;
     x = (x | (x << 4)) & 0x030C30C3;
     x = (x | (x << 2)) & 0x09249249;
@@ -615,7 +622,6 @@ function encodeMagicBits3D(x,y,z) {
 const magicBitsCode2D64 = `Magic Bits Algorithm 2D
 
 function splitBy2(x) {
-
     x = (x | (x << 32)) & 0x00000000FFFFFFFF;
     x = (x | (x << 16)) & 0x0000FFFF0000FFFF;
     x = (x | (x << 8)) & 0x00FF00FF00FF00FF;
@@ -638,7 +644,6 @@ function encodeMagicBits2D(x, y) {
 const magicBitsCode2D32 = `Magic Bits Algorithm 2D
 
 function splitBy2(x) {
-
     x = (x | (x << 16)) & 0x0000FFFF;
     x = (x | (x << 8)) & 0x00FF00FF;
     x = (x | (x << 4)) & 0x0F0F0F0F;
@@ -660,7 +665,6 @@ function encodeMagicBits2D(x, y) {
 const magicBitsCode2D16 = `Magic Bits Algorithm 2D
 
 function splitBy2(x) {
-
     x = (x | (x << 4)) & 0x0F0F;
     x = (x | (x << 2)) & 0x3333;
     x = (x | (x << 1)) & 0x5555;
@@ -728,12 +732,8 @@ function closeCode(codeContainerId, HeaderId, resultContainerId, buttonId) {
 
 // ------------------------------------------------------------------- Addition -----------------------------------------------------------------------
 
-function displayCoordinatesAndMorton(pointId, dimension, layout, bitLength, resultContainerId, mortonCode) {
-    const x = parseInt(document.getElementById(`${pointId}-x`).value);
-    const y = parseInt(document.getElementById(`${pointId}-y`).value);
-    const z = dimension === 3 ? (parseInt(document.getElementById(`${pointId}-z`).value)) : 0;
-
-    const coords = [x, y, z].slice(0, dimension === 3 ? 3 : 2);
+function displayCoordinatesAndMorton(point, dimension, layout, bitLength, resultContainerId) {
+    const coords = [point.x, point.y, point.z].slice(0, dimension === 3 ? 3 : 2);
 
     // Formatierte Binärdarstellung erstellen
     let binaryCoordinates = '';
@@ -747,11 +747,11 @@ function displayCoordinatesAndMorton(pointId, dimension, layout, bitLength, resu
             formattedBits += `<span class="${colorClass}">${binaryString[bitIndex]}</span>`; // Bits einfärben
         }
 
-        binaryCoordinates += `<div class="binary">${layout[i]} = ${formattedBits} (decimal: ${coord})</div>`; // Eingabekoordinaten anzeigen
+        binaryCoordinates += `<div class="binary">${layout[i]} = ${formattedBits} (decimal: ${coord})</div>`;
     }
 
     // Ergebnis in den Container einfügen
-    document.getElementById(resultContainerId).innerHTML += `<p>point ${pointId}:</p>${binaryCoordinates}<p>morton code: ${mortonCode.toString(2)} (decimal: ${mortonCode})</p><br>`;
+    document.getElementById(resultContainerId).innerHTML += `<p>point ${point.id}:</p>${binaryCoordinates}<p>morton code: ${point.mortonCode.toString(2)} (decimal: ${point.mortonCode})</p><br>`;
 }
 
 
@@ -762,14 +762,14 @@ function addition() {
     const error = document.getElementById(`additionError`);
 
     // Prüfen, ob die Morton-Codes existieren
-    if (!mortonCodeA || !mortonCodeB) {
-        error.textContent = "Please calculate Morton Codes for a and b!";
+    if (!pointA.mortonCode || !pointB.mortonCode) {
+        error.textContent = "Please calculate Morton Codes for points A and B!";
         error.style.display = "block";
         return;
     } else {
         error.textContent = "";
         error.style.display = "none";
-    }    
+    }
 
     const dimension = parseInt(document.getElementById("dimension").value); 
     const bitLength = parseInt(document.getElementById("bitLength").value); 
@@ -780,8 +780,8 @@ function addition() {
         const x2_mask = 0xAAAAAAAAAAAAAAAAn;
         const y2_mask = 0x5555555555555555n;
 
-        const x_sum = (mortonCodeA | y2_mask) + (mortonCodeB & x2_mask);
-        const y_sum = (mortonCodeA | x2_mask) + (mortonCodeB & y2_mask);
+        const x_sum = (pointA.mortonCode | y2_mask) + (pointB.mortonCode & x2_mask);
+        const y_sum = (pointA.mortonCode | x2_mask) + (pointB.mortonCode & y2_mask);
         sum = (x_sum & x2_mask) | (y_sum & y2_mask);
 
     } else if (dimension === 3) {
@@ -792,9 +792,9 @@ function addition() {
         const xz3_mask = x3_mask | z3_mask;
         const yz3_mask = y3_mask | z3_mask;
 
-        const x_sum = (mortonCodeA | yz3_mask) + (mortonCodeB & x3_mask);
-        const y_sum = (mortonCodeA | xz3_mask) + (mortonCodeB & y3_mask);
-        const z_sum = (mortonCodeA | xy3_mask) + (mortonCodeB & z3_mask);
+        const x_sum = (pointA.mortonCode | yz3_mask) + (pointB.mortonCode & x3_mask);
+        const y_sum = (pointA.mortonCode | xz3_mask) + (pointB.mortonCode & y3_mask);
+        const z_sum = (pointA.mortonCode | xy3_mask) + (pointB.mortonCode & z3_mask);
         sum = (x_sum & x3_mask) | (y_sum & y3_mask) | (z_sum & z3_mask);
     } else {
         document.getElementById(`resultAddition`).innerHTML = "Invalid dimension!";
@@ -802,16 +802,14 @@ function addition() {
     }
 
     // Koordinaten und Morton-Codes der Punkte anzeigen
-    displayCoordinatesAndMorton('a', dimension, layout, bitLength, 'resultAddition', mortonCodeA);
-    displayCoordinatesAndMorton('b', dimension, layout, bitLength, 'resultAddition', mortonCodeB);
-
-
+    displayCoordinatesAndMorton(pointA, dimension, layout, bitLength, 'resultAddition');
+    displayCoordinatesAndMorton(pointB, dimension, layout, bitLength, 'resultAddition');
 
     // Ergebnisse anzeigen
     document.getElementById(`resultAddition`).innerHTML += 
-        `<strong>a + b = ${sum.toString(2)} (decimal: ${sum}) </strong>
-    `;
+        `<strong>a + b = ${sum.toString(2)} (decimal: ${sum}) </strong>`;
 }
+
 
 function subtraction() {
     // Ergebnisse zurücksetzen
@@ -820,8 +818,8 @@ function subtraction() {
     const error = document.getElementById(`subtractionError`);
 
     // Prüfen, ob die Morton-Codes existieren
-    if (!mortonCodeA || !mortonCodeB) {
-        error.textContent = "Please calculate Morton Codes for a and b!";
+    if (!pointA.mortonCode || !pointB.mortonCode) {
+        error.textContent = "Please calculate Morton Codes for points A and B!";
         error.style.display = "block";
         return;
     } else {
@@ -829,8 +827,8 @@ function subtraction() {
         error.style.display = "none";
     }
 
-    if (checkCoordinatesForSubtraction() == false) {
-        console.log("no subtraction!");
+    if (checkCoordinatesForSubtraction() === false) {
+        console.log("No subtraction!");
         return;
     }
 
@@ -838,27 +836,23 @@ function subtraction() {
     const bitLength = parseInt(document.getElementById("bitLength").value); 
     const layout = document.getElementById("layout").value;
 
-    console.log("dimension " + dimension);
-
     let diff;
     if (dimension === 2) {
-        // 2D-Masks
         const x2_mask = 0xAAAAAAAAAAAAAAAAn;
         const y2_mask = 0x5555555555555555n;
 
-        const x_diff = (mortonCodeA & x2_mask) - (mortonCodeB & x2_mask);
-        const y_diff = (mortonCodeA & y2_mask) - (mortonCodeB & y2_mask);
+        const x_diff = (pointA.mortonCode & x2_mask) - (pointB.mortonCode & x2_mask);
+        const y_diff = (pointA.mortonCode & y2_mask) - (pointB.mortonCode & y2_mask);
         diff = (x_diff & x2_mask) | (y_diff & y2_mask);
 
     } else if (dimension === 3) {
-        // 3D-Masks
         const x3_mask = 0x4924924924924924n;
         const y3_mask = 0x2492492492492492n;
         const z3_mask = 0x9249249249249249n;
 
-        const x_diff = (mortonCodeA & x3_mask) - (mortonCodeB & x3_mask);
-        const y_diff = (mortonCodeA & y3_mask) - (mortonCodeB & y3_mask);
-        const z_diff = (mortonCodeA & z3_mask) - (mortonCodeB & z3_mask);
+        const x_diff = (pointA.mortonCode & x3_mask) - (pointB.mortonCode & x3_mask);
+        const y_diff = (pointA.mortonCode & y3_mask) - (pointB.mortonCode & y3_mask);
+        const z_diff = (pointA.mortonCode & z3_mask) - (pointB.mortonCode & z3_mask);
         diff = (x_diff & x3_mask) | (y_diff & y3_mask) | (z_diff & z3_mask);
     } else {
         document.getElementById(`resultSubtraction`).innerHTML = "Invalid dimension!";
@@ -866,26 +860,18 @@ function subtraction() {
     }
 
     // Koordinaten und Morton-Codes der Punkte anzeigen
-    displayCoordinatesAndMorton('a', dimension, layout, bitLength, 'resultSubtraction', mortonCodeA);
-    displayCoordinatesAndMorton('b', dimension, layout, bitLength, 'resultSubtraction', mortonCodeB);
+    displayCoordinatesAndMorton(pointA, dimension, layout, bitLength, 'resultSubtraction');
+    displayCoordinatesAndMorton(pointB, dimension, layout, bitLength, 'resultSubtraction');
 
-    
     document.getElementById(`resultSubtraction`).innerHTML += 
-        `<p><strong>a - b = ${diff.toString(2)} (decimal: ${diff}) </strong></p>
-    `;
+        `<p><strong>a - b = ${diff.toString(2)} (decimal: ${diff}) </strong></p>`;
 }
 
-function checkCoordinatesForSubtraction() {
-    const aX = parseInt(document.getElementById(`a-x`).value);
-    const aY = parseInt(document.getElementById(`a-y`).value);
-    const aZ = parseInt(document.getElementById(`a-z`).value);
-    const bX = parseInt(document.getElementById(`b-x`).value);
-    const bY = parseInt(document.getElementById(`b-y`).value);
-    const bZ = parseInt(document.getElementById(`b-z`).value);
 
+function checkCoordinatesForSubtraction() {
     const error = document.getElementById(`subtractionError`);
 
-    if (aX < bX || aY < bY || (aZ && bZ && aZ < bZ)) {
+    if (pointA.x < pointB.x || pointA.y < pointB.y || (pointA.z && pointB.z && pointA.z < pointB.z)) {
         error.textContent = "Each coordinate of A must be ≥ the corresponding coordinate of B!";
         error.style.display = "block";
         return false;

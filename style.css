@@ -19,7 +19,6 @@ h3 {
 
 label {
     font-weight: 380;
-    //margin-right: 10px;
     margin-top: 5px;
 }
 
@@ -97,7 +96,6 @@ label {
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #f9f9f9;
-    //height: 500px;
     resize: vertical;
     overflow: hidden;
 }
@@ -105,22 +103,17 @@ label {
 .input-section {
     padding: 20px;
     display: flex;
-    //align-items: center;
     gap: 20px;
     width: 100%;
 }
 .coordinateInputs {
     display: flex;
     gap: 10px;
-    //align-items: center;in: 5px;
-    //margin-top: 5px;
-
 }
 
 
 /* Container für jede Input-Gruppe */
 .input-group {
-    //display: flex;
     flex-direction: column; 
     align-items: flex-start; 
     gap: 2px;
@@ -176,7 +169,6 @@ input::-webkit-inner-spin-button {
 
 
 .output {
-    //border: 1px solid green;
     display: flex;
     flex-direction: row; // die divs in eine zeile 
     justify-content: space-between; // abstände gleichmäßig
@@ -231,18 +223,11 @@ input::-webkit-inner-spin-button {
     flex-direction: column; 
 }
 
-.hidden {
-    display: none;
-}
 
 .steps-container {
     display: flex;
     flex-direction: row-reverse; 
     justify-content: flex-start;
-    //margin-top: 20px;
-    //padding: 10px;
-    //border: 1px solid #ddd;
-    //background-color: #f9f9f9;
     font-family: monospace;
     font-size: 9pt;
     white-space: pre;
@@ -282,18 +267,10 @@ input::-webkit-inner-spin-button {
 
 .show-code-btn:hover {
     background-color: #e5e5e5;
-    //border: none;
-    //color: white;
 }
 
 .code-container {
-    //background-color: black;
-    //border: 1px solid #ccc;
-    //padding: 10px;
-    //margin: 5px;
-    //border-radius: 5px;
     position: relative;
-    //max-height: 550px; /* Maximale Höhe des Fensters */
     overflow-y: auto;
     font-size: 9pt;
 }
