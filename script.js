@@ -26,14 +26,18 @@ function displayMaxCoord() {
 
     maxCoord.innerText = `Maximum Coordinate Value: ${maxCoordinateValue.toString()}`;
 
-    checkCoordinateLimits('a');
-    checkCoordinateLimits('b');
-
     // Ergebnis Container leeren
     document.getElementById(`a-resultForLoop`).innerHTML = '';
     document.getElementById(`a-resultMagicBits`).innerHTML = '';
     document.getElementById(`b-resultForLoop`).innerHTML = '';
     document.getElementById(`b-resultMagicBits`).innerHTML = '';
+    document.getElementById(`resultAddition`).innerHTML = '';
+    document.getElementById(`resultSubtraction`).innerHTML = '';
+    document.getElementById(`additionError`).innerHTML = '';
+    document.getElementById(`subtractionError`).innerHTML = '';
+
+    checkCoordinateLimits('a');
+    checkCoordinateLimits('b');
 }
 
 function checkCoordinateLimits(pointId) {
@@ -181,6 +185,10 @@ function calculateMortonCode(pointId) {
     // Ergebnisse zurücksetzen
     document.getElementById(`${pointId}-resultForLoop`).innerHTML = '';
     document.getElementById(`${pointId}-resultMagicBits`).innerHTML = '';
+    document.getElementById(`resultAddition`).innerHTML = '';
+    document.getElementById(`resultSubtraction`).innerHTML = '';
+    document.getElementById(`additionError`).innerHTML = '';
+    document.getElementById(`subtractionError`).innerHTML = '';
 
     // Koordinaten überprüfen
     if (checkCoordinateLimits(pointId) == false) {
@@ -758,21 +766,26 @@ function displayCoordinatesAndMorton(point, dimension, layout, bitLength, result
     document.getElementById(resultContainerId).innerHTML += `<p>point ${point.id}:</p>${binaryCoordinates}<p>morton code: ${point.mortonCode.toString(2)} (decimal: ${point.mortonCode})</p><br>`;
 }
 
+function checkMortonCodesExist(errorElementId) {
+    const error = document.getElementById(errorElementId);
+
+    if (!pointA.mortonCode || !pointB.mortonCode) {
+        error.textContent = "Please calculate Morton Codes for points A and B!";
+        error.style.display = "block";
+        return false;
+    } else {
+        error.textContent = "";
+        error.style.display = "none";
+        return true;
+    }
+}
 
 function addition() {
     // Ergebnisse zurücksetzen
     document.getElementById(`resultAddition`).innerHTML = " ";
 
-    const error = document.getElementById(`additionError`);
-
-    // Prüfen, ob die Morton-Codes existieren
-    if (!pointA.mortonCode || !pointB.mortonCode) {
-        error.textContent = "Please calculate Morton Codes for points A and B!";
-        error.style.display = "block";
+    if (!checkMortonCodesExist('additionError')) {
         return;
-    } else {
-        error.textContent = "";
-        error.style.display = "none";
     }
 
     const dimension = parseInt(document.getElementById("dimension").value); 
@@ -819,16 +832,8 @@ function subtraction() {
     // Ergebnisse zurücksetzen
     document.getElementById(`resultSubtraction`).innerHTML = " ";
 
-    const error = document.getElementById(`subtractionError`);
-
-    // Prüfen, ob die Morton-Codes existieren
-    if (!pointA.mortonCode || !pointB.mortonCode) {
-        error.textContent = "Please calculate Morton Codes for points A and B!";
-        error.style.display = "block";
+    if (!checkMortonCodesExist('subtractionError')) {
         return;
-    } else {
-        error.textContent = "";
-        error.style.display = "none";
     }
 
     if (checkCoordinatesForSubtraction() === false) {
