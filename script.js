@@ -45,9 +45,13 @@ function checkCoordinateLimits(pointId) {
     const yError = document.getElementById(`${pointId}-yError`);
     const zError = document.getElementById(`${pointId}-zError`);
 
-    const x = xInput.value;
-    const y = yInput.value;
+    const x = xInput && xInput.value ? xInput.value : null;
+    const y = yInput && yInput.value ? yInput.value : null;
     const z = zInput && zInput.value ? zInput.value : null;
+
+    console.log("x:" + x);
+    console.log("y:" + y);
+    console.log("z:" + z);
 
     let hasError = false;
 
@@ -188,9 +192,9 @@ function calculateMortonCode(pointId) {
     const dimension = document.getElementById("dimension").value;
     const layout = document.getElementById("layout").value;
 
-    const x = parseInt(document.getElementById(`${pointId}-x`).value) || 0;
-    const y = parseInt(document.getElementById(`${pointId}-y`).value) || 0;
-    const z = dimension === "3" ? (parseInt(document.getElementById(`${pointId}-z`).value) || 0) : 0;
+    const x = parseInt(document.getElementById(`${pointId}-x`).value);
+    const y = parseInt(document.getElementById(`${pointId}-y`).value);
+    const z = dimension === "3" ? (parseInt(document.getElementById(`${pointId}-z`).value)) : 0;
 
     let coords = [];
     if (dimension === "3") {
@@ -218,7 +222,7 @@ function interleaveForLoop(coords, bitLength, layout, pointId) {
     let mortonCode = BigInt(0);
     const bitsPerCoord = parseInt(bitLength / coords.length); 
     const bitsMortonCode = bitsPerCoord * coords.length;
-    console.log(layout);
+    //console.log(layout);
 
     const resultContainer = document.getElementById(`${pointId}-resultForLoop`);
     resultContainer.innerHTML = '';
