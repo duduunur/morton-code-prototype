@@ -43,8 +43,10 @@ function clearContainers() {
     document.getElementById(`subtractionError`).innerHTML = '';
 
     // Point Container höhe "zurücksetzen"
-    document.getElementById(`point-a`).style.height = '250px';
-    document.getElementById(`point-b`).style.height = '250px';
+    document.getElementById(`point-a`).style.minHeight = '250px';
+    document.getElementById(`point-b`).style.minHeight = '250px';
+    document.getElementById(`point-a`).style.resize = 'none';
+    document.getElementById(`point-b`).style.resize = 'none';
 }
 
 function checkCoordinateLimits(pointId) {
@@ -205,6 +207,7 @@ function calculateMortonCode(pointId) {
 
     const pointContainer = document.getElementById(`point-${pointId}`);
     pointContainer.style.height = '500px';
+    pointContainer.style.resize = 'vertical';
 
     const bitLength = parseInt(document.getElementById("bitLength").value);
     const dimension = document.getElementById("dimension").value;
