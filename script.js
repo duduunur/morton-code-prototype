@@ -26,6 +26,12 @@ function displayMaxCoord() {
 
     maxCoord.innerText = `Maximum Coordinate Value: ${maxCoordinateValue.toString()}`;
 
+    clearContainers();
+    checkCoordinateLimits('a');
+    checkCoordinateLimits('b');
+}
+
+function clearContainers() {
     // Ergebnis Container leeren
     document.getElementById(`a-resultForLoop`).innerHTML = '';
     document.getElementById(`a-resultMagicBits`).innerHTML = '';
@@ -36,8 +42,9 @@ function displayMaxCoord() {
     document.getElementById(`additionError`).innerHTML = '';
     document.getElementById(`subtractionError`).innerHTML = '';
 
-    checkCoordinateLimits('a');
-    checkCoordinateLimits('b');
+    // Point Container höhe "zurücksetzen"
+    document.getElementById(`point-a`).style.height = '250px';
+    document.getElementById(`point-b`).style.height = '250px';
 }
 
 function checkCoordinateLimits(pointId) {
@@ -196,6 +203,9 @@ function calculateMortonCode(pointId) {
         return;
     }
 
+    const pointContainer = document.getElementById(`point-${pointId}`);
+    pointContainer.style.height = '500px';
+
     const bitLength = parseInt(document.getElementById("bitLength").value);
     const dimension = document.getElementById("dimension").value;
     const layout = document.getElementById("layout").value;
@@ -233,10 +243,6 @@ function interleaveForLoop(coords, bitLength, layout, pointId) {
     //console.log(layout);
 
     const resultContainer = document.getElementById(`${pointId}-resultForLoop`);
-    resultContainer.innerHTML = '';
-
-    const pointContainer = document.getElementById(`point-${pointId}`);
-    pointContainer.classList.add("height=500px");
 
     // format input coordinates
     let binaryCoordinates = '';
@@ -467,7 +473,7 @@ function splitBy2(a, bitLength) {
     } else {
         console.log("Bitlänge ungültig");
         return { result: 0, steps };
-    }
+    } 
 }
 
 function mortonEncodeMagicBits2D(x, y, bitLength) {
@@ -480,8 +486,6 @@ function mortonEncodeMagicBits2D(x, y, bitLength) {
 
 function displayMagicBits(coords, bitLength, layout, pointId) {
     const resultContainer = document.getElementById(`${pointId}-resultMagicBits`);
-    const pointContainer = document.getElementById(`point-${pointId}`);
-    pointContainer.style.height = '500px';
     const dimension = coords.length;
     const maxBits = parseInt(bitLength / dimension);
 
