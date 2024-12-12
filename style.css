@@ -22,6 +22,10 @@ label {
     margin-top: 5px;
 }
 
+p {
+    font-family: monospace;
+}
+
 .label {
     font-weight: 500;
     margin-top: 5px;
@@ -40,31 +44,31 @@ label {
     align-items: center;
     width: 30%;
 }
-
-.select-group select {
-    margin-left: auto;
-    background-color: #ffffff;
-    color: #4a4a4a; 
-    border: none; 
-    padding: 4px 24px 4px 8px; 
-    border-radius: 10px;
-    appearance: none; 
-    content: "⌄"; 
-    font-size: 10pt;
-    outline: none; 
-}
-
 /* Pfeil-Styling */
-.select-group::after {
+.select-group:after {
     content: "⌄"; 
     position: absolute;
     right: 7px; 
     bottom: 6px;
     color: #4a4a4a; 
-    pointer-events: none; 
     font-size: 12px;
 }
 
+.select-group select {
+    margin-left: auto;
+    color: #4a4a4a;
+    border: none; 
+    padding: 4px 24px 4px 8px; 
+    border-radius: 10px;
+    appearance: none; 
+    font-size: 10pt;
+    outline: none; 
+}
+
+/* Hover-Effekt */
+.select-group select:hover {
+    background-color:  #f8f8f8;
+}
 
 .settings {
     height: 120px; 
@@ -81,19 +85,19 @@ label {
     padding: 15px;
     margin-top: 15px;
     margin-bottom: 15px;
-    border: 1px solid #ccc;
+    border: 0.5px solid #ccc;
     border-radius: 5px;
     background-color: #f9f9f9;
     width: 27%;
 }
 
 
-.point, .arithmetic {
+.point, .arithmetic, .stencil {
     display: flex;
     flex-direction: column; 
     min-height: 250px;
     margin-bottom: 20px;
-    border: 1px solid #ccc;
+    border: 0.5px solid #ccc;
     border-radius: 5px;
     background-color: #f9f9f9;
     overflow: hidden;
@@ -149,7 +153,7 @@ label {
 input, select, button {
     background-color: white;
     padding: 5px;
-    border: 1px solid #ccc;
+    border: 0.5px solid #ccc;
     border-radius: 4px;
     font-size: 11px;
     outline: none; /* Entfernt den blauen Fokusrahmen */
@@ -175,7 +179,6 @@ input::-webkit-inner-spin-button {
     display: flex;
     flex-direction: row; // die divs in eine zeile 
     justify-content: space-between; // abstände gleichmäßig
-    //margin-top: 20px;
     font-family: monospace;
     font-size: 9pt;
     padding: 10px;
@@ -185,13 +188,12 @@ input::-webkit-inner-spin-button {
   
   .output-section {
     width: 50%;
-    border: 1px solid #ddd;
+    border: 0.5px solid #ddd;
     padding: 10px;
     margin: 5px;
     background-color: white;
     display: flex;
     flex-direction: column; 
-    //justify-content: space-between; // abstände gleichmäßig
   }
 
   .labels {
@@ -216,14 +218,15 @@ input::-webkit-inner-spin-button {
     overflow-y: auto;
 }
 
-.resultArithmetic {
+.resultArithmetic, .resultStencil {
     width: 100%;
-    border: 1px solid #ddd;
+    border: 0.5px solid #ddd;
     padding: 20px;
     margin: 5px;
     background-color: white;
     display: flex;
     flex-direction: column; 
+    font-family: monospace
 }
 
 
@@ -239,7 +242,8 @@ input::-webkit-inner-spin-button {
 
 .step-bit {
     //padding: 0 5px;
-    transition: background-color 0.3s;
+    //transition: background-color 0.3s;
+    //font-family: monospace;
 }
 
 .color-x { color: #DC0909; }
@@ -257,7 +261,7 @@ input::-webkit-inner-spin-button {
 .show-code-btn {
     background-color: white;
     color: #3c3c3c;
-    border: 1px solid #ccc;
+    border: 0.5px solid #ccc;
     //padding: 5px;
     //font-size: 10pt;
     cursor: pointer;

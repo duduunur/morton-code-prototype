@@ -776,7 +776,12 @@ function displayCoordinatesAndMorton(point, dimension, layout, bitLength, result
 function checkMortonCodesExist(errorElementId) {
     const error = document.getElementById(errorElementId);
 
-    if (!pointA.mortonCode || !pointB.mortonCode) {
+    console.log(pointA.mortonCode);
+    console.log(pointB.mortonCode);
+
+    // Überprüfe explizit, ob der Morton-Code `null` oder `undefined` ist
+    if (pointA.mortonCode === null || pointA.mortonCode === undefined || 
+        pointB.mortonCode === null || pointB.mortonCode === undefined) {
         error.textContent = "Please calculate Morton Codes for points A and B!";
         error.style.display = "block";
         return false;
@@ -787,11 +792,13 @@ function checkMortonCodesExist(errorElementId) {
     }
 }
 
+
 function addition() {
     // Ergebnisse zurücksetzen
     document.getElementById(`resultAddition`).innerHTML = " ";
 
     if (!checkMortonCodesExist('additionError')) {
+        console.log("morton code does not exist")
         return;
     }
 
@@ -840,6 +847,7 @@ function subtraction() {
     document.getElementById(`resultSubtraction`).innerHTML = " ";
 
     if (!checkMortonCodesExist('subtractionError')) {
+        console.log("morton code does not exist")
         return;
     }
 
@@ -879,6 +887,10 @@ function subtraction() {
     displayCoordinatesAndMorton(pointA, dimension, layout, bitLength, 'resultSubtraction');
     displayCoordinatesAndMorton(pointB, dimension, layout, bitLength, 'resultSubtraction');
 
+    const finalResult = document.createElement("div");
+    finalResult.innerHTML = `<p><strong>Final Morton Code:</strong> ${colorizeBits(formatBinary(mortonCode))} (decimal: ${mortonCode.toString()})</p>`;
+    resultContainer.appendChild(finalResult);
+
     document.getElementById(`resultSubtraction`).innerHTML += 
         `<p><strong>a - b = ${diff.toString(2)} (decimal: ${diff}) </strong></p>`;
 }
@@ -896,4 +908,12 @@ function checkCoordinatesForSubtraction() {
     error.textContent = "";
     error.style.display = "none";
     return true;
+}
+
+
+//--------------------------------------------------------- stencil -------------------------------------------------------------
+
+
+function generateStencil() {
+
 }

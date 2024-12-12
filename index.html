@@ -93,7 +93,7 @@
                                 onclick="toggleCode('a-forLoopCodeContainer', 'a-magicBitsHeader', 'a-show-code-btn', 'a-resultMagicBits', forLoopCode)">
                                 show source code</button>
                         </div>
-                        <div id="a-resultForLoop" class="resultForLoop"></div>
+                        <div id="a-resultForLoop" class="result"></div>
                     </div>
 
                     <!-- Magic Bits -->
@@ -152,7 +152,7 @@
                                 onclick="toggleCode('b-forLoopCodeContainer', 'b-magicBitsHeader', 'b-show-code-btn', 'b-resultMagicBits', forLoopCode)">
                                 show source code</button>
                         </div>
-                        <div id="b-resultForLoop" class="resultForLoop"></div>
+                        <div id="b-resultForLoop" class="result"></div>
                     </div>
 
                     <!-- Magic Bits -->
@@ -195,6 +195,19 @@
                 </div>
                 <div class="output">
                     <div id="resultSubtraction" class="resultArithmetic"></div>
+                </div>
+            </div>
+
+            <!--------------------------------------------------------------------------- stencil ----------------------------------------------------------------------------->
+            <div id="stencil" class="stencil">
+                <div class="input-section">
+                    <span class="label">stencil</span>
+                    <div id="stencil">
+                        <button onclick="generateStencil()">generate</button>
+                    </div>
+                </div>
+                <div class="output">
+                    <div id="resultStencil" class="resultStencil"></div>
                 </div>
             </div>
     </div>
