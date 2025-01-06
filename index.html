@@ -199,16 +199,30 @@
             </div>
 
             <!--------------------------------------------------------------------------- stencil ----------------------------------------------------------------------------->
-            <div id="stencilContainer" class="stencil">
+            <div id="stencilContainer-a" class="stencil">
                 <div class="input-section">
-                    <span class="label">stencil</span>
-                    <div id="stencilButton">
-                        <button onclick="generateStencil()">generate</button>
+                    <span class="label">stencil point a</span>
+                    <div id="stencilButton-a">
+                        <button onclick="generateStencil('a')">generate</button>
                     </div>
                 </div>
                 <div class="output">
-                    <div id="resultStencil" class="resultStencil">
-                        <canvas id="canvasStencil" width="500" height="500" style="width: 250px; height: 250px;"></canvas>
+                    <div id="resultStencil-a" class="resultStencil">
+                        <canvas id="canvasStencil-a" width="500" height="500" style="width: 250px; height: 250px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div id="stencilContainer-b" class="stencil">
+                <div class="input-section">
+                    <span class="label">stencil point b</span>
+                    <div id="stencilButton-b">
+                        <button onclick="generateStencil('b')">generate</button>
+                    </div>
+                </div>
+                <div class="output">
+                    <div id="resultStencil-b" class="resultStencil">
+                        <canvas id="canvasStencil-b" width="500" height="500" style="width: 250px; height: 250px;"></canvas>
                     </div>
                 </div>
             </div>

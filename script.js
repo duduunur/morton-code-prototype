@@ -910,10 +910,8 @@ function checkCoordinatesForSubtraction() {
 //--------------------------------------------------------- stencil -------------------------------------------------------------
 
 // Funktion, um den 9-Punkte-Stencil zu zeichnen
-function generateStencil() {
-
-
-    const canvas = document.getElementById("canvasStencil");
+function generateStencil(pointId) {
+    const canvas = document.getElementById(`canvasStencil-${pointId}`);
     if (!canvas) {
         console.error('Canvas not found');
         return;
@@ -932,22 +930,29 @@ function generateStencil() {
  
     ctx.scale(2, 2); // skaliert das bild (für höhere auflösung)
 
+    if (pointId == 'a') {
+        generateStencil2D(canvas, ctx, pointA);
+    }
+    if (pointId == 'b') {
+        generateStencil2D(canvas, ctx, pointB);
+    }
+}
 
+function generateStencil2D(canvas, ctx, pointId){
     const centerX = canvas.width / 4;
     const centerY = canvas.height / 4;
     const offset = 80; // Abstand zwischen den Punkten
 
-
     const points = [
-        { x: pointA.x - 1, y: pointA.y - 1 },
-        { x: pointA.x, y: pointA.y - 1 },
-        { x: pointA.x + 1, y: pointA.y - 1 },
-        { x: pointA.x - 1, y: pointA.y },
-        { x: pointA.x, y: pointA.y }, // Mittelpunkt
-        { x: pointA.x + 1, y: pointA.y },
-        { x: pointA.x - 1, y: pointA.y + 1 },
-        { x: pointA.x, y: pointA.y + 1 },
-        { x: pointA.x + 1, y: pointA.y + 1 }
+        { x: pointId.x - 1, y: pointId.y - 1 },
+        { x: pointId.x, y: pointId.y - 1 },
+        { x: pointId.x + 1, y: pointId.y - 1 },
+        { x: pointId.x - 1, y: pointId.y },
+        { x: pointId.x, y: pointId.y }, // Mittelpunkt
+        { x: pointId.x + 1, y: pointId.y },
+        { x: pointId.x - 1, y: pointId.y + 1 },
+        { x: pointId.x, y: pointId.y + 1 },
+        { x: pointId.x + 1, y: pointId.y + 1 }
     ];
 
     // Farben und Stile anpassen
@@ -965,14 +970,14 @@ function generateStencil() {
     ctx.strokeStyle = lineColor;
     for (let i = 0; i < points.length; i++) {
         const point = points[i];
-        const px = centerX + (point.x - pointA.x) * offset;
-        const py = centerY + (point.y - pointA.y) * offset;
+        const px = centerX + (point.x - pointId.x) * offset;
+        const py = centerY + (point.y - pointId.y) * offset;
 
         // Horizontale Verbindungen
         if (i % 3 !== 2) { // Keine Verbindung rechts vom letzten Punkt in einer Zeile
             const rightPoint = points[i + 1];
-            const pxRight = centerX + (rightPoint.x - pointA.x) * offset;
-            const pyRight = centerY + (rightPoint.y - pointA.y) * offset;
+            const pxRight = centerX + (rightPoint.x - pointId.x) * offset;
+            const pyRight = centerY + (rightPoint.y - pointId.y) * offset;
             ctx.beginPath();
             ctx.moveTo(px, py);
             ctx.lineTo(pxRight, pyRight);
@@ -982,8 +987,8 @@ function generateStencil() {
         // Vertikale Verbindungen
         if (i < 6) { // Keine Verbindung unterhalb der letzten Zeile
             const bottomPoint = points[i + 3];
-            const pxBottom = centerX + (bottomPoint.x - pointA.x) * offset;
-            const pyBottom = centerY + (bottomPoint.y - pointA.y) * offset;
+            const pxBottom = centerX + (bottomPoint.x - pointId.x) * offset;
+            const pyBottom = centerY + (bottomPoint.y - pointId.y) * offset;
             ctx.beginPath();
             ctx.moveTo(px, py);
             ctx.lineTo(pxBottom, pyBottom);
@@ -993,8 +998,8 @@ function generateStencil() {
 
     // Zeichne Punkte und Koordinaten
     points.forEach((point) => {
-        const px = centerX + (point.x - pointA.x) * offset;
-        const py = centerY + (point.y - pointA.y) * offset;
+        const px = centerX + (point.x - pointId.x) * offset;
+        const py = centerY + (point.y - pointId.y) * offset;
 
         // Zeichne Kreis
         ctx.beginPath();
@@ -1008,5 +1013,4 @@ function generateStencil() {
         
     });
 
-    
 }
