@@ -199,15 +199,17 @@
             </div>
 
             <!--------------------------------------------------------------------------- stencil ----------------------------------------------------------------------------->
-            <div id="stencil" class="stencil">
+            <div id="stencilContainer" class="stencil">
                 <div class="input-section">
                     <span class="label">stencil</span>
-                    <div id="stencil">
+                    <div id="stencilButton">
                         <button onclick="generateStencil()">generate</button>
                     </div>
                 </div>
                 <div class="output">
-                    <div id="resultStencil" class="resultStencil"></div>
+                    <div id="resultStencil" class="resultStencil">
+                        <canvas id="canvasStencil" width="500" height="500" style="width: 250px; height: 250px;"></canvas>
+                    </div>
                 </div>
             </div>
     </div>

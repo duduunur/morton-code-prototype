@@ -887,10 +887,6 @@ function subtraction() {
     displayCoordinatesAndMorton(pointA, dimension, layout, bitLength, 'resultSubtraction');
     displayCoordinatesAndMorton(pointB, dimension, layout, bitLength, 'resultSubtraction');
 
-    const finalResult = document.createElement("div");
-    finalResult.innerHTML = `<p><strong>Final Morton Code:</strong> ${colorizeBits(formatBinary(mortonCode))} (decimal: ${mortonCode.toString()})</p>`;
-    resultContainer.appendChild(finalResult);
-
     document.getElementById(`resultSubtraction`).innerHTML += 
         `<p><strong>a - b = ${diff.toString(2)} (decimal: ${diff}) </strong></p>`;
 }
@@ -913,7 +909,104 @@ function checkCoordinatesForSubtraction() {
 
 //--------------------------------------------------------- stencil -------------------------------------------------------------
 
-
+// Funktion, um den 9-Punkte-Stencil zu zeichnen
 function generateStencil() {
 
+
+    const canvas = document.getElementById("canvasStencil");
+    if (!canvas) {
+        console.error('Canvas not found');
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+        console.error('Canvas context not found');
+        return;
+    }
+
+
+    // Rücksetzen aller Transformationen und Inhalte
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // Rücksetzt die Skalierung und Verschiebung
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Löscht den Canvas-Inhalt
+ 
+    ctx.scale(2, 2); // skaliert das bild (für höhere auflösung)
+
+
+    const centerX = canvas.width / 4;
+    const centerY = canvas.height / 4;
+    const offset = 80; // Abstand zwischen den Punkten
+
+
+    const points = [
+        { x: pointA.x - 1, y: pointA.y - 1 },
+        { x: pointA.x, y: pointA.y - 1 },
+        { x: pointA.x + 1, y: pointA.y - 1 },
+        { x: pointA.x - 1, y: pointA.y },
+        { x: pointA.x, y: pointA.y }, // Mittelpunkt
+        { x: pointA.x + 1, y: pointA.y },
+        { x: pointA.x - 1, y: pointA.y + 1 },
+        { x: pointA.x, y: pointA.y + 1 },
+        { x: pointA.x + 1, y: pointA.y + 1 }
+    ];
+
+    // Farben und Stile anpassen
+    const lineColor = '#000000'; // Schwarz
+    const circleColor = '#90EE90'; // Hellgrün
+    const textColor = '#000000'; // Schwarz
+
+    // Zeichne Punkte und Verbindungen
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = '12px Helvetica';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Verbindungen zeichnen
+    ctx.strokeStyle = lineColor;
+    for (let i = 0; i < points.length; i++) {
+        const point = points[i];
+        const px = centerX + (point.x - pointA.x) * offset;
+        const py = centerY + (point.y - pointA.y) * offset;
+
+        // Horizontale Verbindungen
+        if (i % 3 !== 2) { // Keine Verbindung rechts vom letzten Punkt in einer Zeile
+            const rightPoint = points[i + 1];
+            const pxRight = centerX + (rightPoint.x - pointA.x) * offset;
+            const pyRight = centerY + (rightPoint.y - pointA.y) * offset;
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(pxRight, pyRight);
+            ctx.stroke();
+        }
+
+        // Vertikale Verbindungen
+        if (i < 6) { // Keine Verbindung unterhalb der letzten Zeile
+            const bottomPoint = points[i + 3];
+            const pxBottom = centerX + (bottomPoint.x - pointA.x) * offset;
+            const pyBottom = centerY + (bottomPoint.y - pointA.y) * offset;
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(pxBottom, pyBottom);
+            ctx.stroke();
+        }
+    }
+
+    // Zeichne Punkte und Koordinaten
+    points.forEach((point) => {
+        const px = centerX + (point.x - pointA.x) * offset;
+        const py = centerY + (point.y - pointA.y) * offset;
+
+        // Zeichne Kreis
+        ctx.beginPath();
+        ctx.arc(px, py, 12, 0, 2 * Math.PI);
+        ctx.fillStyle = circleColor;
+        ctx.fill();
+
+        // Zeichne Koordinaten
+        ctx.fillStyle = textColor;
+        ctx.fillText(`(${point.x}, ${point.y})`, px, py + 25);
+        
+    });
+
+    
 }
