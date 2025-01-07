@@ -241,6 +241,7 @@ function calculateMortonCode(pointId) {
 
 function interleaveForLoop(coords, bitLength, layout, pointId) {
     let mortonCode = BigInt(0);
+    console.log(coords)
     const bitsPerCoord = parseInt(bitLength / coords.length); 
     const bitsMortonCode = bitsPerCoord * coords.length;
     //console.log(layout);
@@ -474,6 +475,7 @@ function splitBy2(a, bitLength) {
         return { result: x, steps };
 
     } else {
+        console.log(bitLength)
         console.log("Bitlänge ungültig");
         return { result: 0, steps };
     } 
@@ -968,7 +970,7 @@ function generateStencil2D(canvas, ctx, pointId){
 
     // Farben und Stile anpassen
     const lineColor = '#000000'; // Schwarz
-    const circleColor = '#90EE90'; // Hellgrün
+    const circleColor = '#000000'; // schwarz
     const textColor = '#000000'; // Schwarz
 
     // Zeichne Punkte und Verbindungen
@@ -1013,7 +1015,7 @@ function generateStencil2D(canvas, ctx, pointId){
 
         // Zeichne Kreis
         ctx.beginPath();
-        ctx.arc(px, py, 12, 0, 2 * Math.PI);
+        ctx.arc(px, py, 8, 0, 2 * Math.PI);
         ctx.fillStyle = circleColor;
         ctx.fill();
 
@@ -1023,6 +1025,9 @@ function generateStencil2D(canvas, ctx, pointId){
         
     });
 
+
+    // Morton-Codes für 2D-Stencil ausgeben
+    outputMortonCodes(points, pointId);
 }
 
 
@@ -1059,6 +1064,8 @@ function generateStencil3D(canvas, ctx, pointId) {
             { x: pointId.x, y: pointId.y + 1 },
             { x: pointId.x + 1, y: pointId.y + 1 }
         ];
+
+        //outputMortonCodes(points, pointId);
 
         // Farben und Stile anpassen
         const lineColor = '#000000'; // Schwarz
@@ -1128,3 +1135,20 @@ function generateStencil3D(canvas, ctx, pointId) {
      ctx.setLineDash([]); // Rücksetzen auf durchgehende Linie
 }
 
+// Funktion, um die Morton-Codes der Punkte des Stencils auszugeben
+function outputMortonCodes(points, pointId) {
+    document.getElementById(`stencilResult-${pointId.id}`).innerHTML = '';
+    const bitLength = parseInt(document.getElementById("bitLength").value);
+    const dimension = parseInt(document.getElementById("dimension").value);
+    console.log(`Morton-Codes für Stencil-Punkte (${pointId.id}):`);
+    points.forEach((point) => {
+        const { mortonCode, steps } = dimension === 2
+        ? mortonEncodeMagicBits2D(point.x, point.y, bitLength)
+        : mortonEncodeMagicBits3D(point.x, point.y, point.z, bitLength);
+        console.log(`Point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2)}`);
+
+        document.getElementById(`stencilResult-${pointId.id}`).innerHTML += 
+        `point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2)} (decimal:${mortonCode}) <br><br>`;
+    });
+}
+   
