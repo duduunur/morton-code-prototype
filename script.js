@@ -930,16 +930,27 @@ function generateStencil(pointId) {
  
     ctx.scale(2, 2); // skaliert das bild (für höhere auflösung)
 
+    const dimension = BigInt(document.getElementById("dimension").value);
+
     if (pointId == 'a') {
-        generateStencil2D(canvas, ctx, pointA);
+        if (dimension == 2){
+            generateStencil2D(canvas, ctx, pointA);
+        } else if (dimension == 3){
+            generateStencil3D(canvas, ctx, pointA);
+        }
     }
+
     if (pointId == 'b') {
-        generateStencil2D(canvas, ctx, pointB);
+        if (dimension == 2){
+            generateStencil2D(canvas, ctx, pointB);
+        } else if (dimension == 3){
+            generateStencil3D(canvas, ctx, pointB);
+        }
     }
 }
 
 function generateStencil2D(canvas, ctx, pointId){
-    const centerX = canvas.width / 4;
+    const centerX = 150;
     const centerY = canvas.height / 4;
     const offset = 80; // Abstand zwischen den Punkten
 
@@ -961,8 +972,7 @@ function generateStencil2D(canvas, ctx, pointId){
     const textColor = '#000000'; // Schwarz
 
     // Zeichne Punkte und Verbindungen
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.font = '12px Helvetica';
+    ctx.font = '9px Helvetica';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
@@ -1014,3 +1024,107 @@ function generateStencil2D(canvas, ctx, pointId){
     });
 
 }
+
+
+
+function generateStencil3D(canvas, ctx, pointId) {
+    const centerX = 130;
+    const centerY = 195;
+    const offset = 90; // Abstand zwischen den Punkten
+    const layerOffsetX = 250; // Abstand zwischen den Lagen
+    const layerOffsetY = 40;
+
+    // Punkte in drei Lagen definieren
+    const layers = [
+        pointId.z - 1,
+        pointId.z,
+        pointId.z + 1
+    ];
+
+    let layerCenters = [];
+
+    layers.forEach((z, layerIndex) => {
+        const layerCenterX = centerX + layerIndex * layerOffsetX;
+        const layerCenterY = centerY - layerIndex * layerOffsetY;
+        layerCenters.push({ x: layerCenterX, y: layerCenterY }); // Speichere die Mittelpunkte der Lagen
+
+        const points = [
+            { x: pointId.x - 1, y: pointId.y - 1 },
+            { x: pointId.x, y: pointId.y - 1 },
+            { x: pointId.x + 1, y: pointId.y - 1 },
+            { x: pointId.x - 1, y: pointId.y },
+            { x: pointId.x, y: pointId.y }, // Mittelpunkt
+            { x: pointId.x + 1, y: pointId.y },
+            { x: pointId.x - 1, y: pointId.y + 1 },
+            { x: pointId.x, y: pointId.y + 1 },
+            { x: pointId.x + 1, y: pointId.y + 1 }
+        ];
+
+        // Farben und Stile anpassen
+        const lineColor = '#000000'; // Schwarz
+        const circleColor = '#000'; // schwarz
+        const textColor = '#000000'; // Schwarz
+
+        ctx.font = '9px Helvetica';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // Verbindungen zeichnen
+        ctx.strokeStyle = lineColor;
+        points.forEach((point, i) => {
+            const px = layerCenterX + (point.x - pointId.x) * offset;
+            const py = layerCenterY + (point.y - pointId.y) * offset;
+
+            // Horizontale Verbindungen
+            if (i % 3 !== 2) {
+                const rightPoint = points[i + 1];
+                const pxRight = layerCenterX + (rightPoint.x - pointId.x) * offset;
+                const pyRight = layerCenterY + (rightPoint.y - pointId.y) * offset;
+                ctx.beginPath();
+                ctx.moveTo(px, py);
+                ctx.lineTo(pxRight, pyRight);
+                ctx.stroke();
+            }
+
+            // Vertikale Verbindungen
+            if (i < 6) {
+                const bottomPoint = points[i + 3];
+                const pxBottom = layerCenterX + (bottomPoint.x - pointId.x) * offset;
+                const pyBottom = layerCenterY + (bottomPoint.y - pointId.y) * offset;
+                ctx.beginPath();
+                ctx.moveTo(px, py);
+                ctx.lineTo(pxBottom, pyBottom);
+                ctx.stroke();
+            }
+        });
+
+
+        // Punkte und Koordinaten zeichnen
+        points.forEach((point) => {
+            const px = layerCenterX + (point.x - pointId.x) * offset;
+            const py = layerCenterY + (point.y - pointId.y) * offset;
+
+            // Kreis zeichnen
+            ctx.beginPath();
+            ctx.arc(px, py, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = circleColor;
+            ctx.fill();
+
+            // Koordinaten zeichnen
+            ctx.fillStyle = textColor;
+            ctx.fillText(`(${point.x}, ${point.y}, ${z})`, px, py + 25);
+        });
+    });
+
+     // Zeichne Linie vom Mittelpunkt der ersten Lage zum Mittelpunkt der letzten Lage
+     const firstCenter = layerCenters[0];
+     const lastCenter = layerCenters[2];
+     ctx.strokeStyle = '#000'; 
+     ctx.setLineDash([5, 5]); // Linie gestrichelt: 10 Pixel Linie, 5 Pixel Lücke
+     ctx.beginPath();
+     ctx.moveTo(firstCenter.x, firstCenter.y);
+     ctx.lineTo(lastCenter.x, lastCenter.y);
+     ctx.stroke();
+     ctx.setLineDash([]); // Rücksetzen auf durchgehende Linie
+}
+
