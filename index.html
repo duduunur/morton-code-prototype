@@ -26,7 +26,7 @@
             <div class="select-group">
                 <label for="dimension">dimension:</label>
                 <select id="dimension"
-                    onchange="toggleCoordinateFields('a'); toggleCoordinateFields('b'); displayMaxCoord();">
+                    onchange="toggleCoordinateFields('a'); toggleCoordinateFields('b'); displayMaxCoord(); handleDimensionOrBitLengthChange();">
                     <option value="2" selected>2D</option>
                     <option value="3">3D</option>
                 </select>
@@ -35,7 +35,7 @@
             <div class="select-group hidden" id="layoutContainer">
                 <label for="layout" id="layoutLabel">layout:</label>
                 <select id="layout"
-                    onchange="toggleCoordinateFields('a'); toggleCoordinateFields('b'); displayMaxCoord();">
+                    onchange="toggleCoordinateFields('a'); toggleCoordinateFields('b'); displayMaxCoord(); handleDimensionOrBitLengthChange();">
                     <option value="xyz">x, y, z</option>
                     <option value="zyx">z, y, x</option>
                 </select>

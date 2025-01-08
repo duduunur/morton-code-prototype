@@ -750,8 +750,34 @@ function closeCode(codeContainerId, HeaderId, resultContainerId, buttonId) {
     codeContainer.innerHTML = ''; // Code entfernen
 }
 
+function handleDimensionOrBitLengthChange() {
+    // Finde alle Code-Container, Header und Result-Container
+    const codeContainers = document.querySelectorAll('.code-container');
+    const headers = document.querySelectorAll('.header-section');
+    const resultContainers = document.querySelectorAll('.result');
+    const buttons = document.querySelectorAll('.show-code-btn');
 
-// ------------------------------------------------------------------- Addition -----------------------------------------------------------------------
+    codeContainers.forEach((codeContainer, index) => {
+        // Überprüfen, ob der Container sichtbar ist
+        if (!codeContainer.classList.contains("hidden")) {
+            const headerId = headers[index]?.id;
+            const resultId = resultContainers[index]?.id;
+            const buttonId = buttons[index=== 0 ? 1 : 0]?.id;
+            if (headerId && resultId && buttonId) {
+                // Rufe closeCode mit den entsprechenden IDs auf
+                console.log("rufe closecode(" + codeContainer.id, headerId, resultId, buttonId + "auf" )
+                closeCode(codeContainer.id, headerId, resultId, buttonId);
+            }
+        }
+    });
+}
+
+// Ergänze die Event-Listener für die Dropdowns
+document.getElementById('bitLength').addEventListener('change', handleDimensionOrBitLengthChange);
+document.getElementById('dimension').addEventListener('change', handleDimensionOrBitLengthChange);
+
+
+// --------------------------------------------------------- Addition und Subtraktion -----------------------------------------------------------------------
 
 function displayCoordinatesAndMorton(point, dimension, layout, bitLength, resultContainerId) {
     const coords = [point.x, point.y, point.z].slice(0, dimension === 3 ? 3 : 2);
