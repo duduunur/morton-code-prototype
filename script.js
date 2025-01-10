@@ -17,6 +17,8 @@ const pointB = {
     mortonCode: null
 };
 
+// --------------------------------------------------- handle settings and update page ---------------------------------------------------
+
 function displayMaxCoord() {
     const bitLength = BigInt(document.getElementById("bitLength").value);
     const dimension = BigInt(document.getElementById("dimension").value);
@@ -43,8 +45,8 @@ function clearContainers() {
     document.getElementById(`subtractionError`).innerHTML = '';
 
     // Point Container höhe "zurücksetzen"
-    document.getElementById(`point-a`).style.minHeight = '250px';
-    document.getElementById(`point-b`).style.minHeight = '250px';
+    document.getElementById(`point-a`).style.height = '250px';
+    document.getElementById(`point-b`).style.height = '250px';
     document.getElementById(`point-a`).style.resize = 'none';
     document.getElementById(`point-b`).style.resize = 'none';
 }
@@ -115,6 +117,7 @@ function checkCoordinateLimits(pointId) {
 }
 
 function toggleCoordinateFields(pointId) {
+    console.log("toggle aufgerufen")
     const dimension = document.getElementById("dimension").value;
     const layout = document.getElementById("layout");
     const layoutContainer = document.getElementById("layoutContainer");
@@ -187,6 +190,12 @@ function updateCoordinateInputOrder(layout, pointId) {
     }
 }
 
+function handleSettingsChange() {
+    toggleCoordinateFields('a');
+    toggleCoordinateFields('b');
+    displayMaxCoord();
+    handleDimensionOrBitLengthChange();
+}
 
 // -------------------------------------------------- Calculate Morton Code --------------------------------------------------------------
 
