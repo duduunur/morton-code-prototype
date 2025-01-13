@@ -85,6 +85,7 @@ function checkCoordinateLimits(pointId) {
     const xInput = document.getElementById(`${pointId}-x`);
     const yInput = document.getElementById(`${pointId}-y`);
     const zInput = document.getElementById(`${pointId}-z`);
+    const zInputContainer = document.getElementById(`${pointId}-zInput`);
 
     const xError = document.getElementById(`${pointId}-xError`);
     const yError = document.getElementById(`${pointId}-yError`);
@@ -106,7 +107,7 @@ function checkCoordinateLimits(pointId) {
     }
 
     // Validate X
-    if (isInvalidCoordinate(x) || BigInt(x) > maxCoordinateValue) {
+    if (x == null || isInvalidCoordinate(x) || BigInt(x) > maxCoordinateValue) {
         xInput.classList.add('input-error');
         xError.textContent = "Enter an integer between 0 and "+ maxCoordinateValue;
         xError.style.display = "block";
@@ -118,7 +119,7 @@ function checkCoordinateLimits(pointId) {
     }
 
     // Validate Y
-    if (isInvalidCoordinate(y) || BigInt(y) > maxCoordinateValue) {
+    if (y == null || isInvalidCoordinate(y) || BigInt(y) > maxCoordinateValue) {
         yInput.classList.add('input-error');
         yError.textContent = "Enter an integer between 0 and "+ maxCoordinateValue;
         yError.style.display = "block";
@@ -130,8 +131,8 @@ function checkCoordinateLimits(pointId) {
     }
 
     // Validate Z (if present)
-    if (zInput && z !== null) {
-        if (isInvalidCoordinate(z) || BigInt(z) > maxCoordinateValue) {
+    if (!zInputContainer.classList.contains("hidden")) {
+        if (z == null || isInvalidCoordinate(z) || BigInt(z) > maxCoordinateValue) {
             zInput.classList.add('input-error');
             zError.textContent = "Enter an integer between 0 and "+ maxCoordinateValue;
             zError.style.display = "block";
