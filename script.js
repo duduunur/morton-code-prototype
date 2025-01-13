@@ -28,7 +28,6 @@ function displayMaxCoord() {
 
     maxCoord.innerText = `Maximum Coordinate Value: ${maxCoordinateValue.toString()}`;
 
-    clearContainers();
     checkCoordinateLimits('a');
     checkCoordinateLimits('b');
 }
@@ -45,8 +44,8 @@ function clearContainers() {
     document.getElementById(`subtractionError`).innerHTML = '';
 
     // Point Container höhe "zurücksetzen"
-    document.getElementById(`point-a`).style.height = '250px';
-    document.getElementById(`point-b`).style.height = '250px';
+    document.getElementById(`point-a`).style.removeProperty('height');
+    document.getElementById(`point-b`).style.removeProperty('height');
     document.getElementById(`point-a`).style.resize = 'none';
     document.getElementById(`point-b`).style.resize = 'none';
 }
@@ -191,6 +190,7 @@ function updateCoordinateInputOrder(layout, pointId) {
 }
 
 function handleSettingsChange() {
+    clearContainers();
     toggleCoordinateFields('a');
     toggleCoordinateFields('b');
     displayMaxCoord();
