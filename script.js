@@ -20,30 +20,48 @@ const pointB = {
 // --------------------------------------------------- handle settings and update page ---------------------------------------------------
 
 function displayMaxCoord() {
+    // get bit length, dimension and maxCoord element
     const bitLength = BigInt(document.getElementById("bitLength").value);
     const dimension = BigInt(document.getElementById("dimension").value);
     const maxCoord = document.getElementById("maxCoord");
 
+    //calculate maxCoord
     maxCoordinateValue = (1n << (bitLength / dimension)) - 1n; //1n << x verschiebt die Zahl 1 um x Bit nach links, was äquivalent zu 2^x ist 
 
+    // display max coord
     maxCoord.innerText = `Maximum Coordinate Value: ${maxCoordinateValue.toString()}`;
-
-    checkCoordinateLimits('a');
-    checkCoordinateLimits('b');
 }
 
 function clearContainers() {
-    // Ergebnis Container leeren
+    // Ergebnis Container und Error container leeren
     document.getElementById(`a-resultForLoop`).innerHTML = '';
     document.getElementById(`a-resultMagicBits`).innerHTML = '';
     document.getElementById(`b-resultForLoop`).innerHTML = '';
     document.getElementById(`b-resultMagicBits`).innerHTML = '';
+
+    document.getElementById(`a-xError`).innerHTML = '';
+    document.getElementById(`a-x`).classList.remove('input-error');
+    document.getElementById(`a-yError`).innerHTML = '';
+    document.getElementById(`a-y`).classList.remove('input-error');
+    document.getElementById(`a-zError`).innerHTML = '';
+    document.getElementById(`a-z`).classList.remove('input-error');
+
+    document.getElementById(`b-xError`).innerHTML = '';
+    document.getElementById(`b-x`).classList.remove('input-error');
+    document.getElementById(`b-yError`).innerHTML = '';
+    document.getElementById(`b-y`).classList.remove('input-error');
+    document.getElementById(`b-zError`).innerHTML = '';
+    document.getElementById(`b-z`).classList.remove('input-error');
+
+    clearStencil('a');
+    clearStencil('b');
+
     document.getElementById(`resultAddition`).innerHTML = '';
     document.getElementById(`resultSubtraction`).innerHTML = '';
     document.getElementById(`additionError`).innerHTML = '';
     document.getElementById(`subtractionError`).innerHTML = '';
 
-    // Point Container höhe "zurücksetzen"
+    // Point Container höhe zurücksetzen und nicht mehr resizable 
     document.getElementById(`point-a`).style.removeProperty('height');
     document.getElementById(`point-b`).style.removeProperty('height');
     document.getElementById(`point-a`).style.resize = 'none';
@@ -59,7 +77,7 @@ function checkCoordinateLimits(pointId) {
     const yError = document.getElementById(`${pointId}-yError`);
     const zError = document.getElementById(`${pointId}-zError`);
 
-    const x = xInput && xInput.value ? xInput.value : null;
+    const x = xInput && xInput.value ? xInput.value : null; //brauche ich das? 
     const y = yInput && yInput.value ? yInput.value : null;
     const z = zInput && zInput.value ? zInput.value : null;
 
@@ -76,24 +94,24 @@ function checkCoordinateLimits(pointId) {
 
     // Validate X
     if (isInvalidCoordinate(x) || BigInt(x) > maxCoordinateValue) {
-        xInput.style.border = "1px solid red";
+        xInput.classList.add('input-error');
         xError.textContent = "Enter an integer between 0 and "+ maxCoordinateValue;
         xError.style.display = "block";
         hasError = true;
     } else {
-        xInput.style.border = "";
+        xInput.classList.remove('input-error');
         xError.textContent = "";
         xError.style.display = "none";
     }
 
     // Validate Y
     if (isInvalidCoordinate(y) || BigInt(y) > maxCoordinateValue) {
-        yInput.style.border = "1px solid red";
+        yInput.classList.add('input-error');
         yError.textContent = "Enter an integer between 0 and "+ maxCoordinateValue;
         yError.style.display = "block";
         hasError = true;
     } else {
-        yInput.style.border = "";
+        yInput.classList.remove('input-error');
         yError.textContent = "";
         yError.style.display = "none";
     }
@@ -101,12 +119,12 @@ function checkCoordinateLimits(pointId) {
     // Validate Z (if present)
     if (zInput && z !== null) {
         if (isInvalidCoordinate(z) || BigInt(z) > maxCoordinateValue) {
-            zInput.style.border = "1px solid red";
+            zInput.classList.add('input-error');
             zError.textContent = "Enter an integer between 0 and "+ maxCoordinateValue;
             zError.style.display = "block";
             hasError = true;
         } else {
-            zInput.style.border = "";
+            zInput.classList.remove('input-error');
             zError.textContent = "";
             zError.style.display = "none";
         }
@@ -197,12 +215,34 @@ function handleSettingsChange() {
     handleDimensionOrBitLengthChange();
 }
 
+function clearStencil(pointId) {
+    const canvas = document.getElementById(`canvasStencil-${pointId}`);
+    const resultDiv = document.getElementById(`stencilResult-${pointId}`);
+    
+    // Canvas leeren
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    
+    // Inhalt des resultDiv leeren
+    if (resultDiv) {
+        resultDiv.innerHTML = '';
+    }
+}
+
 // -------------------------------------------------- Calculate Morton Code --------------------------------------------------------------
 
 function calculateMortonCode(pointId) {
     // Ergebnisse zurücksetzen
     document.getElementById(`${pointId}-resultForLoop`).innerHTML = '';
     document.getElementById(`${pointId}-resultMagicBits`).innerHTML = '';
+
+    document.getElementById(`point-${pointId}`).style.removeProperty('height');
+    document.getElementById(`point-${pointId}`).style.resize = 'none';
+
+    clearStencil(pointId) 
+
     document.getElementById(`resultAddition`).innerHTML = '';
     document.getElementById(`resultSubtraction`).innerHTML = '';
     document.getElementById(`additionError`).innerHTML = '';
@@ -243,6 +283,8 @@ function calculateMortonCode(pointId) {
     point.y = y;
     point.z = dimension === "3" ? z : null; // Z nur speichern, wenn Dimension 3
     point.mortonCode = mortonCode;
+
+    generateStencil(`${pointId}`);
 }
 
 // ---------------------------------------------- Interleave mit For-Schleife ----------------------------------------------------------
@@ -948,6 +990,7 @@ function checkCoordinatesForSubtraction() {
 
 // Funktion, um den 9-Punkte-Stencil zu zeichnen
 function generateStencil(pointId) {
+    console.log("generatestencil aufgerufen")
     const canvas = document.getElementById(`canvasStencil-${pointId}`);
     if (!canvas) {
         console.error('Canvas not found');
