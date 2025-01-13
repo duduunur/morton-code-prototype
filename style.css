@@ -103,6 +103,15 @@ p {
     overflow: hidden;
 }
 
+.stencil {
+    height: 250px;
+    overflow: hidden;
+}
+
+.stencil.expanded {
+    height: auto; /* Automatische Höhe, abhängig vom Inhalt */
+}
+
 .point {
     resize: none;
 }

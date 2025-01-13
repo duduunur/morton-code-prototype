@@ -216,6 +216,8 @@ function handleSettingsChange() {
 }
 
 function clearStencil(pointId) {
+    document.getElementById(`stencilContainer-${pointId}`).classList.remove('expanded');
+
     const canvas = document.getElementById(`canvasStencil-${pointId}`);
     const resultDiv = document.getElementById(`stencilResult-${pointId}`);
     
@@ -990,6 +992,8 @@ function checkCoordinatesForSubtraction() {
 
 // Funktion, um den 9-Punkte-Stencil zu zeichnen
 function generateStencil(pointId) {
+    document.getElementById(`stencilContainer-${pointId}`).classList.add('expanded');
+
     console.log("generatestencil aufgerufen")
     const canvas = document.getElementById(`canvasStencil-${pointId}`);
     if (!canvas) {
