@@ -39,6 +39,9 @@ function clearContainers() {
     document.getElementById(`b-resultForLoop`).innerHTML = '';
     document.getElementById(`b-resultMagicBits`).innerHTML = '';
 
+    clearCoordinateInputs('a');
+    clearCoordinateInputs('b');
+
     document.getElementById(`a-xError`).innerHTML = '';
     document.getElementById(`a-x`).classList.remove('input-error');
     document.getElementById(`a-yError`).innerHTML = '';
@@ -66,6 +69,16 @@ function clearContainers() {
     document.getElementById(`point-b`).style.removeProperty('height');
     document.getElementById(`point-a`).style.resize = 'none';
     document.getElementById(`point-b`).style.resize = 'none';
+}
+
+function clearCoordinateInputs(pointId) {
+    console.log("clearCoordinateinputs aufgerufen für point" + pointId)
+    document.getElementById(`${pointId}-x`).value = "";
+    document.getElementById(`${pointId}-y`).value = "";
+    const zInput = document.getElementById(`${pointId}-z`);
+    if (zInput) {
+        zInput.value = "";
+    }
 }
 
 function checkCoordinateLimits(pointId) {
@@ -142,8 +155,6 @@ function toggleCoordinateFields(pointId) {
     const zLabel = document.getElementById(`${pointId}-zLabel`);
     const zError = document.getElementById(`${pointId}-zError`);
 
-    clearCoordinateInputs(pointId);
-
     if (dimension === '3') {
         zLabel.classList.remove('hidden');
         zInput.classList.remove('hidden');
@@ -159,16 +170,6 @@ function toggleCoordinateFields(pointId) {
 
     // Reihenfolge der Eingabefelder (in Abhängigkeit vom Layout) aktualisieren 
     updateCoordinateInputOrder(layout.value, pointId);
-}
-
-
-function clearCoordinateInputs(pointId) {
-    document.getElementById(`${pointId}-x`).value = "";
-    document.getElementById(`${pointId}-y`).value = "";
-    const zInput = document.getElementById(`${pointId}-z`);
-    if (zInput) {
-        zInput.value = "";
-    }
 }
 
 
@@ -209,10 +210,13 @@ function updateCoordinateInputOrder(layout, pointId) {
 
 function handleSettingsChange() {
     clearContainers();
-    toggleCoordinateFields('a');
+    toggleCoordinateFields('a'); 
     toggleCoordinateFields('b');
     displayMaxCoord();
-    handleDimensionOrBitLengthChange();
+    closeCode('a-forLoopCodeContainer', 'a-magicBitsHeader', 'a-show-code-btn', 'a-resultMagicBits'); // to-do: prüfen, ob offen 
+    closeCode('a-magicBitsCodeContainer', 'a-forLoopHeader','a-show-code-btn2','a-resultForLoop');// to-do: prüfen, ob offen 
+    closeCode('b-forLoopCodeContainer', 'b-magicBitsHeader', 'b-show-code-btn', 'b-resultMagicBits'); // to-do: prüfen, ob offen 
+    closeCode('b-magicBitsCodeContainer', 'b-forLoopHeader','b-show-code-btn2','b-resultForLoop');// to-do: prüfen, ob offen 
 }
 
 function clearStencil(pointId) {
@@ -267,6 +271,8 @@ function calculateMortonCode(pointId) {
     const x = parseInt(document.getElementById(`${pointId}-x`).value);
     const y = parseInt(document.getElementById(`${pointId}-y`).value);
     const z = dimension === "3" ? (parseInt(document.getElementById(`${pointId}-z`).value)) : 0;
+
+    clearCoordinateInputs(pointId);
 
     let coords = [];
     if (dimension === "3") {
@@ -756,7 +762,7 @@ function encodeMagicBits(x, y) {
 `;
 
 
-function toggleCode(codeContainerId, HeaderId, buttonId, resultContainerId, code) {
+function showSourceCode(codeContainerId, HeaderId, buttonId, resultContainerId, code) {
     const codeContainer = document.getElementById(codeContainerId);
     const resultContainer = document.getElementById(resultContainerId);
     const headerContainer = document.getElementById(HeaderId);
@@ -774,9 +780,15 @@ function toggleCode(codeContainerId, HeaderId, buttonId, resultContainerId, code
         }
     }    
 
+    // make source code container visible 
     codeContainer.classList.remove("hidden");
+
+    // hide header, result and show source code button 
     headerContainer.classList.add("hidden");
     resultContainer.classList.add("hidden");
+    button.classList.add("hidden");
+
+    // fill the source code container
     codeContainer.innerHTML = `
         <button class="close-btn" onclick="closeCode('${codeContainerId}', '${HeaderId}', '${resultContainerId}', '${buttonId}')">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1">
@@ -786,7 +798,6 @@ function toggleCode(codeContainerId, HeaderId, buttonId, resultContainerId, code
         </button>
         <pre><code class="language-javascript">${code}</code></pre>
         `;
-    button.classList.add("hidden");
     Prism.highlightAll();
 }
 
@@ -802,33 +813,6 @@ function closeCode(codeContainerId, HeaderId, resultContainerId, buttonId) {
     button.classList.remove("hidden");
     codeContainer.innerHTML = ''; // Code entfernen
 }
-
-function handleDimensionOrBitLengthChange() {
-    // Finde alle Code-Container, Header und Result-Container
-    const codeContainers = document.querySelectorAll('.code-container');
-    const headers = document.querySelectorAll('.header-section');
-    const resultContainers = document.querySelectorAll('.result');
-    const buttons = document.querySelectorAll('.show-code-btn');
-
-    codeContainers.forEach((codeContainer, index) => {
-        // Überprüfen, ob der Container sichtbar ist
-        if (!codeContainer.classList.contains("hidden")) {
-            const headerId = headers[index]?.id;
-            const resultId = resultContainers[index]?.id;
-            const buttonId = buttons[index=== 0 ? 1 : 0]?.id;
-            if (headerId && resultId && buttonId) {
-                // Rufe closeCode mit den entsprechenden IDs auf
-                console.log("rufe closecode(" + codeContainer.id, headerId, resultId, buttonId + "auf" )
-                closeCode(codeContainer.id, headerId, resultId, buttonId);
-            }
-        }
-    });
-}
-
-// Ergänze die Event-Listener für die Dropdowns
-document.getElementById('bitLength').addEventListener('change', handleDimensionOrBitLengthChange);
-document.getElementById('dimension').addEventListener('change', handleDimensionOrBitLengthChange);
-
 
 // --------------------------------------------------------- Addition und Subtraktion -----------------------------------------------------------------------
 
