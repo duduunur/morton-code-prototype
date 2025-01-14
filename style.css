@@ -17,6 +17,16 @@ h3 {
     padding: 5px;
 }
 
+h4 {
+    font-family: monospace;
+    font-size: 9.5pt;
+}
+
+h5 {
+    font-family: monospace;
+    font-size: 9pt;
+}
+
 label {
     font-weight: 380;
     margin-top: 5px;
