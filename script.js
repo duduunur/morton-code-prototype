@@ -1156,21 +1156,21 @@ function generateStencil2D(canvas, ctx, pointId){
     const offset = 80; // Abstand zwischen den Punkten
 
     const points = [
-        { x: pointId.x - 1, y: pointId.y - 1 },
-        { x: pointId.x, y: pointId.y - 1 },
-        { x: pointId.x + 1, y: pointId.y - 1 },
-        { x: pointId.x - 1, y: pointId.y },
-        { x: pointId.x, y: pointId.y }, // Mittelpunkt
-        { x: pointId.x + 1, y: pointId.y },
-        { x: pointId.x - 1, y: pointId.y + 1 },
-        { x: pointId.x, y: pointId.y + 1 },
-        { x: pointId.x + 1, y: pointId.y + 1 }
+        { x: pointId.x - 1, y: pointId.y + 1 }, // oben links
+        { x: pointId.x, y: pointId.y + 1 },     // oben mittig
+        { x: pointId.x + 1, y: pointId.y + 1 }, // oben rechts
+        { x: pointId.x - 1, y: pointId.y },     // mitte links
+        { x: pointId.x, y: pointId.y },         // mitte
+        { x: pointId.x + 1, y: pointId.y },     // mitte rechts
+        { x: pointId.x - 1, y: pointId.y - 1 }, // unten links
+        { x: pointId.x, y: pointId.y - 1 },     // unten mittig
+        { x: pointId.x + 1, y: pointId.y - 1 }  // unten rechts
     ];
 
     // Farben und Stile anpassen
     const lineColor = '#000000'; // Schwarz
     const circleColor = '#000000'; // schwarz
-    const centerColor = '#0C9329' // grün
+    const centerColor = '#0C9329'; // grün
     const textColor = '#000000'; // Schwarz
 
     // Zeichne Punkte und Verbindungen
@@ -1183,13 +1183,13 @@ function generateStencil2D(canvas, ctx, pointId){
     for (let i = 0; i < points.length; i++) {
         const point = points[i];
         const px = centerX + (point.x - pointId.x) * offset;
-        const py = centerY + (point.y - pointId.y) * offset;
+        const py = centerY - (point.y - pointId.y) * offset; // Y invertiert für korrekte Darstellung
 
         // Horizontale Verbindungen
         if (i % 3 !== 2) { // Keine Verbindung rechts vom letzten Punkt in einer Zeile
             const rightPoint = points[i + 1];
             const pxRight = centerX + (rightPoint.x - pointId.x) * offset;
-            const pyRight = centerY + (rightPoint.y - pointId.y) * offset;
+            const pyRight = centerY - (rightPoint.y - pointId.y) * offset;
             ctx.beginPath();
             ctx.moveTo(px, py);
             ctx.lineTo(pxRight, pyRight);
@@ -1200,7 +1200,7 @@ function generateStencil2D(canvas, ctx, pointId){
         if (i < 6) { // Keine Verbindung unterhalb der letzten Zeile
             const bottomPoint = points[i + 3];
             const pxBottom = centerX + (bottomPoint.x - pointId.x) * offset;
-            const pyBottom = centerY + (bottomPoint.y - pointId.y) * offset;
+            const pyBottom = centerY - (bottomPoint.y - pointId.y) * offset;
             ctx.beginPath();
             ctx.moveTo(px, py);
             ctx.lineTo(pxBottom, pyBottom);
@@ -1211,7 +1211,7 @@ function generateStencil2D(canvas, ctx, pointId){
     // Zeichne Punkte und Koordinaten
     points.forEach((point, index) => {
         const px = centerX + (point.x - pointId.x) * offset;
-        const py = centerY + (point.y - pointId.y) * offset;
+        const py = centerY - (point.y - pointId.y) * offset;
 
         // Zeichne Kreis
         ctx.beginPath();
@@ -1261,15 +1261,15 @@ function generateStencil3D(canvas, ctx, pointId) {
         layerCenters.push({ x: layerCenterX, y: layerCenterY }); // Speichere die Mittelpunkte der Lagen
 
         const points = [
-            { x: pointId.x - 1, y: pointId.y - 1 },
-            { x: pointId.x, y: pointId.y - 1 },
-            { x: pointId.x + 1, y: pointId.y - 1 },
-            { x: pointId.x - 1, y: pointId.y },
-            { x: pointId.x, y: pointId.y }, // Mittelpunkt
-            { x: pointId.x + 1, y: pointId.y },
-            { x: pointId.x - 1, y: pointId.y + 1 },
-            { x: pointId.x, y: pointId.y + 1 },
-            { x: pointId.x + 1, y: pointId.y + 1 }
+            { x: pointId.x - 1, y: pointId.y + 1 }, // oben links
+            { x: pointId.x, y: pointId.y + 1 },     // oben mittig
+            { x: pointId.x + 1, y: pointId.y + 1 }, // oben rechts
+            { x: pointId.x - 1, y: pointId.y },     // mitte links
+            { x: pointId.x, y: pointId.y },         // mitte
+            { x: pointId.x + 1, y: pointId.y },     // mitte rechts
+            { x: pointId.x - 1, y: pointId.y - 1 }, // unten links
+            { x: pointId.x, y: pointId.y - 1 },     // unten mittig
+            { x: pointId.x + 1, y: pointId.y - 1 }  // unten rechts
         ];
 
         // Farben und Stile anpassen
@@ -1286,13 +1286,13 @@ function generateStencil3D(canvas, ctx, pointId) {
         ctx.strokeStyle = lineColor;
         points.forEach((point, i) => {
             const px = layerCenterX + (point.x - pointId.x) * offset;
-            const py = layerCenterY + (point.y - pointId.y) * offset;
+            const py = layerCenterY - (point.y - pointId.y) * offset;
 
             // Horizontale Verbindungen
             if (i % 3 !== 2) {
                 const rightPoint = points[i + 1];
                 const pxRight = layerCenterX + (rightPoint.x - pointId.x) * offset;
-                const pyRight = layerCenterY + (rightPoint.y - pointId.y) * offset;
+                const pyRight = layerCenterY - (rightPoint.y - pointId.y) * offset;
                 ctx.beginPath();
                 ctx.moveTo(px, py);
                 ctx.lineTo(pxRight, pyRight);
@@ -1303,7 +1303,7 @@ function generateStencil3D(canvas, ctx, pointId) {
             if (i < 6) {
                 const bottomPoint = points[i + 3];
                 const pxBottom = layerCenterX + (bottomPoint.x - pointId.x) * offset;
-                const pyBottom = layerCenterY + (bottomPoint.y - pointId.y) * offset;
+                const pyBottom = layerCenterY - (bottomPoint.y - pointId.y) * offset;
                 ctx.beginPath();
                 ctx.moveTo(px, py);
                 ctx.lineTo(pxBottom, pyBottom);
@@ -1315,7 +1315,7 @@ function generateStencil3D(canvas, ctx, pointId) {
         // Punkte und Koordinaten zeichnen
         points.forEach((point, index) => {
             const px = layerCenterX + (point.x - pointId.x) * offset;
-            const py = layerCenterY + (point.y - pointId.y) * offset;
+            const py = layerCenterY - (point.y - pointId.y) * offset;
 
             // Kreis zeichnen
             ctx.beginPath();
