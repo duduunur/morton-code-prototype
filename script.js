@@ -876,6 +876,10 @@ function addition() {
         console.log("Morton code does not exist");
         return;
     }
+    if (!checkCoordinatesForAddition()) {
+        console.log("out of range");
+        return;
+    }
 
     const dimension = parseInt(document.getElementById("dimension").value);
     const bitLength = parseInt(document.getElementById("bitLength").value);
@@ -1062,6 +1066,20 @@ function subtraction() {
     // Ergebnisse und Schritte anzeigen
     resultElement.innerHTML += steps;
     resultElement.innerHTML += `<strong>result:<br><br>a - b = ${diff.toString(2).padStart(bitLength, '0')} (decimal: ${diff}) </strong>`;
+}
+
+function checkCoordinatesForAddition() {
+    const error = document.getElementById(`additionError`);
+
+    if (pointA.x + pointB.x > maxCoordinateValue || pointA.x + pointB.x > maxCoordinateValue || (pointA.z && pointB.z && pointA.z + pointB.z > maxCoordinateValue)) {
+        error.textContent = `Each coordinate sum must be within the allowed range! (max allowed: ${maxCoordinateValue})`;
+        error.style.display = "block";
+        return false;
+    }
+
+    error.textContent = "";
+    error.style.display = "none";
+    return true;
 }
 
 
