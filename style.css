@@ -57,16 +57,21 @@ p {
 /* Pfeil-Styling */
 .select-group:after {
     content: "⌄"; 
-    position: absolute;
-    right: 7px; 
-    bottom: 6px;
-    color: #4a4a4a; 
+    position: relative;
+    right: 12px; 
+    bottom: 2px;
+    color: #303030; 
     font-size: 12px;
+}
+
+#layoutContainer:after{ 
+    right: 65px; 
+    bottom: 2px;
 }
 
 .select-group select {
     margin-left: auto;
-    color: #4a4a4a;
+    color: #303030;
     border: none; 
     padding: 4px 24px 4px 8px; 
     border-radius: 10px;
@@ -81,7 +86,7 @@ p {
 }
 
 .settings {
-    height: 120px; 
+    height: 135px; 
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -177,6 +182,11 @@ input, select, button {
     font-size: 11px;
     outline: none; /* Entfernt den blauen Fokusrahmen */
     cursor: pointer;
+}
+
+#layout {
+    height: 45px; 
+    border-radius: 15px;
 }
 
 input {
@@ -326,4 +336,13 @@ input::-webkit-inner-spin-button {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.svg-container {
+    width: 35px;
+    height: 35px;
+    margin-left: 7px;
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    padding: 5px;
 }

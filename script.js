@@ -229,6 +229,16 @@ function handleSettingsChange() {
     closeCode('a-magicBitsCodeContainer', 'a-forLoopHeader','a-show-code-btn2','a-resultForLoop');// to-do: prüfen, ob offen 
     closeCode('b-forLoopCodeContainer', 'b-magicBitsHeader', 'b-show-code-btn', 'b-resultMagicBits'); // to-do: prüfen, ob offen 
     closeCode('b-magicBitsCodeContainer', 'b-forLoopHeader','b-show-code-btn2','b-resultForLoop');// to-do: prüfen, ob offen 
+
+    const layoutSelect = document.getElementById("layout");
+    const svgImage = document.getElementById("layoutImage");
+
+    // Das Bild je nach Auswahl ändern
+    if (layoutSelect.value === "xyz") {
+        svgImage.src = "xyz.svg";
+    } else {
+        svgImage.src = "zyx.svg";
+    }
 }
 
 function clearStencil(pointId) {
@@ -1240,8 +1250,15 @@ function generateStencil3D(canvas, ctx, pointId) {
     canvas.style.height = '350px'; 
 
     ctx.scale(2, 2); // skaliert das bild (für höhere auflösung)
+
+    const img = new Image();
+    img.src = 'xyz.svg';  // Ersetze mit deinem Bildpfad
+    img.onload = function () {
+        ctx.drawImage(img, 10, 10, 40, 40);
+    };
+
     const centerX = 170;
-    const centerY = 200;
+    const centerY = 210;
     const offset = 90; // Abstand zwischen den Punkten
     const layerOffsetX = 250; // Abstand zwischen den Lagen
     const layerOffsetY = 50;
