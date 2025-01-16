@@ -83,7 +83,7 @@ function clearContainers() {
 }
 
 function clearCoordinateInputs(pointId) {
-    console.log("clearCoordinateinputs aufgerufen für point" + pointId)
+    //console.log("clearCoordinateinputs aufgerufen für point" + pointId)
     document.getElementById(`${pointId}-x`).value = "";
     document.getElementById(`${pointId}-y`).value = "";
     const zInput = document.getElementById(`${pointId}-z`);
@@ -106,9 +106,9 @@ function checkCoordinateLimits(pointId) {
     const y = yInput && yInput.value ? yInput.value : null;
     const z = zInput && zInput.value ? zInput.value : null;
 
-    console.log("x:" + x);
-    console.log("y:" + y);
-    console.log("z:" + z);
+    //console.log("x:" + x);
+    //console.log("y:" + y);
+    //console.log("z:" + z);
 
     let hasError = false;
 
@@ -159,7 +159,7 @@ function checkCoordinateLimits(pointId) {
 }
 
 function toggleCoordinateFields(pointId) {
-    console.log("toggle aufgerufen")
+    //console.log("toggle aufgerufen")
     const dimension = document.getElementById("dimension").value;
     const layout = document.getElementById("layout");
     const layoutContainer = document.getElementById("layoutContainer");
@@ -310,7 +310,7 @@ function calculateMortonCode(pointId) {
 
 function interleaveForLoop(coords, bitLength, layout, pointId) {
     let mortonCode = BigInt(0);
-    console.log(coords)
+    //console.log(coords)
     const bitsPerCoord = parseInt(bitLength / coords.length); 
     const bitsMortonCode = bitsPerCoord * coords.length;
     //console.log(layout);
@@ -1143,11 +1143,11 @@ function generateStencil(pointId) {
 }
 
 function generateStencil2D(canvas, ctx, pointId){
-    canvas.width = 500;  // Ändert die interne Breite 
-    canvas.height = 500;
+    canvas.width = 550;  // Ändert die interne Breite 
+    canvas.height = 550;
 
-    canvas.style.width = '250px';  // darstellungsgröße
-    canvas.style.height = '250px'; 
+    canvas.style.width = '275px';  // darstellungsgröße
+    canvas.style.height = '275px'; 
 
     ctx.scale(2, 2); // skaliert das bild (für höhere auflösung)
 
@@ -1171,7 +1171,6 @@ function generateStencil2D(canvas, ctx, pointId){
     const lineColor = '#000000'; // Schwarz
     const circleColor = '#000000'; // schwarz
     const centerColor = '#0C9329'; // grün
-    const textColor = '#000000'; // Schwarz
 
     // Zeichne Punkte und Verbindungen
     ctx.font = '9px Helvetica';
@@ -1219,10 +1218,9 @@ function generateStencil2D(canvas, ctx, pointId){
         ctx.fillStyle = index === 4 ? centerColor : circleColor; // Mittelpunkt grün füllen
         ctx.fill();
 
-        // Zeichne Koordinaten
-        ctx.fillStyle = textColor;
-        ctx.fillText(`(${point.x}, ${point.y})`, px, py + 25);
-        
+        // Koordinaten zeichnen
+        const adjustedPy = [1, 4, 7].includes(index) ? py - 10 : py; // 10 Pixel nach unten für Index 1, 4, 7
+        ctx.fillText(`(${point.x}, ${point.y})`, px, adjustedPy + 25); 
     });
 
 
@@ -1233,18 +1231,18 @@ function generateStencil2D(canvas, ctx, pointId){
 
 
 function generateStencil3D(canvas, ctx, pointId) {
-    canvas.width = 1500;  // Ändert die interne Breite 
+    canvas.width = 1560;  // Ändert die interne Breite 
     canvas.height = 700;
 
-    canvas.style.width = '750px';  // darstellungsgröße
+    canvas.style.width = '780px';  // darstellungsgröße
     canvas.style.height = '350px'; 
 
     ctx.scale(2, 2); // skaliert das bild (für höhere auflösung)
-    const centerX = canvas.width / 4 / 3;
+    const centerX = 140;
     const centerY = 200;
     const offset = 90; // Abstand zwischen den Punkten
     const layerOffsetX = 250; // Abstand zwischen den Lagen
-    const layerOffsetY = 40;
+    const layerOffsetY = 50;
 
     // Punkte in drei Lagen definieren
     const layers = [
@@ -1276,7 +1274,6 @@ function generateStencil3D(canvas, ctx, pointId) {
         const lineColor = '#000000'; // Schwarz
         const circleColor = '#000'; // Schwarz
         const centerColor = '#0C9329' // grün
-        const textColor = '#000000'; // Schwarz
 
         ctx.font = '9px Helvetica';
         ctx.textAlign = 'center';
@@ -1324,8 +1321,8 @@ function generateStencil3D(canvas, ctx, pointId) {
             ctx.fill();
 
             // Koordinaten zeichnen
-            ctx.fillStyle = textColor;
-            ctx.fillText(`(${point.x}, ${point.y}, ${z})`, px, py + 25);
+            const adjustedPy = [1, 4, 7].includes(index) ? py - 10 : py; // 10 Pixel nach unten für Index 1, 4, 7
+            ctx.fillText(`(${point.x}, ${point.y})`, px, adjustedPy + 25); 
         });
     });
 
@@ -1346,7 +1343,7 @@ function outputMortonCodes(points, pointId) {
     document.getElementById(`stencilResult-${pointId.id}`).innerHTML = '';
     const bitLength = parseInt(document.getElementById("bitLength").value);
     const dimension = parseInt(document.getElementById("dimension").value);
-    console.log(`Morton-Codes für Stencil-Punkte (${pointId.id}):`);
+    //console.log(`Morton-Codes für Stencil-Punkte (${pointId.id}):`);
 
     document.getElementById(`stencilResult-${pointId.id}`).innerHTML += `<h4>Morton codes of neighboring points:</h4>`;
 
@@ -1354,7 +1351,7 @@ function outputMortonCodes(points, pointId) {
         const { mortonCode, steps } = dimension === 2
         ? mortonEncodeMagicBits2D(point.x, point.y, bitLength)
         : mortonEncodeMagicBits3D(point.x, point.y, point.z, bitLength);
-        console.log(`Point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2)}`);
+        //console.log(`Point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2)}`);
 
         document.getElementById(`stencilResult-${pointId.id}`).innerHTML += 
         `<p>point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2).padStart(bitLength, '0')} (decimal:${mortonCode})</p>`;
