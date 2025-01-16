@@ -230,11 +230,11 @@ function handleSettingsChange() {
     closeCode('b-forLoopCodeContainer', 'b-magicBitsHeader', 'b-show-code-btn', 'b-resultMagicBits'); // to-do: prüfen, ob offen 
     closeCode('b-magicBitsCodeContainer', 'b-forLoopHeader','b-show-code-btn2','b-resultForLoop');// to-do: prüfen, ob offen 
 
-    const layoutSelect = document.getElementById("layout");
+    const layout = document.getElementById("layout");
     const svgImage = document.getElementById("layoutImage");
 
     // Das Bild je nach Auswahl ändern
-    if (layoutSelect.value === "xyz") {
+    if (layout.value === "xyz") {
         svgImage.src = "assets/xyz.svg";
     } else {
         svgImage.src = "assets/zyx.svg";
@@ -1251,8 +1251,15 @@ function generateStencil3D(canvas, ctx, pointId) {
 
     ctx.scale(2, 2); // skaliert das bild (für höhere auflösung)
 
+    // achsen-layout zeigen
+    const layout = document.getElementById("layout");
     const img = new Image();
-    img.src = 'xyz.svg';  // Ersetze mit deinem Bildpfad
+
+    if (layout.value === "xyz") {
+        img.src = "assets/xyz.svg";
+    } else {
+        img.src = "assets/zyx.svg";
+    }
     img.onload = function () {
         ctx.drawImage(img, 10, 10, 40, 40);
     };
@@ -1366,7 +1373,7 @@ function outputMortonCodes(points, pointId) {
     const dimension = parseInt(document.getElementById("dimension").value);
     //console.log(`Morton-Codes für Stencil-Punkte (${pointId.id}):`);
 
-    document.getElementById(`stencilResult-${pointId.id}`).innerHTML += `<h4>Morton codes of neighboring points:</h4>`;
+    document.getElementById(`stencilResult-${pointId.id}`).innerHTML += `<h4>morton codes:</h4>`;
 
     points.forEach((point, index) => {
         const { mortonCode, steps } = dimension === 2
