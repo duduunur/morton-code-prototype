@@ -1143,10 +1143,10 @@ function generateStencil(pointId) {
 }
 
 function generateStencil2D(canvas, ctx, pointId){
-    canvas.width = 550;  // Ändert die interne Breite 
+    canvas.width = 600;  // Ändert die interne Breite 
     canvas.height = 550;
 
-    canvas.style.width = '275px';  // darstellungsgröße
+    canvas.style.width = '300px';  // darstellungsgröße
     canvas.style.height = '275px'; 
 
     ctx.scale(2, 2); // skaliert das bild (für höhere auflösung)
@@ -1231,14 +1231,14 @@ function generateStencil2D(canvas, ctx, pointId){
 
 
 function generateStencil3D(canvas, ctx, pointId) {
-    canvas.width = 1560;  // Ändert die interne Breite 
+    canvas.width = 1700;  // Ändert die interne Breite 
     canvas.height = 700;
 
-    canvas.style.width = '780px';  // darstellungsgröße
+    canvas.style.width = '850px';  // darstellungsgröße
     canvas.style.height = '350px'; 
 
     ctx.scale(2, 2); // skaliert das bild (für höhere auflösung)
-    const centerX = 140;
+    const centerX = 170;
     const centerY = 200;
     const offset = 90; // Abstand zwischen den Punkten
     const layerOffsetX = 250; // Abstand zwischen den Lagen
@@ -1322,7 +1322,7 @@ function generateStencil3D(canvas, ctx, pointId) {
 
             // Koordinaten zeichnen
             const adjustedPy = [1, 4, 7].includes(index) ? py - 10 : py; // 10 Pixel nach unten für Index 1, 4, 7
-            ctx.fillText(`(${point.x}, ${point.y})`, px, adjustedPy + 25); 
+            ctx.fillText(`(${point.x}, ${point.y}, ${z})`, px, adjustedPy + 25); 
         });
     });
 
@@ -1347,14 +1347,16 @@ function outputMortonCodes(points, pointId) {
 
     document.getElementById(`stencilResult-${pointId.id}`).innerHTML += `<h4>Morton codes of neighboring points:</h4>`;
 
-    points.forEach((point) => {
+    points.forEach((point, index) => {
         const { mortonCode, steps } = dimension === 2
         ? mortonEncodeMagicBits2D(point.x, point.y, bitLength)
         : mortonEncodeMagicBits3D(point.x, point.y, point.z, bitLength);
         //console.log(`Point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2)}`);
 
+        const colorStyle = index === 4 ? 'style="color: #0C9329;"' : '';
+
         document.getElementById(`stencilResult-${pointId.id}`).innerHTML += 
-        `<p>point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2).padStart(bitLength, '0')} (decimal:${mortonCode})</p>`;
+            `<p ${colorStyle}>point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2).padStart(bitLength, '0')} (decimal:${mortonCode})</p>`;
     });
 }
    
