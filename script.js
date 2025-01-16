@@ -1231,7 +1231,7 @@ function generateStencil2D(canvas, ctx, pointId){
 }
 
 
-
+// layout xyz 
 function generateStencil3D(canvas, ctx, pointId) {
     canvas.width = 1700;  // Ändert die interne Breite 
     canvas.height = 700;
@@ -1248,9 +1248,9 @@ function generateStencil3D(canvas, ctx, pointId) {
 
     // Punkte in drei Lagen definieren
     const layers = [
-        pointId.z - 1,
+        pointId.z + 1,
         pointId.z,
-        pointId.z + 1
+        pointId.z - 1
     ];
 
     let layerCenters = [];
@@ -1325,8 +1325,8 @@ function generateStencil3D(canvas, ctx, pointId) {
 
             // Koordinaten zeichnen
             ctx.fillStyle = textColor;
-            const adjustedPy = [1, 4, 7].includes(index) ? py - 10 : py; // 10 Pixel nach unten für Index 1, 4, 7
-            ctx.fillText(`(${point.x}, ${point.y}, ${z})`, px, adjustedPy + 25); 
+            const adjustedPy = [1, 4, 7].includes(index) ? py - 10 : py; // 10 Pixel nach oben für Index 1, 4, 7
+            ctx.fillText(`(${point.x}, ${point.y}, ${z})`, px + 2, adjustedPy + 25); 
         });
     });
 
