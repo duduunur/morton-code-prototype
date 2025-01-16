@@ -1168,9 +1168,10 @@ function generateStencil2D(canvas, ctx, pointId){
     ];
 
     // Farben und Stile anpassen
-    const lineColor = '#000000'; // Schwarz
-    const circleColor = '#000000'; // schwarz
+    const lineColor = '#707070'; 
+    const circleColor = '#303030'; 
     const centerColor = '#0C9329'; // grün
+    const textColor = '#000'
 
     // Zeichne Punkte und Verbindungen
     ctx.font = '9px Helvetica';
@@ -1219,6 +1220,7 @@ function generateStencil2D(canvas, ctx, pointId){
         ctx.fill();
 
         // Koordinaten zeichnen
+        ctx.fillStyle = textColor;
         const adjustedPy = [1, 4, 7].includes(index) ? py - 10 : py; // 10 Pixel nach unten für Index 1, 4, 7
         ctx.fillText(`(${point.x}, ${point.y})`, px, adjustedPy + 25); 
     });
@@ -1253,6 +1255,16 @@ function generateStencil3D(canvas, ctx, pointId) {
 
     let layerCenters = [];
 
+    // Farben und Stile anpassen
+    const lineColor = '#707070'; 
+    const circleColor = '#303030'; 
+    const centerColor = '#0C9329'; // grün
+    const textColor = '#000'
+    
+    ctx.font = '9px Helvetica';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
     layers.forEach((z, layerIndex) => {
         const layerCenterX = centerX + layerIndex * layerOffsetX;
         const layerCenterY = centerY - layerIndex * layerOffsetY;
@@ -1269,15 +1281,6 @@ function generateStencil3D(canvas, ctx, pointId) {
             { x: pointId.x, y: pointId.y - 1 },     // unten mittig
             { x: pointId.x + 1, y: pointId.y - 1 }  // unten rechts
         ];
-
-        // Farben und Stile anpassen
-        const lineColor = '#000000'; // Schwarz
-        const circleColor = '#000'; // Schwarz
-        const centerColor = '#0C9329' // grün
-
-        ctx.font = '9px Helvetica';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
 
         // Verbindungen zeichnen
         ctx.strokeStyle = lineColor;
@@ -1321,6 +1324,7 @@ function generateStencil3D(canvas, ctx, pointId) {
             ctx.fill();
 
             // Koordinaten zeichnen
+            ctx.fillStyle = textColor;
             const adjustedPy = [1, 4, 7].includes(index) ? py - 10 : py; // 10 Pixel nach unten für Index 1, 4, 7
             ctx.fillText(`(${point.x}, ${point.y}, ${z})`, px, adjustedPy + 25); 
         });
@@ -1329,7 +1333,7 @@ function generateStencil3D(canvas, ctx, pointId) {
      // Zeichne Linie vom Mittelpunkt der ersten Lage zum Mittelpunkt der letzten Lage
      const firstCenter = layerCenters[0];
      const lastCenter = layerCenters[2];
-     ctx.strokeStyle = '#000'; 
+     ctx.strokeStyle = circleColor; 
      ctx.setLineDash([10, 10]); // Linie gestrichelt: 10 Pixel Linie, 10 Pixel Lücke
      ctx.beginPath();
      ctx.moveTo(firstCenter.x, firstCenter.y);
