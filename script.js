@@ -235,9 +235,9 @@ function handleSettingsChange() {
 
     // Das Bild je nach Auswahl ändern
     if (layoutSelect.value === "xyz") {
-        svgImage.src = "xyz.svg";
+        svgImage.src = "assets/xyz.svg";
     } else {
-        svgImage.src = "zyx.svg";
+        svgImage.src = "assets/zyx.svg";
     }
 }
 
