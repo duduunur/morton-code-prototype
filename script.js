@@ -1387,20 +1387,64 @@ function generateStencil3D(canvas, ctx, pointId) {
 // Funktion, um die Morton-Codes der Punkte des Stencils auszugeben
 function outputMortonCodes(points, pointId) {
     document.getElementById(`stencilResult-${pointId.id}`).innerHTML = '';
-    //console.log(`Morton-Codes für Stencil-Punkte (${pointId.id}):`);
+    document.getElementById(`stencilResult-${pointId.id}`).innerHTML += `<h4>Morton Codes:</h4>`;
 
-    document.getElementById(`stencilResult-${pointId.id}`).innerHTML += `<h4>morton codes:</h4>`;
+    // Mittelpunkt-Morton-Code
+    const centerMorton = BigInt(pointId.mortonCode);
+
+    function generateMask(pattern, bitLength) {
+        let mask = 0n;
+        for (let i = 0; i < bitLength; i += pattern.length) {
+            for (let j = 0; j < pattern.length; j++) {
+                if (i + j < bitLength && pattern[j] === "1") {
+                    mask |= 1n << BigInt(i + j);
+                }
+            }
+        }
+        return mask;
+    }
+
+    const mask10 = generateMask("01", bitLength);
+    const mask01 = generateMask("10", bitLength);
+    console.log("mask10: "+mask10.toString(2) )
+    console.log("mask01: "+mask01.toString(2) )
 
     points.forEach((point, index) => {
-        const { mortonCode, steps } = dimension === 2
-        ? mortonEncodeMagicBits2D(point.x, point.y, bitLength)
-        : mortonEncodeMagicBits3D(point.x, point.y, point.z, bitLength);
-        //console.log(`Point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2)}`);
+        let mortonCode;
+
+        if (index === 4) { // Mittelpunkt
+            mortonCode = centerMorton;
+        } else {
+            // Morton-Code für direkte Nachbarpunkte berechnen
+            if (index === 1) { // Oben
+                mortonCode = (((centerMorton | mask01) + 1n) & mask10) | (centerMorton & mask01);
+            } else if (index === 7) { // Unten
+                mortonCode = (((centerMorton & mask10) - 1n) & mask10) | (centerMorton & mask01);
+            } else if (index === 3) { // Links
+                mortonCode = (((centerMorton & mask01) - 1n) & mask01) | (centerMorton & mask10);
+            } else if (index === 5) { // Rechts
+                mortonCode = (((centerMorton | mask10) + 1n) & mask01) | (centerMorton & mask10);
+            } else if (index === 0) { // Oben links
+                let temp = (((centerMorton | mask01) + 1n) & mask10) | (centerMorton & mask01);
+                mortonCode = (((temp & mask01) - 1n) & mask01) | (temp & mask10);
+            } else if (index === 2) { // Oben rechts
+                let temp = (((centerMorton | mask01) + 1n) & mask10) | (centerMorton & mask01);
+                mortonCode = (((temp | mask10) + 1n) & mask01) | (temp & mask10);
+            } else if (index === 6) { // Unten links
+                let temp = (((centerMorton & mask10) - 1n) & mask10) | (centerMorton & mask01);
+                mortonCode = (((temp & mask01) - 1n) & mask01) | (temp & mask10);
+            } else if (index === 8) { // Unten rechts
+                let temp = (((centerMorton & mask10) - 1n) & mask10) | (centerMorton & mask01);
+                mortonCode = (((temp | mask10) + 1n) & mask01) | (temp & mask10);
+            }
+        }
 
         const colorStyle = index === 4 ? 'style="color: #0C9329;"' : '';
 
         document.getElementById(`stencilResult-${pointId.id}`).innerHTML += 
-            `<p ${colorStyle}>point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2).padStart(bitLength, '0')} (decimal:${mortonCode})</p>`;
+            `<p ${colorStyle}> ${index}.point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCode})</p>`;
     });
 }
+
+
    
