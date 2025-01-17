@@ -1392,22 +1392,20 @@ function outputMortonCodes(points, pointId) {
     // Mittelpunkt-Morton-Code
     const centerMorton = BigInt(pointId.mortonCode);
 
-    function generateMask(pattern, bitLength) {
-        let mask = 0n;
-        for (let i = 0; i < bitLength; i += pattern.length) {
-            for (let j = 0; j < pattern.length; j++) {
-                if (i + j < bitLength && pattern[j] === "1") {
-                    mask |= 1n << BigInt(i + j);
-                }
-            }
-        }
-        return mask;
+    if (bitLength == 16){
+        x_mask = BigInt(0x5555); // x (0101010101010101)
+        y_mask = BigInt(0xAAAA); // y (1010101010101010)
+    } else if (bitLength == 32) {
+        x_mask = BigInt(0x55555555); 
+        y_mask = BigInt(0xAAAAAAAA); 
+    } else if (bitLength == 64) {
+        x_mask = BigInt(0x5555555555555555n); 
+        y_mask = BigInt(0xAAAAAAAAAAAAAAAAn); 
     }
+   
 
-    const mask10 = generateMask("01", bitLength);
-    const mask01 = generateMask("10", bitLength);
-    console.log("mask10: "+mask10.toString(2) )
-    console.log("mask01: "+mask01.toString(2) )
+    console.log("x_mask (x): "+x_mask.toString(2) )
+    console.log("y_mask (y): "+y_mask.toString(2) )
 
     points.forEach((point, index) => {
         let mortonCode;
@@ -1417,25 +1415,25 @@ function outputMortonCodes(points, pointId) {
         } else {
             // Morton-Code für direkte Nachbarpunkte berechnen
             if (index === 1) { // Oben
-                mortonCode = (((centerMorton | mask01) + 1n) & mask10) | (centerMorton & mask01);
+                mortonCode = (((centerMorton | x_mask) + 1n) & y_mask) | (centerMorton & x_mask);
             } else if (index === 7) { // Unten
-                mortonCode = (((centerMorton & mask10) - 1n) & mask10) | (centerMorton & mask01);
+                mortonCode = (((centerMorton & y_mask) - 1n) & y_mask) | (centerMorton & x_mask);
             } else if (index === 3) { // Links
-                mortonCode = (((centerMorton & mask01) - 1n) & mask01) | (centerMorton & mask10);
+                mortonCode = (((centerMorton & x_mask) - 1n) & x_mask) | (centerMorton & y_mask);
             } else if (index === 5) { // Rechts
-                mortonCode = (((centerMorton | mask10) + 1n) & mask01) | (centerMorton & mask10);
+                mortonCode = (((centerMorton | y_mask) + 1n) & x_mask) | (centerMorton & y_mask);
             } else if (index === 0) { // Oben links
-                let temp = (((centerMorton | mask01) + 1n) & mask10) | (centerMorton & mask01);
-                mortonCode = (((temp & mask01) - 1n) & mask01) | (temp & mask10);
+                let temp = (((centerMorton | x_mask) + 1n) & y_mask) | (centerMorton & x_mask);
+                mortonCode = (((temp & x_mask) - 1n) & x_mask) | (temp & y_mask);
             } else if (index === 2) { // Oben rechts
-                let temp = (((centerMorton | mask01) + 1n) & mask10) | (centerMorton & mask01);
-                mortonCode = (((temp | mask10) + 1n) & mask01) | (temp & mask10);
+                let temp = (((centerMorton | x_mask) + 1n) & y_mask) | (centerMorton & x_mask);
+                mortonCode = (((temp | y_mask) + 1n) & x_mask) | (temp & y_mask);
             } else if (index === 6) { // Unten links
-                let temp = (((centerMorton & mask10) - 1n) & mask10) | (centerMorton & mask01);
-                mortonCode = (((temp & mask01) - 1n) & mask01) | (temp & mask10);
+                let temp = (((centerMorton & y_mask) - 1n) & y_mask) | (centerMorton & x_mask);
+                mortonCode = (((temp & x_mask) - 1n) & x_mask) | (temp & y_mask);
             } else if (index === 8) { // Unten rechts
-                let temp = (((centerMorton & mask10) - 1n) & mask10) | (centerMorton & mask01);
-                mortonCode = (((temp | mask10) + 1n) & mask01) | (temp & mask10);
+                let temp = (((centerMorton & y_mask) - 1n) & y_mask) | (centerMorton & x_mask);
+                mortonCode = (((temp | y_mask) + 1n) & x_mask) | (temp & y_mask);
             }
         }
 
