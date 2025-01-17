@@ -1,11 +1,15 @@
 // Globale Variablen
+let bitLength = 16;  
+let dimension = 2;    
+let layout = "xyz";   
+
 let maxCoordinateValue = 0n;
 
 const pointA = {
     id: 'a',
     x: null,
     y: null,
-    z: null, // Optional für 3D
+    z: null, 
     mortonCode: null
 };
 
@@ -13,23 +17,21 @@ const pointB = {
     id: 'b',
     x: null,
     y: null,
-    z: null, // Optional für 3D
+    z: null, 
     mortonCode: null
 };
 
 // --------------------------------------------------- handle settings and update page ---------------------------------------------------
 
 function displayMaxCoord() {
-    // get bit length, dimension and maxCoord element
-    const bitLength = BigInt(document.getElementById("bitLength").value);
-    const dimension = BigInt(document.getElementById("dimension").value);
-    const maxCoord = document.getElementById("maxCoord");
+    // get maxCoord html element
+    maxCoordContainer = document.getElementById("maxCoord");
 
     //calculate maxCoord
-    maxCoordinateValue = (1n << (bitLength / dimension)) - 1n; //1n << x verschiebt die Zahl 1 um x Bit nach links, was äquivalent zu 2^x ist 
+    maxCoordinateValue = (1n << (BigInt(bitLength) / BigInt(dimension))) - 1n; //1n << x verschiebt die Zahl 1 um x Bit nach links, was äquivalent zu 2^x ist 
 
     // display max coord
-    maxCoord.innerText = `Maximum Coordinate Value: ${maxCoordinateValue.toString()}`;
+    maxCoordContainer.innerText = `Maximum Coordinate Value: ${maxCoordinateValue.toString()}`;
 }
 
 function clearContainers() {
@@ -39,8 +41,8 @@ function clearContainers() {
     document.getElementById(`b-resultForLoop`).innerHTML = '';
     document.getElementById(`b-resultMagicBits`).innerHTML = '';
 
-    clearCoordinateInputs('a');
-    clearCoordinateInputs('b');
+    clearCoordinateInputs(pointA);
+    clearCoordinateInputs(pointB);
 
     document.getElementById(`a-xError`).innerHTML = '';
     document.getElementById(`a-x`).classList.remove('input-error');
@@ -56,8 +58,8 @@ function clearContainers() {
     document.getElementById(`b-zError`).innerHTML = '';
     document.getElementById(`b-z`).classList.remove('input-error');
 
-    clearStencil('a');
-    clearStencil('b');
+    clearStencil(pointA);
+    clearStencil(pointB);
 
     document.getElementById(`resultAddition`).innerHTML = '';
     document.getElementById(`resultSubtraction`).innerHTML = '';
@@ -82,34 +84,37 @@ function clearContainers() {
     pointB.mortonCode = null;
 }
 
-function clearCoordinateInputs(pointId) {
+function clearCoordinateInputs(point) {
     //console.log("clearCoordinateinputs aufgerufen für point" + pointId)
-    document.getElementById(`${pointId}-x`).value = "";
-    document.getElementById(`${pointId}-y`).value = "";
-    const zInput = document.getElementById(`${pointId}-z`);
+    document.getElementById(`${point.id}-x`).value = "";
+    document.getElementById(`${point.id}-y`).value = "";
+    const zInput = document.getElementById(`${point.id}-z`);
     if (zInput) {
         zInput.value = "";
     }
 }
 
-function checkCoordinateLimits(pointId) {
-    const xInput = document.getElementById(`${pointId}-x`);
-    const yInput = document.getElementById(`${pointId}-y`);
-    const zInput = document.getElementById(`${pointId}-z`);
-    const zInputContainer = document.getElementById(`${pointId}-zInput`);
+function checkCoordinateLimits(point) {
+    //console.log("checking coordinatelimits")
+    const xInput = document.getElementById(`${point.id}-x`);
+    const yInput = document.getElementById(`${point.id}-y`);
+    const zInput = document.getElementById(`${point.id}-z`);
+    const zInputContainer = document.getElementById(`${point.id}-zInput`);
 
-    const xError = document.getElementById(`${pointId}-xError`);
-    const yError = document.getElementById(`${pointId}-yError`);
-    const zError = document.getElementById(`${pointId}-zError`);
+    const xError = document.getElementById(`${point.id}-xError`);
+    const yError = document.getElementById(`${point.id}-yError`);
+    const zError = document.getElementById(`${point.id}-zError`);
 
     const x = xInput && xInput.value ? xInput.value : null; //brauche ich das? 
     const y = yInput && yInput.value ? yInput.value : null;
     const z = zInput && zInput.value ? zInput.value : null;
 
-    //console.log("x:" + x);
-    //console.log("y:" + y);
-    //console.log("z:" + z);
 
+    //console.log("checking x:" + x);
+    //console.log("checking y:" + y);
+    //console.log("checking z:" + z);
+
+    //console.log("checking maxcoordvalue:" + maxCoordinateValue);
     let hasError = false;
 
     // Helper function for invalid input
@@ -158,16 +163,16 @@ function checkCoordinateLimits(pointId) {
     return !hasError;
 }
 
-function toggleCoordinateFields(pointId) {
-    //console.log("toggle aufgerufen")
-    const dimension = document.getElementById("dimension").value;
-    const layout = document.getElementById("layout");
+function toggleCoordinateFields(point) {
+    dimension = parseInt(document.getElementById("dimension").value);
+    layout = document.getElementById("layout").value;
     const layoutContainer = document.getElementById("layoutContainer");
-    const zInput = document.getElementById(`${pointId}-zInput`);
-    const zLabel = document.getElementById(`${pointId}-zLabel`);
-    const zError = document.getElementById(`${pointId}-zError`);
+    const zInput = document.getElementById(`${point.id}-zInput`);
+    const zLabel = document.getElementById(`${point.id}-zLabel`);
+    const zError = document.getElementById(`${point.id}-zError`);
+    console.log("layout:" + layout)
 
-    if (dimension === '3') {
+    if (dimension === 3) {
         zLabel.classList.remove('hidden');
         zInput.classList.remove('hidden');
         zError.classList.remove('hidden');
@@ -177,25 +182,25 @@ function toggleCoordinateFields(pointId) {
         zInput.classList.add('hidden');
         zError.classList.add('hidden');
         layoutContainer.classList.add("hidden"); 
-        layout.value = 'xyz';
+        layout = 'xyz'; // layout für 2d (to-do: gucken, ob ich das brauche)
     }
 
     // Reihenfolge der Eingabefelder (in Abhängigkeit vom Layout) aktualisieren 
-    updateCoordinateInputOrder(layout.value, pointId);
+    updateCoordinateInputOrder(layout, point);
 }
 
 
-function updateCoordinateInputOrder(layout, pointId) {
-    const xLabel = document.querySelector(`label[for="${pointId}-x"]`);
-    const yLabel = document.querySelector(`label[for="${pointId}-y"]`);
-    const zLabel = document.querySelector(`label[for="${pointId}-z"]`);
+function updateCoordinateInputOrder(layout, point) {
+    const xLabel = document.querySelector(`label[for="${point.id}-x"]`);
+    const yLabel = document.querySelector(`label[for="${point.id}-y"]`);
+    const zLabel = document.querySelector(`label[for="${point.id}-z"]`);
 
-    const xGroup = document.querySelector(`#${pointId}-x`).closest('.input-group');
-    const yGroup = document.querySelector(`#${pointId}-y`).closest('.input-group');
-    const zGroup = document.querySelector(`#${pointId}-zInput`);
+    const xGroup = document.querySelector(`#${point.id}-x`).closest('.input-group');
+    const yGroup = document.querySelector(`#${point.id}-y`).closest('.input-group');
+    const zGroup = document.querySelector(`#${point.id}-zInput`);
 
-    const calculateButton = document.getElementById(`${pointId}-calculateButton`);
-    const coordinateInputs = document.getElementById(`${pointId}-coordinateInputs`);
+    const calculateButton = document.getElementById(`${point.id}-calculateButton`);
+    const coordinateInputs = document.getElementById(`${point.id}-coordinateInputs`);
 
     // Container leeren
     coordinateInputs.innerHTML = '';
@@ -208,44 +213,47 @@ function updateCoordinateInputOrder(layout, pointId) {
         coordinateInputs.appendChild(yGroup);
         if (zLabel) coordinateInputs.appendChild(zLabel);
         if (zGroup) coordinateInputs.appendChild(zGroup);
-        if (calculateButton) coordinateInputs.appendChild(calculateButton);
+        coordinateInputs.appendChild(calculateButton);
     } else if (layout === 'zyx') {
-        if (zLabel) coordinateInputs.appendChild(zLabel);
-        if (zGroup) coordinateInputs.appendChild(zGroup);
+        coordinateInputs.appendChild(zLabel);
+        coordinateInputs.appendChild(zGroup);
         coordinateInputs.appendChild(yLabel);
         coordinateInputs.appendChild(yGroup);
         coordinateInputs.appendChild(xLabel);
         coordinateInputs.appendChild(xGroup);
-        if (calculateButton) coordinateInputs.appendChild(calculateButton);
+        coordinateInputs.appendChild(calculateButton);
     }
 }
 
 function handleSettingsChange() {
+    // "settings" aus html holen
+    bitLength = parseInt(document.getElementById("bitLength").value);
+    dimension = parseInt(document.getElementById("dimension").value);
+    layout = document.getElementById("layout").value;
+
     clearContainers();
-    toggleCoordinateFields('a'); 
-    toggleCoordinateFields('b');
+    toggleCoordinateFields(pointA); 
+    toggleCoordinateFields(pointB);
     displayMaxCoord();
     closeCode('a-forLoopCodeContainer', 'a-magicBitsHeader', 'a-show-code-btn', 'a-resultMagicBits'); // to-do: prüfen, ob offen 
     closeCode('a-magicBitsCodeContainer', 'a-forLoopHeader','a-show-code-btn2','a-resultForLoop');// to-do: prüfen, ob offen 
     closeCode('b-forLoopCodeContainer', 'b-magicBitsHeader', 'b-show-code-btn', 'b-resultMagicBits'); // to-do: prüfen, ob offen 
     closeCode('b-magicBitsCodeContainer', 'b-forLoopHeader','b-show-code-btn2','b-resultForLoop');// to-do: prüfen, ob offen 
 
-    const layout = document.getElementById("layout");
     const svgImage = document.getElementById("layoutImage");
-
     // Das Bild je nach Auswahl ändern
-    if (layout.value === "xyz") {
+    if (layout === "xyz") {
         svgImage.src = "assets/xyz.svg";
     } else {
         svgImage.src = "assets/zyx.svg";
     }
 }
 
-function clearStencil(pointId) {
-    document.getElementById(`stencilContainer-${pointId}`).classList.remove('expanded');
+function clearStencil(point) {
+    document.getElementById(`stencilContainer-${point.id}`).classList.remove('expanded');
 
-    const canvas = document.getElementById(`canvasStencil-${pointId}`);
-    const resultDiv = document.getElementById(`stencilResult-${pointId}`);
+    const canvas = document.getElementById(`canvasStencil-${point.id}`);
+    const resultDiv = document.getElementById(`stencilResult-${point.id}`);
     
     // Canvas leeren
     if (canvas) {
@@ -261,76 +269,87 @@ function clearStencil(pointId) {
 
 // -------------------------------------------------- Calculate Morton Code --------------------------------------------------------------
 
-function calculateMortonCode(pointId) {
+function calculateMortonCode(point) {
     // Ergebnisse zurücksetzen
-    document.getElementById(`${pointId}-resultForLoop`).innerHTML = '';
-    document.getElementById(`${pointId}-resultMagicBits`).innerHTML = '';
+    document.getElementById(`${point.id}-resultForLoop`).innerHTML = '';
+    document.getElementById(`${point.id}-resultMagicBits`).innerHTML = '';
 
-    document.getElementById(`point-${pointId}`).style.removeProperty('height');
-    document.getElementById(`point-${pointId}`).style.resize = 'none';
+    // point container wieder klein und disable resize 
+    const pointContainer = document.getElementById(`point-${point.id}`);
+    pointContainer.style.removeProperty('height');
+    pointContainer.style.resize = 'none';
 
-    clearStencil(pointId) 
+    // stencil leeren
+    clearStencil(point) 
 
+    // addition und subtraktion ergebnisse und error leeren
     document.getElementById(`resultAddition`).innerHTML = '';
     document.getElementById(`resultSubtraction`).innerHTML = '';
     document.getElementById(`additionError`).innerHTML = '';
     document.getElementById(`subtractionError`).innerHTML = '';
 
     // Koordinaten überprüfen
-    if (checkCoordinateLimits(pointId) == false) {
-        console.log("No calculation for point", pointId);
+    if (checkCoordinateLimits(point) == false) {
+        console.log("No calculation for point", point.id);
         return;
     }
 
-    const pointContainer = document.getElementById(`point-${pointId}`);
+    // höhe und resizability für ergebnisse
     pointContainer.style.height = '500px';
     pointContainer.style.resize = 'vertical';
 
-    const bitLength = parseInt(document.getElementById("bitLength").value);
-    const dimension = document.getElementById("dimension").value;
-    const layout = document.getElementById("layout").value;
+    // koordinaten values aus html holen
+    const x = parseInt(document.getElementById(`${point.id}-x`).value);
+    const y = parseInt(document.getElementById(`${point.id}-y`).value);
+    const z = dimension === 3 ? (parseInt(document.getElementById(`${point.id}-z`).value)) : 0;
+    console.log("x: " + x+ " y: " +y+ " z: "+ z);
 
-    const x = parseInt(document.getElementById(`${pointId}-x`).value);
-    const y = parseInt(document.getElementById(`${pointId}-y`).value);
-    const z = dimension === "3" ? (parseInt(document.getElementById(`${pointId}-z`).value)) : 0;
-
-    let coords = [];
-    if (dimension === "3") {
-        coords = layout === "xyz" ? [x, y, z] : [z, y, x];
-    } else {
-        coords = [x, y];
-    }
-
-    // Berechnungen durchführen
-    const mortonCode = interleaveForLoop(coords, bitLength, layout, pointId);
-    displayMagicBits(coords, bitLength, layout, pointId);
-
-    // Morton-Codes und Koordinaten speichern
-    const point = pointId === 'a' ? pointA : pointB;
+    // koordinaten in point objekte speichern
     point.x = x;
     point.y = y;
-    point.z = dimension === "3" ? z : null; // Z nur speichern, wenn Dimension 3
+    point.z = dimension === 3 ? z : null; // Z nur speichern, wenn Dimension 3
+
+    // Berechnungen durchführen
+    const mortonCode = interleaveForLoop(point);
+    displayMagicBits(point);
+
+    // Morton-Codes speichern
     point.mortonCode = mortonCode;
 
-    generateStencil(`${pointId}`);
+    // stencil generieren
+    generateStencil(`${point.id}`);
 }
 
 // ---------------------------------------------- Interleave mit For-Schleife ----------------------------------------------------------
 
 
-function interleaveForLoop(coords, bitLength, layout, pointId) {
+function interleaveForLoop(point) {
     let mortonCode = BigInt(0);
-    //console.log(coords)
-    const bitsPerCoord = parseInt(bitLength / coords.length); 
-    const bitsMortonCode = bitsPerCoord * coords.length;
+    const bitsPerCoord = parseInt(bitLength / dimension); 
+    const bitsMortonCode = bitsPerCoord * dimension;
     //console.log(layout);
 
-    const resultContainer = document.getElementById(`${pointId}-resultForLoop`);
+    const resultContainer = document.getElementById(`${point.id}-resultForLoop`);
+    console.log("pointId.x " + point.x)
+    console.log("pointId.y " + point.y)
+    console.log("pointId.z " + point.z)
+
+    console.log("dimension: " + dimension)
+    // koordinaten in ein array
+    let coords = [];
+    if (dimension === 3) {
+        coords = layout === "xyz" ? [point.x, point.y, point.z] : [point.z, point.y, point.x];
+    } else {
+        coords = [point.x, point.y];
+    }
+    console.log("pointId.x " + point.x)
+    console.log("coords:" + coords)
 
     // format input coordinates
     let binaryCoordinates = '';
-    for (let i = 0; i < coords.length; i++) {
+    for (let i = 0; i < dimension; i++) {
         const coord = coords[i];
+        console.log("coord:" + coord)
         const colorClass = i === 0 ? 'color-x' : i === 1 ? 'color-y' : 'color-z'; // Farben basierend auf Index
         const binaryString = coord.toString(2).padStart(bitsPerCoord, '0'); // Binärformatierung mit Padding
     
@@ -568,12 +587,21 @@ function mortonEncodeMagicBits2D(x, y, bitLength) {
     return { mortonCode: result, steps: [xSplit, ySplit] };
 }
 
-function displayMagicBits(coords, bitLength, layout, pointId) {
-    const resultContainer = document.getElementById(`${pointId}-resultMagicBits`);
-    const dimension = coords.length;
+function displayMagicBits(point) {
+    const resultContainer = document.getElementById(`${point.id}-resultMagicBits`);
     const maxBits = parseInt(bitLength / dimension);
 
+    // koordinaten in ein array
+    let coords = [];
+    if (dimension === 3) {
+        coords = layout === "xyz" ? [point.x, point.y, point.z] : [point.z, point.y, point.x];
+    } else {
+        coords = [point.x, point.y];
+    }
+
     // Berechnung entsprechend Dimension
+    console.log("dimension in displaymagicbits: " + dimension)
+    console.log("dimension type " + typeof dimension)
     const { mortonCode, steps } = dimension === 2
         ? mortonEncodeMagicBits2D(coords[0], coords[1], bitLength)
         : mortonEncodeMagicBits3D(coords[0], coords[1], coords[2], bitLength);
@@ -891,10 +919,6 @@ function addition() {
         return;
     }
 
-    const dimension = parseInt(document.getElementById("dimension").value);
-    const bitLength = parseInt(document.getElementById("bitLength").value);
-    const layout = document.getElementById("layout").value;
-
     let sum;
     let steps = ""; // String to hold the calculation steps
 
@@ -994,10 +1018,6 @@ function subtraction() {
         console.log("No subtraction!");
         return;
     }
-
-    const dimension = parseInt(document.getElementById("dimension").value);
-    const bitLength = parseInt(document.getElementById("bitLength").value);
-    const layout = document.getElementById("layout").value;
 
     let diff;
     let steps = ""; // String to hold the calculation steps
@@ -1113,8 +1133,6 @@ function checkCoordinatesForSubtraction() {
 // Funktion, um den 9-Punkte-Stencil zu zeichnen
 function generateStencil(pointId) {
     document.getElementById(`stencilContainer-${pointId}`).classList.add('expanded');
-
-    console.log("generatestencil aufgerufen")
     const canvas = document.getElementById(`canvasStencil-${pointId}`);
     if (!canvas) {
         console.error('Canvas not found');
@@ -1369,8 +1387,6 @@ function generateStencil3D(canvas, ctx, pointId) {
 // Funktion, um die Morton-Codes der Punkte des Stencils auszugeben
 function outputMortonCodes(points, pointId) {
     document.getElementById(`stencilResult-${pointId.id}`).innerHTML = '';
-    const bitLength = parseInt(document.getElementById("bitLength").value);
-    const dimension = parseInt(document.getElementById("dimension").value);
     //console.log(`Morton-Codes für Stencil-Punkte (${pointId.id}):`);
 
     document.getElementById(`stencilResult-${pointId.id}`).innerHTML += `<h4>morton codes:</h4>`;

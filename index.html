@@ -27,8 +27,8 @@
                 <label for="dimension">dimension:</label>
                 <select id="dimension"
                     onchange="handleSettingsChange()">
-                    <option value="2" selected>2D</option>
-                    <option value="3">3D</option>
+                    <option value= 2 selected>2D</option>
+                    <option value= 3 >3D</option>
                 </select>
             </div>
 
@@ -80,7 +80,7 @@
                     </div>
 
                     <div id="a-calculateButton">
-                        <button onclick="calculateMortonCode('a')">calculate</button>
+                        <button onclick="calculateMortonCode(pointA)">calculate</button>
                     </div>
                 </div>
             </div>
@@ -139,7 +139,7 @@
                         <div id="b-zError" class="error"></div>
                     </div>
                     <div id="b-calculateButton">
-                        <button onclick="calculateMortonCode('b')">calculate</button>
+                        <button onclick="calculateMortonCode(pointB)">calculate</button>
                     </div>
                 </div>
             </div>
