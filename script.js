@@ -264,6 +264,8 @@ function clearStencil(point) {
     // Inhalt des resultDiv leeren
     if (resultDiv) {
         resultDiv.innerHTML = '';
+        resultDiv.style.removeProperty('height');
+        resultDiv.style.resize = 'none';
     }
 }
 
@@ -1261,6 +1263,7 @@ function generateStencil2D(canvas, ctx, pointId){
 
 
 function generateStencil3D(canvas, ctx, pointId) {
+    outputMortonCodes3D(pointId);
     canvas.width = 1700;  // Ändert die interne Breite 
     canvas.height = 700;
 
@@ -1440,8 +1443,30 @@ function outputMortonCodes(points, pointId) {
         const colorStyle = index === 4 ? 'style="color: #0C9329;"' : '';
 
         document.getElementById(`stencilResult-${pointId.id}`).innerHTML += 
-            `<p ${colorStyle}> ${index}.point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCode})</p>`;
+            `<p ${colorStyle}> point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCode})</p>`;
     });
+}
+
+function outputMortonCodes3D(pointId) {
+    const resultContainer = document.getElementById(`stencilResult-${pointId.id}`)
+    
+    resultContainer.innerHTML = '';
+    // höhe und resizability für ergebnisse
+    resultContainer.style.height = '250px';
+    resultContainer.style.resize = 'vertical';
+
+    resultContainer.innerHTML += `<h4>Morton Codes:</h4>`;
+
+    for (let i = -1; i < 2; i++){
+        for (let j = -1; j < 2; j++){
+            for (let k = -1; k < 2; k++){
+                const colorStyle = i === 0 && j === 0 && k === 0 ? 'style="color: #0C9329;"' : '';
+                result = mortonEncodeMagicBits3D(pointId.x+i, pointId.y +j, pointId.z +k, bitLength);
+                resultContainer.innerHTML += 
+                    `<p ${colorStyle}> point (${pointId.x + i}, ${pointId.y +j}, ${pointId.z +k}): Morton Code: ${result.mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${result.mortonCode})</p>`;
+            }
+        }
+    }
 }
 
 

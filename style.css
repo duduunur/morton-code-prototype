@@ -259,9 +259,17 @@ input::-webkit-inner-spin-button {
     background-color: white;
     display: flex;
     flex-direction: column; 
-    font-family: monospace
+    font-family: monospace;
 }
 
+#stencilResult-a.result{
+    min-height: 100px;
+    max-height: 765px;
+}
+#stencilResult-b.result{
+    min-height: 100px;
+    max-height: 765px;
+}
 
 .steps-container {
     display: flex;
