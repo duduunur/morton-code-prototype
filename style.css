@@ -262,6 +262,10 @@ input::-webkit-inner-spin-button {
     font-family: monospace;
 }
 
+.resultArithmetic{
+    overflow-y: auto;
+}
+
 #stencilResult-a.result{
     min-height: 100px;
     max-height: 765px;
@@ -290,6 +294,8 @@ input::-webkit-inner-spin-button {
 .color-x { color: #DC0909; }
 .color-y { color: #151BB9; }
 .color-z { color: #0C9329; }
+.color-a { color: #C03594;}
+.color-b { color: #873CE9;}
 
 .binary{
     //border: 1px solid yellow;
