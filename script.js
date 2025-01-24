@@ -243,14 +243,6 @@ function handleSettingsChange() {
     closeCode('a-magicBitsCodeContainer', 'a-forLoopHeader','a-show-code-btn2','a-resultForLoop');// to-do: prüfen, ob offen 
     closeCode('b-forLoopCodeContainer', 'b-magicBitsHeader', 'b-show-code-btn', 'b-resultMagicBits'); // to-do: prüfen, ob offen 
     closeCode('b-magicBitsCodeContainer', 'b-forLoopHeader','b-show-code-btn2','b-resultForLoop');// to-do: prüfen, ob offen 
-
-    const svgImage = document.getElementById("layoutImage");
-    // Das Bild je nach Auswahl ändern
-    if (layout === "xyz") {
-        svgImage.src = "assets/xyz.svg";
-    } else {
-        svgImage.src = "assets/zyx.svg";
-    }
 }
 
 function clearStencil(point) {
@@ -361,8 +353,8 @@ function interleaveForLoop(point) {
     
         let formattedBits = '';
         for (let bitIndex = 0; bitIndex < binaryString.length; bitIndex++) {
-            formattedBits += `<span class="${colorClass}">${binaryString[bitIndex]}</span>`; // Bits einfärben
-        }
+            formattedBits += `<span class="${colorClass}">${binaryString[bitIndex]}</span>`; // Bits einfärben 
+        } // das muss ich doch garnicht in einer for schleife machen?? (das bräuchte ich nur, wenn ich nicht alle bits in der selben farbe machen würde)
     
         binaryCoordinates += `<div class="binary">${layout[i]} = ${formattedBits} (decimal: ${coord})</div>`; // Eingabekoordinaten anzeigen
     }
@@ -1125,6 +1117,7 @@ function checkCoordinatesForSubtraction() {
 
 // Funktion, um den 9-Punkte-Stencil zu zeichnen
 function generateStencil(pointId) {
+    document.getElementById(`stencilContainer-${pointId}`).classList.remove("hidden");
     document.getElementById(`stencilContainer-${pointId}`).classList.add('expanded');
     const canvas = document.getElementById(`canvasStencil-${pointId}`);
     if (!canvas) {
@@ -1164,15 +1157,22 @@ function generateStencil(pointId) {
 }
 
 function generateStencil2D(canvas, ctx, pointId){
-    canvas.width = 600;  // Ändert die interne Breite 
+    canvas.width = 700;  // Ändert die interne Breite 
     canvas.height = 550;
 
-    canvas.style.width = '300px';  // darstellungsgröße
+    canvas.style.width = '350px';  // darstellungsgröße
     canvas.style.height = '275px'; 
 
     ctx.scale(2, 2); // skaliert das bild (für höhere auflösung)
 
-    const centerX = canvas.width / 4;
+    // achsen-layout zeigen
+    const img = new Image();
+    img.src = "assets/xy.svg";
+    img.onload = function () {
+        ctx.drawImage(img, 10, 10, 40, 40);
+    };
+
+    const centerX = 180;
     const centerY = canvas.height / 4;
     const offset = 80; // Abstand zwischen den Punkten
 
@@ -1265,11 +1265,7 @@ function generateStencil3D(canvas, ctx, pointId) {
 
     // achsen-layout zeigen
     const img = new Image();
-    if (layout === "xyz") {
-        img.src = "assets/xyz.svg";
-    } else {
-        img.src = "assets/zyx.svg";
-    }
+    img.src = "assets/xyz.svg";
     img.onload = function () {
         ctx.drawImage(img, 10, 10, 40, 40);
     };
@@ -1280,13 +1276,12 @@ function generateStencil3D(canvas, ctx, pointId) {
     const layerOffsetX = 250; // Abstand zwischen den Lagen
     const layerOffsetY = 50;
 
-    coords = layout === "xyz" ? [pointId.x, pointId.y, pointId.z] : [pointId.z, pointId.y, pointId.x];
 
     // Punkte in drei Lagen definieren
     const layers = [
-        coords[2] + 1,
-        coords[2],
-        coords[2] - 1
+        pointId.z + 1,
+        pointId.z,
+        pointId.z - 1
     ];
 
     let layerCenters = [];
@@ -1307,28 +1302,28 @@ function generateStencil3D(canvas, ctx, pointId) {
         layerCenters.push({ x: layerCenterX, y: layerCenterY }); // Speichere die Mittelpunkte der Lagen
 
         const points = [
-            { x: coords[0] - 1, y: coords[1] + 1 }, // oben links
-            { x: coords[0], y: coords[1] + 1 },     // oben mittig
-            { x: coords[0] + 1, y: coords[1] + 1 }, // oben rechts
-            { x: coords[0] - 1, y: coords[1] },     // mitte links
-            { x: coords[0], y: coords[1] },         // mitte
-            { x: coords[0] + 1, y: coords[1] },     // mitte rechts
-            { x: coords[0] - 1, y: coords[1] - 1 }, // unten links
-            { x: coords[0], y: coords[1] - 1 },     // unten mittig
-            { x: coords[0] + 1, y: coords[1] - 1 }  // unten rechts
+            { x: pointId.x - 1, y: pointId.y + 1 }, // oben links
+            { x: pointId.x, y: pointId.y + 1 },     // oben mittig
+            { x: pointId.x + 1, y: pointId.y + 1 }, // oben rechts
+            { x: pointId.x - 1, y: pointId.y },     // mitte links
+            { x: pointId.x, y: pointId.y },         // mitte
+            { x: pointId.x + 1, y: pointId.y },     // mitte rechts
+            { x: pointId.x - 1, y: pointId.y - 1 }, // unten links
+            { x: pointId.x, y: pointId.y - 1 },     // unten mittig
+            { x: pointId.x + 1, y: pointId.y - 1 }  // unten rechts
         ];
 
         // Verbindungen zeichnen
         ctx.strokeStyle = lineColor;
         points.forEach((point, i) => {
-            const px = layerCenterX + (point.x - coords[0]) * offset;
-            const py = layerCenterY - (point.y - coords[1]) * offset;
+            const px = layerCenterX + (point.x - pointId.x) * offset;
+            const py = layerCenterY - (point.y - pointId.y) * offset;
 
             // Horizontale Verbindungen
             if (i % 3 !== 2) {
                 const rightPoint = points[i + 1];
-                const pxRight = layerCenterX + (rightPoint.x - coords[0]) * offset;
-                const pyRight = layerCenterY - (rightPoint.y - coords[1]) * offset;
+                const pxRight = layerCenterX + (rightPoint.x - pointId.x) * offset;
+                const pyRight = layerCenterY - (rightPoint.y - pointId.y) * offset;
                 ctx.beginPath();
                 ctx.moveTo(px, py);
                 ctx.lineTo(pxRight, pyRight);
@@ -1338,8 +1333,8 @@ function generateStencil3D(canvas, ctx, pointId) {
             // Vertikale Verbindungen
             if (i < 6) {
                 const bottomPoint = points[i + 3];
-                const pxBottom = layerCenterX + (bottomPoint.x - coords[0]) * offset;
-                const pyBottom = layerCenterY - (bottomPoint.y - coords[1]) * offset;
+                const pxBottom = layerCenterX + (bottomPoint.x - pointId.x) * offset;
+                const pyBottom = layerCenterY - (bottomPoint.y - pointId.y) * offset;
                 ctx.beginPath();
                 ctx.moveTo(px, py);
                 ctx.lineTo(pxBottom, pyBottom);
@@ -1350,8 +1345,8 @@ function generateStencil3D(canvas, ctx, pointId) {
 
         // Punkte und Koordinaten zeichnen
         points.forEach((point, index) => {
-            const px = layerCenterX + (point.x - coords[0]) * offset;
-            const py = layerCenterY - (point.y - coords[1]) * offset;
+            const px = layerCenterX + (point.x - pointId.x) * offset;
+            const py = layerCenterY - (point.y - pointId.y) * offset;
 
             // Kreis zeichnen
             ctx.beginPath();
@@ -1362,7 +1357,11 @@ function generateStencil3D(canvas, ctx, pointId) {
             // Koordinaten zeichnen
             ctx.fillStyle = textColor;
             const adjustedPy = [1, 4, 7].includes(index) ? py - 10 : py; // 10 Pixel nach oben für Index 1, 4, 7
-            ctx.fillText(`(${point.x}, ${point.y}, ${z})`, px + 2, adjustedPy + 25); 
+            if (layout == 'xyz'){
+                ctx.fillText(`(${point.x}, ${point.y}, ${z})`, px + 2, adjustedPy + 25); 
+            } else if (layout == 'zyx') {
+                ctx.fillText(`(${z}, ${point.y}, ${point.x})`, px + 2, adjustedPy + 25); 
+            }
         });
     });
 
