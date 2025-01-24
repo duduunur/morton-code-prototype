@@ -1451,9 +1451,15 @@ function outputMortonCodes3D(pointId) {
         for (let j = -1; j < 2; j++){
             for (let k = -1; k < 2; k++){
                 const colorStyle = i === 0 && j === 0 && k === 0 ? 'style="color: #0C9329;"' : '';
-                result = mortonEncodeMagicBits3D(pointId.x+i, pointId.y +j, pointId.z +k, bitLength);
-                resultContainer.innerHTML += 
-                    `<p ${colorStyle}> point (${pointId.x + i}, ${pointId.y +j}, ${pointId.z +k}): Morton Code: ${result.mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${result.mortonCode})</p>`;
+                if (layout == 'xyz'){
+                    result = mortonEncodeMagicBits3D(pointId.x + i, pointId.y + j, pointId.z + k, bitLength);
+                    resultContainer.innerHTML += 
+                    `<p ${colorStyle}> point (${pointId.x + i}, ${pointId.y + j}, ${pointId.z + k}): Morton Code: ${result.mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${result.mortonCode})</p>`;
+                } else if (layout == 'zyx'){
+                    result = mortonEncodeMagicBits3D(pointId.z + i, pointId.y + j, pointId.x + k, bitLength);
+                    resultContainer.innerHTML += 
+                    `<p ${colorStyle}> point (${pointId.z + i}, ${pointId.y + j}, ${pointId.x + k}): Morton Code: ${result.mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${result.mortonCode})</p>`;
+                }
             }
         }
     }
