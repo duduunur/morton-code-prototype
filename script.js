@@ -1190,9 +1190,15 @@ function generateStencil2D(canvas, ctx, pointId){
 
     // Farben und Stile anpassen
     const lineColor = '#707070'; 
+    const hiddenColor = '#ccc' // for coordinates that are out of bounds 
     const circleColor = '#303030'; 
     const centerColor = '#0C9329'; // grün
     const textColor = '#000'
+
+    function isOutOfBounds(point) {
+        return point.x < 0 || point.y < 0 ||
+               point.x > maxCoordinateValue || point.y > maxCoordinateValue;
+    }
 
     // Zeichne Punkte und Verbindungen
     ctx.font = '9px Helvetica';
@@ -1209,6 +1215,11 @@ function generateStencil2D(canvas, ctx, pointId){
         // Horizontale Verbindungen
         if (i % 3 !== 2) { // Keine Verbindung rechts vom letzten Punkt in einer Zeile
             const rightPoint = points[i + 1];
+            if (isOutOfBounds(point) || isOutOfBounds(rightPoint)){
+                ctx.strokeStyle = hiddenColor;
+            } else {
+                ctx.strokeStyle = lineColor;
+            }
             const pxRight = centerX + (rightPoint.x - pointId.x) * offset;
             const pyRight = centerY - (rightPoint.y - pointId.y) * offset;
             ctx.beginPath();
@@ -1220,6 +1231,11 @@ function generateStencil2D(canvas, ctx, pointId){
         // Vertikale Verbindungen
         if (i < 6) { // Keine Verbindung unterhalb der letzten Zeile
             const bottomPoint = points[i + 3];
+            if (isOutOfBounds(point) ||isOutOfBounds(bottomPoint)){
+                ctx.strokeStyle = hiddenColor;
+            } else {
+                ctx.strokeStyle = lineColor;
+            }
             const pxBottom = centerX + (bottomPoint.x - pointId.x) * offset;
             const pyBottom = centerY - (bottomPoint.y - pointId.y) * offset;
             ctx.beginPath();
@@ -1236,14 +1252,21 @@ function generateStencil2D(canvas, ctx, pointId){
 
         // Zeichne Kreis
         ctx.beginPath();
-        ctx.arc(px, py, 8, 0, 2 * Math.PI);
-        ctx.fillStyle = index === 4 ? centerColor : circleColor; // Mittelpunkt grün füllen
+        ctx.arc(px, py, 8, 0, 2 * Math.PI);            
+        // "hide" values that are out of bounds
+        if (isOutOfBounds(point)){
+            ctx.fillStyle = hiddenColor;
+        } else {
+            ctx.fillStyle = (index === 4) ? centerColor : circleColor; // Mittelpunkt grün füllen
+        }
         ctx.fill();
 
         // Koordinaten zeichnen
         ctx.fillStyle = textColor;
         const adjustedPy = [1, 4, 7].includes(index) ? py - 10 : py; // 10 Pixel nach unten für Index 1, 4, 7
-        ctx.fillText(`(${point.x}, ${point.y})`, px, adjustedPy + 25); 
+        if (!isOutOfBounds(point)){
+            ctx.fillText(`(${point.x}, ${point.y})`, px, adjustedPy + 25); 
+        }
     });
 
 
@@ -1288,10 +1311,15 @@ function generateStencil3D(canvas, ctx, pointId) {
 
     // Farben und Stile anpassen
     const lineColor = '#707070'; 
+    const hiddenColor = '#ccc' // for coordinates that are out of bounds 
     const circleColor = '#303030'; 
     const centerColor = '#0C9329'; // grün
     const textColor = '#000'
-    
+
+    function isOutOfBounds(point, z) {
+        return point.x < 0 || point.y < 0 || z < 0 ||
+               point.x > maxCoordinateValue || point.y > maxCoordinateValue || z > maxCoordinateValue;
+    } 
     ctx.font = '9px Helvetica';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -1314,14 +1342,18 @@ function generateStencil3D(canvas, ctx, pointId) {
         ];
 
         // Verbindungen zeichnen
-        ctx.strokeStyle = lineColor;
         points.forEach((point, i) => {
             const px = layerCenterX + (point.x - pointId.x) * offset;
             const py = layerCenterY - (point.y - pointId.y) * offset;
 
             // Horizontale Verbindungen
-            if (i % 3 !== 2) {
+            if (i % 3 !== 2) { // 0,1,3,4,6,7 (alle außer die drei rechten)
                 const rightPoint = points[i + 1];
+                if (isOutOfBounds(point, z) || isOutOfBounds(rightPoint, z)){
+                    ctx.strokeStyle = hiddenColor;
+                } else {
+                    ctx.strokeStyle = lineColor;
+                }
                 const pxRight = layerCenterX + (rightPoint.x - pointId.x) * offset;
                 const pyRight = layerCenterY - (rightPoint.y - pointId.y) * offset;
                 ctx.beginPath();
@@ -1333,6 +1365,11 @@ function generateStencil3D(canvas, ctx, pointId) {
             // Vertikale Verbindungen
             if (i < 6) {
                 const bottomPoint = points[i + 3];
+                if (isOutOfBounds(point, z) ||isOutOfBounds(bottomPoint, z)){
+                    ctx.strokeStyle = hiddenColor;
+                } else {
+                    ctx.strokeStyle = lineColor;
+                }
                 const pxBottom = layerCenterX + (bottomPoint.x - pointId.x) * offset;
                 const pyBottom = layerCenterY - (bottomPoint.y - pointId.y) * offset;
                 ctx.beginPath();
@@ -1351,16 +1388,23 @@ function generateStencil3D(canvas, ctx, pointId) {
             // Kreis zeichnen
             ctx.beginPath();
             ctx.arc(px, py, 7, 0, 2 * Math.PI);
-            ctx.fillStyle = (index === 4 && layerIndex === 1) ? centerColor : circleColor; // Mittelpunkt grün füllen
-            ctx.fill();
+            // "hide" values that are out of bounds
+            if (isOutOfBounds(point, z)){
+                ctx.fillStyle = hiddenColor;
+            } else {
+                ctx.fillStyle = (index === 4 && layerIndex === 1) ? centerColor : circleColor; // Mittelpunkt grün füllen
+            }
+            ctx.fill(); 
 
             // Koordinaten zeichnen
             ctx.fillStyle = textColor;
             const adjustedPy = [1, 4, 7].includes(index) ? py - 10 : py; // 10 Pixel nach oben für Index 1, 4, 7
-            if (layout == 'xyz'){
-                ctx.fillText(`(${point.x}, ${point.y}, ${z})`, px + 2, adjustedPy + 25); 
-            } else if (layout == 'zyx') {
-                ctx.fillText(`(${z}, ${point.y}, ${point.x})`, px + 2, adjustedPy + 25); 
+            if (!isOutOfBounds(point, z)){
+                if (layout == 'xyz'){
+                    ctx.fillText(`(${point.x}, ${point.y}, ${z})`, px + 2, adjustedPy + 25); 
+                } else if (layout == 'zyx') {
+                    ctx.fillText(`(${z}, ${point.y}, ${point.x})`, px + 2, adjustedPy + 25); 
+                }
             }
         });
     });
@@ -1395,7 +1439,11 @@ function outputMortonCodes(points, pointId) {
         x_mask = BigInt(0x5555555555555555n); 
         y_mask = BigInt(0xAAAAAAAAAAAAAAAAn); 
     }
-   
+
+    function isOutOfBounds(point) {
+        return point.x < 0 || point.y < 0 ||
+               point.x > maxCoordinateValue || point.y > maxCoordinateValue;
+    }
 
     console.log("x_mask (x): "+x_mask.toString(2) )
     console.log("y_mask (y): "+y_mask.toString(2) )
@@ -1405,7 +1453,12 @@ function outputMortonCodes(points, pointId) {
 
         if (index === 4) { // Mittelpunkt
             mortonCode = centerMorton;
-        } else {
+
+            const colorStyle = 'style="color: #0C9329;"'
+            document.getElementById(`stencilResult-${pointId.id}`).innerHTML += 
+            `<p ${colorStyle}> point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCode})</p>`;
+
+        } else if (!isOutOfBounds(point)){
             // Morton-Code für direkte Nachbarpunkte berechnen
             if (index === 1) { // Oben
                 mortonCode = (((centerMorton | x_mask) + 1n) & y_mask) | (centerMorton & x_mask);
@@ -1428,12 +1481,10 @@ function outputMortonCodes(points, pointId) {
                 let temp = (((centerMorton & y_mask) - 1n) & y_mask) | (centerMorton & x_mask);
                 mortonCode = (((temp | y_mask) + 1n) & x_mask) | (temp & y_mask);
             }
+
+            document.getElementById(`stencilResult-${pointId.id}`).innerHTML += 
+            `<p> point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCode})</p>`;
         }
-
-        const colorStyle = index === 4 ? 'style="color: #0C9329;"' : '';
-
-        document.getElementById(`stencilResult-${pointId.id}`).innerHTML += 
-            `<p ${colorStyle}> point (${point.x}, ${point.y}): Morton Code = ${mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCode})</p>`;
     });
 }
 
@@ -1447,18 +1498,25 @@ function outputMortonCodes3D(pointId) {
 
     resultContainer.innerHTML += `<h4>Morton Codes:</h4>`;
 
+    function isOutOfBounds(x, y, z) {
+        return x < 0 || y < 0 || z < 0 ||
+               x > maxCoordinateValue || y > maxCoordinateValue || z > maxCoordinateValue;
+    } 
+
     for (let i = -1; i < 2; i++){
         for (let j = -1; j < 2; j++){
             for (let k = -1; k < 2; k++){
                 const colorStyle = i === 0 && j === 0 && k === 0 ? 'style="color: #0C9329;"' : '';
-                if (layout == 'xyz'){
-                    result = mortonEncodeMagicBits3D(pointId.x + i, pointId.y + j, pointId.z + k, bitLength);
-                    resultContainer.innerHTML += 
-                    `<p ${colorStyle}> point (${pointId.x + i}, ${pointId.y + j}, ${pointId.z + k}): Morton Code: ${result.mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${result.mortonCode})</p>`;
-                } else if (layout == 'zyx'){
-                    result = mortonEncodeMagicBits3D(pointId.z + i, pointId.y + j, pointId.x + k, bitLength);
-                    resultContainer.innerHTML += 
-                    `<p ${colorStyle}> point (${pointId.z + i}, ${pointId.y + j}, ${pointId.x + k}): Morton Code: ${result.mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${result.mortonCode})</p>`;
+                if(!isOutOfBounds(pointId.x + i, pointId.y + j, pointId.z + k)) {
+                    if (layout == 'xyz'){
+                        result = mortonEncodeMagicBits3D(pointId.x + i, pointId.y + j, pointId.z + k, bitLength);
+                        resultContainer.innerHTML += 
+                        `<p ${colorStyle}> point (${pointId.x + i}, ${pointId.y + j}, ${pointId.z + k}): Morton Code: ${result.mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${result.mortonCode})</p>`;
+                    } else if (layout == 'zyx'){
+                        result = mortonEncodeMagicBits3D(pointId.z + i, pointId.y + j, pointId.x + k, bitLength);
+                        resultContainer.innerHTML += 
+                        `<p ${colorStyle}> point (${pointId.z + i}, ${pointId.y + j}, ${pointId.x + k}): Morton Code: ${result.mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${result.mortonCode})</p>`;
+                    }
                 }
             }
         }
