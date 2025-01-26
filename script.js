@@ -186,7 +186,7 @@ function toggleCoordinateFields(point) {
         zInput.classList.add('hidden');
         zError.classList.add('hidden');
         layoutContainer.classList.add("hidden"); 
-        layout = 'xyz'; // layout für 2d (to-do: gucken, ob ich das brauche)
+        layout = 'xyz'; // bei auswahl der dimension 2, wird das layout "zurückgesetzt" auf xyz
     }
 
     // Reihenfolge der Eingabefelder (in Abhängigkeit vom Layout) aktualisieren 
@@ -215,8 +215,8 @@ function updateCoordinateInputOrder(layout, point) {
         coordinateInputs.appendChild(xGroup);
         coordinateInputs.appendChild(yLabel);
         coordinateInputs.appendChild(yGroup);
-        if (zLabel) coordinateInputs.appendChild(zLabel);
-        if (zGroup) coordinateInputs.appendChild(zGroup);
+        if (zLabel) coordinateInputs.appendChild(zLabel); // falls es visible/ nicht hidden ist (3d)
+        if (zGroup) coordinateInputs.appendChild(zGroup); // falls es visible/ nicht hidden ist (3d)
         coordinateInputs.appendChild(calculateButton);
     } else if (layout === 'zyx') {
         coordinateInputs.appendChild(zLabel);
@@ -300,7 +300,7 @@ function calculateMortonCode(point) {
     const x = parseInt(document.getElementById(`${point.id}-x`).value);
     const y = parseInt(document.getElementById(`${point.id}-y`).value);
     const z = dimension === 3 ? (parseInt(document.getElementById(`${point.id}-z`).value)) : 0;
-    console.log("x: " + x+ " y: " +y+ " z: "+ z);
+    //console.log("x: " + x+ " y: " +y+ " z: "+ z);
 
     // koordinaten in point objekte speichern
     point.x = x;
@@ -325,14 +325,9 @@ function interleaveForLoop(point) {
     let mortonCode = BigInt(0);
     const bitsPerCoord = parseInt(bitLength / dimension); 
     const bitsMortonCode = bitsPerCoord * dimension;
-    //console.log(layout);
 
     const resultContainer = document.getElementById(`${point.id}-resultForLoop`);
-    console.log("pointId.x " + point.x)
-    console.log("pointId.y " + point.y)
-    console.log("pointId.z " + point.z)
 
-    console.log("dimension: " + dimension)
     // koordinaten in ein array
     let coords = [];
     if (dimension === 3) {
@@ -340,23 +335,14 @@ function interleaveForLoop(point) {
     } else {
         coords = [point.x, point.y];
     }
-    console.log("pointId.x " + point.x)
-    console.log("coords:" + coords)
 
-    // format input coordinates
+    // display coordinates in binary and colorized
     let binaryCoordinates = '';
-    for (let i = 0; i < dimension; i++) {
+    for (let i = 0; i < coords.length; i++) {
         const coord = coords[i];
-        console.log("coord:" + coord)
-        const colorClass = i === 0 ? 'color-x' : i === 1 ? 'color-y' : 'color-z'; // Farben basierend auf Index
-        const binaryString = coord.toString(2).padStart(bitsPerCoord, '0'); // Binärformatierung mit Padding
-    
-        let formattedBits = '';
-        for (let bitIndex = 0; bitIndex < binaryString.length; bitIndex++) {
-            formattedBits += `<span class="${colorClass}">${binaryString[bitIndex]}</span>`; // Bits einfärben 
-        } // das muss ich doch garnicht in einer for schleife machen?? (das bräuchte ich nur, wenn ich nicht alle bits in der selben farbe machen würde)
-    
-        binaryCoordinates += `<div class="binary">${layout[i]} = ${formattedBits} (decimal: ${coord})</div>`; // Eingabekoordinaten anzeigen
+        const colorClass = `color-${layout[i]}`; // Farben basierend auf Index
+        const binaryString = `<span class="${colorClass}">${coord.toString(2).padStart(bitsPerCoord, '0')}</span>`;
+        binaryCoordinates += `<div class="binary">${layout[i]} = ${binaryString} (decimal: ${coord})</div>`;
     }
 
     // display input coordinates
@@ -364,7 +350,7 @@ function interleaveForLoop(point) {
     coordinates.innerHTML = `${binaryCoordinates}<br>`;
     resultContainer.appendChild(coordinates);
 
-    // Morton Code und Rechenschritte mit Nullen füllen 
+    // funktion für Morton Code und Rechenschritte (binary und mit Nullen füllen)
     function formatBinary(value) {
         return value.toString(2).padStart(Number(bitsMortonCode), '0');
     }
@@ -376,8 +362,7 @@ function interleaveForLoop(point) {
 
         // Schleife von rechts nach links durch die Bits
         for (let k = length - 1; k >= 0; k--) {
-            const colorClass = (length - 1 - k) % coords.length === 0 ? 'color-x' :
-                (length - 1 - k) % coords.length === 1 ? 'color-y' : 'color-z';
+            const colorClass = `color-${layout[(length - 1 - k) % dimension]}`; // Farben basierend auf Index
 
             // Das Bit wird der gefärbten Zeichenkette am Anfang hinzugefügt
             coloredStr = `<span class="${colorClass}">${binaryStr[k]}</span>` + coloredStr;
@@ -385,6 +370,7 @@ function interleaveForLoop(point) {
 
         return coloredStr;
     }
+
 
     // Current Bit und shifted bit formatieren
     function formatAndColorizeBits(value, colorClass) {
@@ -413,7 +399,7 @@ function interleaveForLoop(point) {
             mortonCode |= shiftedBit;
 
             // Wählen der entsprechenden Farbe basierend auf j-Wert
-            const colorClass = j === 0 ? 'color-x' : j === 1 ? 'color-y' : 'color-z';
+            const colorClass = `color-${layout[j]}`; // Farben basierend auf Index
 
             // Formatierte Ausgabe des aktuellen Bits und des verschobenen Bits
             const formattedCurrentBit = formatAndColorizeBits(currentBit, colorClass);
@@ -608,7 +594,7 @@ function displayMagicBits(point) {
     let binaryCoordinates = '';
     for (let i = 0; i < coords.length; i++) {
         const coord = coords[i];
-        const colorClass = i === 0 ? 'color-x' : i === 1 ? 'color-y' : 'color-z';
+        const colorClass = `color-${layout[i]}`;
         const binaryString = `<span class="${colorClass}">${coord.toString(2).padStart(maxBits, '0')}</span>`;
         binaryCoordinates += `<div class="binary">${layout[i]} = ${binaryString} (decimal: ${coord})</div>`;
     }
@@ -618,7 +604,7 @@ function displayMagicBits(point) {
     let bitSteps = '';
     for (let i = 0; i < steps.length; i++) {
         const stepInfo = steps[i];
-        const colorClass = i === 0 ? 'color-x' : i === 1 ? 'color-y' : 'color-z';
+        const colorClass = `color-${layout[i]}`; // Farben basierend auf Index
         bitSteps += `<h5>Bits for ${layout[i]}:</h5>`;
         for (let i = 0; i < stepInfo.steps.length; i++) {
             const step = stepInfo.steps[i];
@@ -633,7 +619,7 @@ function displayMagicBits(point) {
 
     for (let i = 0; i < mortonCodeBinary.length; i++) {
         const reversedIndex = mortonCodeBinary.length - 1 - i;
-        const colorClass = reversedIndex % dimension === 0 ? 'color-x' :
+        const colorClass = `color-${layout[reversedIndex % dimension]}`; // Farben basierend auf Index
         reversedIndex % dimension === 1 ? 'color-y' : 'color-z';
         formattedBits += `<span class="${colorClass}">${mortonCodeBinary[i]}</span>`;
     }
