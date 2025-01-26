@@ -656,79 +656,81 @@ function interleave(coords, bitLength) {
 }
 `;
 
+function getMagicBits3D64() {
+    return `
+    Magic Bits Algorithm 3D
 
-const magicBitsCode3D64 = `Magic Bits Algorithm 3D
+    function splitBy3(x) {
+        x = (x | (x << 32)) & 0x1F00000000FFFF;
+        x = (x | (x << 16)) & 0x1F0000FF0000FF;
+        x = (x | (x << 8)) & 0x100F00F00F00F00F;
+        x = (x | (x << 4)) & 0x10C30C30C30C30C3;
+        x = (x | (x << 2)) & 0x1249249249249249;
 
-function splitBy3(x) {
-    x = (x | (x << 32)) & 0x1F00000000FFFF;
-    x = (x | (x << 16)) & 0x1F0000FF0000FF;
-    x = (x | (x << 8)) & 0x100F00F00F00F00F;
-    x = (x | (x << 4)) & 0x10C30C30C30C30C3;
-    x = (x | (x << 2)) & 0x1249249249249249;
+        return x;   
+    }
 
-    return x;
+    function encodeMagicBits3D(x, y, z) {
+        const xSplit = splitBy3(x);
+        const ySplit = splitBy3(y);
+        const zSplit = splitBy3(z);
+
+        return ${layout === "xyz" ? 
+          "xSplit | (ySplit << 1) | (zSplit << 2);" : 
+          "zSplit | (ySplit << 1) | (xSplit << 2);"
+        }
+    }
+    `;
 }
 
-function encodeMagicBits3D(x,y,z) {
-    const xSplit = splitBy3(x);
-    const ySplit = splitBy3(y);
-    const zSplit = splitBy3(z);
+function getMagicBits3D32() {
+    return `
+    Magic Bits Algorithm 3D
 
-    const result = xSplit 
-                | (ySplit << 1) 
-                | (zSplit << 2);
+    function splitBy3(x) {
+        x = (x | (x << 16)) & 0x30000FF;
+        x = (x | (x << 8)) & 0x0300F00F;
+        x = (x | (x << 4)) & 0x30C30C3;
+        x = (x | (x << 2)) & 0x9249249;
+        return x;   
+    }
 
-    return result;
-}
-`;
+    function encodeMagicBits3D(x, y, z) {
+        const xSplit = splitBy3(x);
+        const ySplit = splitBy3(y);
+        const zSplit = splitBy3(z);
 
-
-const magicBitsCode3D32 = `Magic Bits Algorithm 3D
-
-function splitBy3(x) {
-    x = (x | (x << 16)) & 0x30000FF;
-    x = (x | (x << 8)) & 0x0300F00F;
-    x = (x | (x << 4)) & 0x30C30C3;
-    x = (x | (x << 2)) & 0x9249249;
-
-    return x;
-}
-
-function encodeMagicBits3D(x,y,z) {
-    const xSplit = splitBy3(x);
-    const ySplit = splitBy3(y);
-    const zSplit = splitBy3(z);
-
-    const result = xSplit 
-                | (ySplit << 1) 
-                | (zSplit << 2);
-
-    return result;
-}
-`;
-
-const magicBitsCode3D16 = `Magic Bits Algorithm 3D
-
-function splitBy3(x) {
-    x = (x | (x << 8)) & 0x0300F00F;
-    x = (x | (x << 4)) & 0x030C30C3;
-    x = (x | (x << 2)) & 0x09249249;
-
-    return x;   
+        return ${layout === "xyz" ? 
+          "xSplit | (ySplit << 1) | (zSplit << 2);" : 
+          "zSplit | (ySplit << 1) | (xSplit << 2);"
+        }
+    }
+    `;
 }
 
-function encodeMagicBits3D(x,y,z) {
-    const xSplit = splitBy3(x);
-    const ySplit = splitBy3(y);
-    const zSplit = splitBy3(z);
+function getMagicBits3D16() {
+    return `
+    Magic Bits Algorithm 3D
 
-    const result = xSplit 
-                | (ySplit << 1) 
-                | (zSplit << 2);
+    function splitBy3(x) {
+        x = (x | (x << 8)) & 0x0300F00F;
+        x = (x | (x << 4)) & 0x030C30C3;
+        x = (x | (x << 2)) & 0x09249249;
+        return x;   
+    }
 
-    return result;
+    function encodeMagicBits3D(x, y, z) {
+        const xSplit = splitBy3(x);
+        const ySplit = splitBy3(y);
+        const zSplit = splitBy3(z);
+
+        return ${layout === "xyz" ? 
+          "xSplit | (ySplit << 1) | (zSplit << 2);" : 
+          "zSplit | (ySplit << 1) | (xSplit << 2);"
+        }
+    }
+    `;
 }
-`;
 
 const magicBitsCode2D64 = `Magic Bits Algorithm 2D
 
@@ -746,9 +748,8 @@ function splitBy2(x) {
 function encodeMagicBits2D(x, y) {
     const xSplit = splitBy2(x);
     const ySplit = splitBy2(y);
-    const result = xSplit | (ySplit << 1);
 
-    return result;
+    return xSplit | (ySplit << 1);
 }
 `;
 
@@ -767,9 +768,8 @@ function splitBy2(x) {
 function encodeMagicBits2D(x, y) {
     const xSplit = splitBy2(x);
     const ySplit = splitBy2(y);
-    const result = xSplit | (ySplit << 1);
 
-    return result;
+    return xSplit | (ySplit << 1);
 }
 `;
 
@@ -786,9 +786,8 @@ function splitBy2(x) {
 function encodeMagicBits(x, y) {
     const xSplit = splitBy2(x);
     const ySplit = splitBy2(y);
-    const result = xSplit | (ySplit << 1);
 
-    return result;
+    return xSplit | (ySplit << 1);
 }
 `;
 
@@ -806,8 +805,8 @@ function showSourceCode(codeContainerId, HeaderId, buttonId, resultContainerId, 
             code = bitLength === "64" ? magicBitsCode2D64 :
                    bitLength === "32" ? magicBitsCode2D32 : magicBitsCode2D16;
         } else if (dimension === "3") {
-            code = bitLength === "64" ? magicBitsCode3D64 :
-                   bitLength === "32" ? magicBitsCode3D32 : magicBitsCode3D16;
+            code = bitLength === "64" ? getMagicBits3D64() :
+                   bitLength === "32" ? getMagicBits3D32() : getMagicBits3D16();
         }
     }    
 
