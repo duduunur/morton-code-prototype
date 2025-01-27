@@ -89,7 +89,6 @@ function clearContainers() {
 }
 
 function clearCoordinateInputs(point) {
-    //console.log("clearCoordinateinputs aufgerufen für point" + pointId)
     document.getElementById(`${point.id}-x`).value = "";
     document.getElementById(`${point.id}-y`).value = "";
     const zInput = document.getElementById(`${point.id}-z`);
@@ -99,7 +98,6 @@ function clearCoordinateInputs(point) {
 }
 
 function checkCoordinateLimits(point) {
-    //console.log("checking coordinatelimits")
     const xInput = document.getElementById(`${point.id}-x`);
     const yInput = document.getElementById(`${point.id}-y`);
     const zInput = document.getElementById(`${point.id}-z`);
@@ -113,12 +111,6 @@ function checkCoordinateLimits(point) {
     const y = yInput && yInput.value ? yInput.value : null;
     const z = zInput && zInput.value ? zInput.value : null;
 
-
-    //console.log("checking x:" + x);
-    //console.log("checking y:" + y);
-    //console.log("checking z:" + z);
-
-    //console.log("checking maxcoordvalue:" + maxCoordinateValue);
     let hasError = false;
 
     // Helper function for invalid input
@@ -174,7 +166,6 @@ function toggleCoordinateFields(point) {
     const zInput = document.getElementById(`${point.id}-zInput`);
     const zLabel = document.getElementById(`${point.id}-zLabel`);
     const zError = document.getElementById(`${point.id}-zError`);
-    console.log("layout:" + layout)
 
     if (dimension === 3) {
         zLabel.classList.remove('hidden');
@@ -300,7 +291,6 @@ function calculateMortonCode(point) {
     const x = parseInt(document.getElementById(`${point.id}-x`).value);
     const y = parseInt(document.getElementById(`${point.id}-y`).value);
     const z = dimension === 3 ? (parseInt(document.getElementById(`${point.id}-z`).value)) : 0;
-    //console.log("x: " + x+ " y: " +y+ " z: "+ z);
 
     // koordinaten in point objekte speichern
     point.x = x;
@@ -584,8 +574,6 @@ function displayMagicBits(point) {
     }
 
     // Berechnung entsprechend Dimension
-    console.log("dimension in displaymagicbits: " + dimension)
-    console.log("dimension type " + typeof dimension)
     const { mortonCode, steps } = dimension === 2
         ? mortonEncodeMagicBits2D(coords[0], coords[1], bitLength)
         : mortonEncodeMagicBits3D(coords[0], coords[1], coords[2], bitLength);
@@ -845,9 +833,6 @@ function closeCode(codeContainerId, HeaderId, resultContainerId, buttonId) {
 
 function checkMortonCodesExist(errorElementId) {
     const error = document.getElementById(errorElementId);
-
-    console.log(pointA.mortonCode);
-    console.log(pointB.mortonCode);
 
     // Überprüfe explizit, ob der Morton-Code `null` oder `undefined` ist
     if (pointA.mortonCode === null || pointA.mortonCode === undefined || 
@@ -1316,7 +1301,13 @@ function generateStencil2D(canvas, ctx, pointId){
 
 
 function generateStencil3D(canvas, ctx, pointId) {
-    outputMortonCodes3D(pointId);
+    // container von den morton code ergebnissen der benachbarten punkte leeren 
+    const resultContainer = document.getElementById(`stencilResult-${pointId.id}`)
+    resultContainer.innerHTML = '';
+    // höhe und resizability für ergebnisse
+    resultContainer.style.height = '250px';
+    resultContainer.style.resize = 'vertical';
+
     canvas.width = 1700;  // Ändert die interne Breite 
     canvas.height = 700;
 
@@ -1346,8 +1337,6 @@ function generateStencil3D(canvas, ctx, pointId) {
         pointId.z - 1
     ];
 
-    let layerCenters = [];
-
     // Farben und Stile anpassen
     const lineColor = '#707070'; 
     const hiddenColor = '#ccc' // for coordinates that are out of bounds 
@@ -1362,6 +1351,8 @@ function generateStencil3D(canvas, ctx, pointId) {
     ctx.font = '9px Helvetica';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+
+    let layerCenters = [];
 
     layers.forEach((z, layerIndex) => {
         const layerCenterX = centerX + layerIndex * layerOffsetX;
@@ -1446,6 +1437,8 @@ function generateStencil3D(canvas, ctx, pointId) {
                 }
             }
         });
+        // morton codes der nachbarn des jeweiligen layers ausrechnen und ausgeben 
+        outputMortonCodes3D(points, layerIndex, pointId);
     });
 
      // Zeichne Linie vom Mittelpunkt der ersten Lage zum Mittelpunkt der letzten Lage
@@ -1460,7 +1453,7 @@ function generateStencil3D(canvas, ctx, pointId) {
      ctx.setLineDash([]); // Rücksetzen auf durchgehende Linie
 }
 
-// Funktion, um die Morton-Codes der Punkte des Stencils auszugeben
+// Funktion, um die Morton-Codes der Punkte des Stencils (2d) auszugeben
 function outputMortonCodes(points, pointId) {
     document.getElementById(`stencilResult-${pointId.id}`).innerHTML = '';
     document.getElementById(`stencilResult-${pointId.id}`).innerHTML += `<h4>Morton Codes:</h4>`;
@@ -1483,9 +1476,6 @@ function outputMortonCodes(points, pointId) {
         return point.x < 0 || point.y < 0 ||
                point.x > maxCoordinateValue || point.y > maxCoordinateValue;
     }
-
-    console.log("x_mask (x): "+x_mask.toString(2) )
-    console.log("y_mask (y): "+y_mask.toString(2) )
 
     points.forEach((point, index) => {
         let mortonCode;
@@ -1527,40 +1517,116 @@ function outputMortonCodes(points, pointId) {
     });
 }
 
-function outputMortonCodes3D(pointId) {
-    const resultContainer = document.getElementById(`stencilResult-${pointId.id}`)
-    
-    resultContainer.innerHTML = '';
-    // höhe und resizability für ergebnisse
-    resultContainer.style.height = '250px';
-    resultContainer.style.resize = 'vertical';
+// 3D neighbours output with offset 
+function outputMortonCodes3D(points, layerIndex, pointId) {
+    // überschrift einmal ausgeben (vor der ausgabe der morton codes des vorderen layers)
+    if (layerIndex == 0) {document.getElementById(`stencilResult-${pointId.id}`).innerHTML += `<h4>Morton Codes:</h4>`;}
 
-    resultContainer.innerHTML += `<h4>Morton Codes:</h4>`;
-
-    function isOutOfBounds(x, y, z) {
-        return x < 0 || y < 0 || z < 0 ||
-               x > maxCoordinateValue || y > maxCoordinateValue || z > maxCoordinateValue;
-    } 
-
-    for (let i = -1; i < 2; i++){
-        for (let j = -1; j < 2; j++){
-            for (let k = -1; k < 2; k++){
-                const colorStyle = i === 0 && j === 0 && k === 0 ? 'style="color: #0C9329;"' : '';
-                if(!isOutOfBounds(pointId.x + i, pointId.y + j, pointId.z + k)) {
-                    if (layout == 'xyz'){
-                        result = mortonEncodeMagicBits3D(pointId.x + i, pointId.y + j, pointId.z + k, bitLength);
-                        resultContainer.innerHTML += 
-                        `<p ${colorStyle}> point (${pointId.x + i}, ${pointId.y + j}, ${pointId.z + k}): Morton Code: ${result.mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${result.mortonCode})</p>`;
-                    } else if (layout == 'zyx'){
-                        result = mortonEncodeMagicBits3D(pointId.z + i, pointId.y + j, pointId.x + k, bitLength);
-                        resultContainer.innerHTML += 
-                        `<p ${colorStyle}> point (${pointId.z + i}, ${pointId.y + j}, ${pointId.x + k}): Morton Code: ${result.mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${result.mortonCode})</p>`;
-                    }
+    // Helper function to generate masks dynamically
+    function generateMask(pattern, bitLength) {
+        let mask = 0n;
+        for (let i = 0; i < bitLength; i += pattern.length) {
+            for (let j = 0; j < pattern.length; j++) {
+                if (i + j < bitLength && pattern[j] === "1") {
+                    mask |= 1n << BigInt(i + j);
                 }
             }
         }
+        return mask;
     }
+
+    // masken je nach layout
+    if (layout == 'xyz') {
+        x3_mask = generateMask("100", bitLength);
+        y3_mask = generateMask("010", bitLength);
+        z3_mask = generateMask("001", bitLength);        
+    } else if (layout == 'zyx') {
+        x3_mask = generateMask("001", bitLength);
+        y3_mask = generateMask("010", bitLength);
+        z3_mask = generateMask("100", bitLength);
+    }
+
+    const xy3_mask = x3_mask | y3_mask;
+    const xz3_mask = x3_mask | z3_mask;
+    const yz3_mask = y3_mask | z3_mask;
+
+    // Mittelpunkt-Morton-Code je nach layer
+    if (layerIndex == 0) {
+        // center von dem layer z+1 (vorne)
+        centerMorton = (((BigInt(pointId.mortonCode) | xy3_mask) +1n) & z3_mask) | (BigInt(pointId.mortonCode) & xy3_mask);
+    } else if (layerIndex == 1) {
+        // center von dem layer in der mitte
+        centerMorton = BigInt(pointId.mortonCode);
+    } else if (layerIndex == 2){
+        // center von dem layer z-1 (hinten)
+        centerMorton = (((BigInt(pointId.mortonCode) & z3_mask) -1n) & z3_mask) | (BigInt(pointId.mortonCode) & xy3_mask);
+    }
+
+    // prüfen, ob der jeweilige nachbar out of bounds ist
+    function isOutOfBounds(point, z) {
+        return point.x < 0 || point.y < 0 || z < 0 ||
+               point.x > maxCoordinateValue || point.y > maxCoordinateValue || z > maxCoordinateValue;
+    } 
+
+    // z werte der layers 
+    const layers = [
+        pointId.z + 1,
+        pointId.z,
+        pointId.z - 1
+    ];
+ 
+    // schleife durch die points je layer
+    points.forEach((point, index) => {
+        let mortonCode;
+
+        if (!isOutOfBounds(point, layers[layerIndex]) && index === 4) { // Mittelpunkt
+            mortonCode = centerMorton;
+            const colorStyle = layerIndex === 1 ? 'style="color: #0C9329;"' : '';
+
+            if (layout == 'xyz') {
+                    document.getElementById(`stencilResult-${pointId.id}`).innerHTML += 
+                `<p ${colorStyle}> point (${point.x}, ${point.y}, ${layers[layerIndex]}): Morton Code = ${mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCode})</p>`;
+            } else if (layout == 'zyx') {
+                document.getElementById(`stencilResult-${pointId.id}`).innerHTML += 
+                `<p ${colorStyle}> point (${layers[layerIndex]}, ${point.y}, ${point.x}): Morton Code = ${mortonCode.toString(2).padStart(bitLength, '0')} (decimal: ${mortonCode})</p>`;
+            }
+        } else if (!isOutOfBounds(point, layers[layerIndex])){
+            // Morton-Code für direkte Nachbarpunkte berechnen
+            if (index === 1) { // Oben
+                mortonCode = (((centerMorton | xz3_mask) +1n) & y3_mask) | (centerMorton & xz3_mask);
+            } else if (index === 7) { // Unten
+                mortonCode = (((centerMorton & y3_mask) -1n) & y3_mask) | (centerMorton & xz3_mask);
+            } else if (index === 3) { // Links
+                mortonCode = (((centerMorton & x3_mask) -1n) & x3_mask) | (centerMorton & yz3_mask);
+            } else if (index === 5) { // Rechts
+                mortonCode = (((centerMorton | yz3_mask) +1n) & x3_mask) | (centerMorton & yz3_mask);
+            } else if (index === 0) { // Oben links
+                let temp = (((centerMorton | xz3_mask) +1n) & y3_mask) | (centerMorton & xz3_mask);
+                mortonCode = (((temp & x3_mask) -1n) & x3_mask) | (temp & yz3_mask);
+            } else if (index === 2) { // Oben rechts
+                let temp = (((centerMorton | xz3_mask) +1n) & y3_mask) | (centerMorton & xz3_mask);
+                mortonCode = (((temp | yz3_mask) +1n) & x3_mask) | (temp & yz3_mask);
+            } else if (index === 6) { // Unten links
+                let temp = (((centerMorton & y3_mask) -1n) & y3_mask) | (centerMorton & xz3_mask);
+                mortonCode = (((temp & x3_mask) -1n) & x3_mask) | (temp & yz3_mask);
+            } else if (index === 8) { // Unten rechts
+                let temp = (((centerMorton & y3_mask) -1n) & y3_mask) | (centerMorton & xz3_mask);
+                mortonCode = (((temp | yz3_mask) +1n) & x3_mask) | (temp & yz3_mask);
+            }
+
+            // ausgeben des ergebnisses
+            if (layout == 'xyz') {
+                document.getElementById(`stencilResult-${pointId.id}`).innerHTML += 
+                `<p> point (${point.x}, ${point.y}, ${layers[layerIndex]}): 
+                Morton Code = ${mortonCode.toString(2).padStart(bitLength, '0')} 
+                (decimal: ${mortonCode})</p>`;
+            } else if (layout == 'zyx') {
+                document.getElementById(`stencilResult-${pointId.id}`).innerHTML += 
+                `<p> point (${layers[layerIndex]}, ${point.y}, ${point.x}): 
+                Morton Code = ${mortonCode.toString(2).padStart(bitLength, '0')} 
+                (decimal: ${mortonCode})</p>`;
+            }
+        }
+    });
 }
-
-
    
