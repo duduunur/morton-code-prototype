@@ -534,6 +534,8 @@ function splitBy2(a, bitLength) {
         return { result: x, steps };
 
     } else if (bitLength === 16) {
+        x = (x | (x << 8n)) & 0x00FFn;
+        steps.push(x.toString(2).padStart(bitLength, '0'));
 
         x = (x | (x << 4n)) & 0x0F0Fn;
         steps.push(x.toString(2).padStart(bitLength, '0'));
@@ -761,6 +763,7 @@ function encodeMagicBits2D(x, y) {
 const magicBitsCode2D16 = `Magic Bits Algorithm 2D
 
 function splitBy2(x) {
+    x = (x | (x << 8)) & 0x00FF;
     x = (x | (x << 4)) & 0x0F0F;
     x = (x | (x << 2)) & 0x3333;
     x = (x | (x << 1)) & 0x5555;
@@ -892,17 +895,25 @@ function addition() {
         <div class="binary">X-mask: 0x${x2_mask.toString(16).toUpperCase()}<br>
         Y-mask: 0x${y2_mask.toString(16).toUpperCase()}</div><br>`;
 
-        const x_sum = (pointA.mortonCode | y2_mask) + (pointB.mortonCode & x2_mask);
-        steps += `<p>x-sum calculation:</p><div class="binary">(pointA | Y-mask) + (pointB & X-mask):<br><br>
-        <span class="color-a">${pointA.mortonCode.toString(2).padStart(bitLength, '0')}</span> | ${y2_mask.toString(2).padStart(bitLength, '0')} + <span class="color-b">${pointB.mortonCode.toString(2).padStart(bitLength, '0')}</span> & ${x2_mask.toString(2).padStart(bitLength, '0')} <br><br>= ${x_sum.toString(2).padStart(bitLength, '0')}</div><br>`;
+        const x_sum = ((pointA.mortonCode | y2_mask) + (pointB.mortonCode & x2_mask)) & x2_mask;
+        steps += `<p>x-sum calculation:</p><div class="binary">(pointA | Y-mask) + (pointB & X-mask) & X-mask:<br><br>
+        (<span class="color-a">${pointA.mortonCode.toString(2).padStart(bitLength, '0')}</span> | 
+        ${y2_mask.toString(2).padStart(bitLength, '0')}) + 
+        (<span class="color-b">${pointB.mortonCode.toString(2).padStart(bitLength, '0')}</span> & 
+        ${x2_mask.toString(2).padStart(bitLength, '0')}) & ${x2_mask.toString(2).padStart(bitLength, '0')}<br><br>= 
+        ${x_sum.toString(2).padStart(bitLength, '0')}</div><br>`;
 
-        const y_sum = (pointA.mortonCode | x2_mask) + (pointB.mortonCode & y2_mask);
-        steps += `<p>y-sum calculation: </p><div class="binary">(pointA | X-mask) + (pointB & Y-mask):<br><br>
-        <span class="color-a">${pointA.mortonCode.toString(2).padStart(bitLength, '0')}</span> | ${x2_mask.toString(2).padStart(bitLength, '0')} + <span class="color-b">${pointB.mortonCode.toString(2).padStart(bitLength, '0')}</span> & ${y2_mask.toString(2).padStart(bitLength, '0')} <br><br>= ${y_sum.toString(2).padStart(bitLength, '0')}</div><br>`;
+        const y_sum = ((pointA.mortonCode | x2_mask) + (pointB.mortonCode & y2_mask)) & y2_mask;
+        steps += `<p>y-sum calculation: </p><div class="binary">(pointA | X-mask) + (pointB & Y-mask) & Y-mask:<br><br>
+        (<span class="color-a">${pointA.mortonCode.toString(2).padStart(bitLength, '0')}</span> | 
+        ${x2_mask.toString(2).padStart(bitLength, '0')}) + 
+        (<span class="color-b">${pointB.mortonCode.toString(2).padStart(bitLength, '0')}</span> & 
+        ${y2_mask.toString(2).padStart(bitLength, '0')}) & ${y2_mask.toString(2).padStart(bitLength, '0')} <br><br>= 
+        ${y_sum.toString(2).padStart(bitLength, '0')}</div><br>`;
 
-        sum = (x_sum & x2_mask) | (y_sum & y2_mask);
-        steps += `<p>final sum: </p><div class="binary">(X-sum & X-mask) | (Y-sum & Y-mask):<br><br>
-        ${x_sum.toString(2).padStart(bitLength, '0')} & ${x2_mask.toString(2).padStart(bitLength, '0')} | ${y_sum.toString(2).padStart(bitLength, '0')} & ${y2_mask.toString(2).padStart(bitLength, '0')} <br><br>= <b>${sum.toString(2).padStart(bitLength, '0')}</b></div><br><br>`;
+        sum = x_sum | y_sum;
+        steps += `<p>final sum: </p><div class="binary">X-sum | Y-sum :<br><br>
+        ${x_sum.toString(2).padStart(bitLength, '0')} | ${y_sum.toString(2).padStart(bitLength, '0')} <br><br>= <b>${sum.toString(2).padStart(bitLength, '0')}</b></div><br><br>`;
 
     } else if (dimension === 3) {
         // Generate masks for 3D
@@ -915,25 +926,48 @@ function addition() {
 
         steps += `<h4>calculation steps: </h4>`;
         steps += `<p>masks: </p>
-        <div class="binary">${layout[0]}-mask: 0x${x3_mask.toString(16).toUpperCase()}<br>
+        <div class="binary">
+        ${layout[0]}-mask: 0x${x3_mask.toString(16).toUpperCase()}<br>
         ${layout[1]}-mask: 0x${y3_mask.toString(16).toUpperCase()}<br>
-        ${layout[2]}-mask: 0x${z3_mask.toString(16).toUpperCase()}</div><br>`;
+        ${layout[2]}-mask: 0x${z3_mask.toString(16).toUpperCase()}<br>
+        ${layout[0]}${layout[1]}-mask: 0x${xy3_mask.toString(16).toUpperCase()}<br>
+        ${layout[0]}${layout[2]}-mask: 0x${xz3_mask.toString(16).toUpperCase()}<br>
+        ${layout[1]}${layout[2]}-mask: 0x${yz3_mask.toString(16).toUpperCase()}<br></div><br>`; //yz
 
-        const x_sum = (pointA.mortonCode | yz3_mask) + (pointB.mortonCode & x3_mask);
-        steps += `<p>${layout[0]}-sum calculation:</p><div class="binary">(pointA | ${layout[1]}${layout[2]}-mask) + (pointB & ${layout[0]}-mask):<br><br>
-        <span class="color-a">${pointA.mortonCode.toString(2).padStart(bitLength, '0')}</span> | ${yz3_mask.toString(2).padStart(bitLength, '0')} + <span class="color-b">${pointB.mortonCode.toString(2).padStart(bitLength, '0')}</span> & ${x3_mask.toString(2).padStart(bitLength, '0')} <br><br>= ${x_sum.toString(2).padStart(bitLength, '0')}</div><br>`;
+        const x_sum = ((pointA.mortonCode | yz3_mask) + (pointB.mortonCode & x3_mask))  & x3_mask;
+        steps += `<p>${layout[0]}-sum calculation:</p><div class="binary">((pointA | 
+        ${layout[1]}${layout[2]}-mask) + (pointB & ${layout[0]}-mask)) & ${layout[0]}-mask:<br><br>
 
-        const y_sum = (pointA.mortonCode | xz3_mask) + (pointB.mortonCode & y3_mask);
-        steps += `<p>${layout[1]}-sum calculation: </p><div class="binary">(pointA | ${layout[0]}${layout[2]}-mask) + (pointB & ${layout[1]}-mask):<br><br>
-        <span class="color-a">${pointA.mortonCode.toString(2).padStart(bitLength, '0')}</span> | ${xz3_mask.toString(2).padStart(bitLength, '0')} + <span class="color-b">${pointB.mortonCode.toString(2).padStart(bitLength, '0')}</span> & ${y3_mask.toString(2).padStart(bitLength, '0')} <br><br>= ${y_sum.toString(2).padStart(bitLength, '0')}</div><br>`;
+        (<span class="color-a">${pointA.mortonCode.toString(2).padStart(bitLength, '0')}</span> | 
+        ${yz3_mask.toString(2).padStart(bitLength, '0')} + 
+        <span class="color-b">${pointB.mortonCode.toString(2).padStart(bitLength, '0')}</span> & 
+        ${x3_mask.toString(2).padStart(bitLength, '0')}) & ${x3_mask.toString(2).padStart(bitLength, '0')}<br><br>= 
+        ${x_sum.toString(2).padStart(bitLength, '0')}</div><br>`;
 
-        const z_sum = (pointA.mortonCode | xy3_mask) + (pointB.mortonCode & z3_mask);
-        steps += `<p>${layout[2]}-sum calculation: </p><div class="binary">(pointA | ${layout[0]}${layout[1]}-mask) + (pointB & ${layout[2]}-mask):<br><br>
-        <span class="color-a">${pointA.mortonCode.toString(2).padStart(bitLength, '0')}</span> | ${xy3_mask.toString(2).padStart(bitLength, '0')} + <span class="color-b">${pointB.mortonCode.toString(2).padStart(bitLength, '0')}</span> & ${z3_mask.toString(2).padStart(bitLength, '0')} <br><br>= ${z_sum.toString(2).padStart(bitLength, '0')}</div><br>`;
 
-        sum = (x_sum & x3_mask) | (y_sum & y3_mask) | (z_sum & z3_mask);
-        steps += `<p>final sum: </p><div class="binary">(${layout[0]}-sum & ${layout[0]}-mask) | (${layout[1]}-sum & ${layout[1]}-mask) | (${layout[2]}-sum & ${layout[2]}-mask):<br><br>
-        ${x_sum.toString(2).padStart(bitLength, '0')} & ${x3_mask.toString(2).padStart(bitLength, '0')} | ${y_sum.toString(2).padStart(bitLength, '0')} & ${y3_mask.toString(2).padStart(bitLength, '0')} | ${z_sum.toString(2).padStart(bitLength, '0')} & ${z3_mask.toString(2).padStart(bitLength, '0')} <br><br>= <b>${sum.toString(2).padStart(bitLength, '0')}</b></div><br><br>`;
+        const y_sum = (pointA.mortonCode | xz3_mask) + (pointB.mortonCode & y3_mask) & y3_mask;
+        steps += `<p>${layout[1]}-sum calculation: </p><div class="binary">((pointA | 
+        ${layout[0]}${layout[2]}-mask) + (pointB & ${layout[1]}-mask)) & ${layout[1]}-mask:<br><br>
+
+        (<span class="color-a">${pointA.mortonCode.toString(2).padStart(bitLength, '0')}</span> | 
+        ${xz3_mask.toString(2).padStart(bitLength, '0')} + 
+        <span class="color-b">${pointB.mortonCode.toString(2).padStart(bitLength, '0')}</span> & 
+        ${y3_mask.toString(2).padStart(bitLength, '0')}) & ${y3_mask.toString(2).padStart(bitLength, '0')}<br><br>= 
+        ${y_sum.toString(2).padStart(bitLength, '0')}</div><br>`;
+
+        const z_sum = (pointA.mortonCode | xy3_mask) + (pointB.mortonCode & z3_mask) & z3_mask;
+        steps += `<p>${layout[2]}-sum calculation: </p><div class="binary">(pointA | 
+        ${layout[0]}${layout[1]}-mask) + (pointB & ${layout[2]}-mask)) & ${layout[2]}-mask:<br><br>
+        (<span class="color-a">${pointA.mortonCode.toString(2).padStart(bitLength, '0')}</span> | 
+        ${xy3_mask.toString(2).padStart(bitLength, '0')} + 
+        <span class="color-b">${pointB.mortonCode.toString(2).padStart(bitLength, '0')}</span> & 
+        ${z3_mask.toString(2).padStart(bitLength, '0')}) & ${z3_mask.toString(2).padStart(bitLength, '0')} <br><br>= 
+        ${z_sum.toString(2).padStart(bitLength, '0')}</div><br>`;
+
+        sum = x_sum| y_sum | z_sum;
+        steps += `<p>final sum: </p><div class="binary">
+        ${layout[0]}-sum | ${layout[1]}-sum | ${layout[2]}-sum:<br><br>
+        ${x_sum.toString(2).padStart(bitLength, '0')} | ${y_sum.toString(2).padStart(bitLength, '0')} | ${z_sum.toString(2).padStart(bitLength, '0')} <br><br>= <b>${sum.toString(2).padStart(bitLength, '0')}</b></div><br><br>`;
     } else {
         resultContainer.innerHTML = "<p>Invalid dimension!</p>";
         return;
@@ -1535,6 +1569,8 @@ function outputMortonCodes3D(points, layerIndex, pointId) {
         return mask;
     }
 
+    let x3_mask;
+
     // masken je nach layout
     if (layout == 'xyz') {
         x3_mask = generateMask("100", bitLength);
@@ -1549,6 +1585,14 @@ function outputMortonCodes3D(points, layerIndex, pointId) {
     const xy3_mask = x3_mask | y3_mask;
     const xz3_mask = x3_mask | z3_mask;
     const yz3_mask = y3_mask | z3_mask;
+
+    console.log("x mask " + x3_mask.toString(16));
+    console.log("y mask " + y3_mask.toString(16));
+    console.log("z mask " + z3_mask.toString(16));
+    console.log("xy mask " + xy3_mask.toString(16));
+    console.log("xz mask " + xz3_mask.toString(16));
+    console.log("yz mask " + yz3_mask.toString(16));
+
 
     // Mittelpunkt-Morton-Code je nach layer
     if (layerIndex == 0) {
