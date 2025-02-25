@@ -69,11 +69,7 @@ function clearContainers() {
     clearCoordinateInputs(pointA);
     clearCoordinateInputs(pointB);
 
-    document.getElementById(`a-resultForLoop`).innerHTML = '';
-    document.getElementById(`a-resultMagicBits`).innerHTML = '';
-    document.getElementById(`b-resultForLoop`).innerHTML = '';
-    document.getElementById(`b-resultMagicBits`).innerHTML = '';
-
+    // error messages entfernen
     document.getElementById(`a-xError`).innerHTML = '';
     document.getElementById(`a-x`).classList.remove('input-error');
     document.getElementById(`a-yError`).innerHTML = '';
@@ -88,10 +84,18 @@ function clearContainers() {
     document.getElementById(`b-zError`).innerHTML = '';
     document.getElementById(`b-z`).classList.remove('input-error');
 
+    // ergebniscontainer leeren
+    document.getElementById(`a-resultForLoop`).innerHTML = '';
+    document.getElementById(`a-resultMagicBits`).innerHTML = '';
+    document.getElementById(`b-resultForLoop`).innerHTML = '';
+    document.getElementById(`b-resultMagicBits`).innerHTML = '';
+
     document.getElementById(`resultAddition`).innerHTML = '';
     document.getElementById(`resultSubtraction`).innerHTML = '';
     document.getElementById(`additionError`).innerHTML = '';
     document.getElementById(`subtractionError`).innerHTML = '';
+
+    // addition und subtraktion Container höhe zurücksetzen und nicht mehr resizable
     document.getElementById(`resultAddition`).style.removeProperty('height');
     document.getElementById(`resultSubtraction`).style.removeProperty('height');
     document.getElementById(`resultAddition`).style.resize = 'none';
@@ -135,12 +139,12 @@ function checkCoordinateLimits(point) {
 
     let hasError = false;
 
-    // Helper function for invalid input
+    // Helper function for invalid input (keine zahl, input mit komma, negative zahl)
     function isInvalidCoordinate(value) {
         return isNaN(value) || value.includes(".") || value < 0;
     }
 
-    // Validate X
+    // Validate X (check if its not null, its valid and its not bigger than maxcoordvalue)
     if (x == null || isInvalidCoordinate(x) || BigInt(x) > maxCoordinateValue) {
         xInput.classList.add('input-error');
         xError.textContent = "Enter an integer between 0 and "+ maxCoordinateValue;
@@ -178,9 +182,11 @@ function checkCoordinateLimits(point) {
         }
     }
 
+    // wenn kein Fehler (valid eingabe), return true
     return !hasError;
 }
 
+// eingabefelder an dimension anpassen
 function toggleCoordinateFields(point) {
     dimension = parseInt(document.getElementById("dimension").value);
     layout = document.getElementById("layout").value;
@@ -206,7 +212,7 @@ function toggleCoordinateFields(point) {
     updateCoordinateInputOrder(layout, point);
 }
 
-
+// eingabefelder an layout anpassen
 function updateCoordinateInputOrder(layout, point) {
     const xLabel = document.querySelector(`label[for="${point.id}-x"]`);
     const yLabel = document.querySelector(`label[for="${point.id}-y"]`);
@@ -218,9 +224,6 @@ function updateCoordinateInputOrder(layout, point) {
 
     const calculateButton = document.getElementById(`${point.id}-calculateButton`);
     const coordinateInputs = document.getElementById(`${point.id}-coordinateInputs`);
-
-    // Container leeren
-    coordinateInputs.innerHTML = '';
 
     // Layout anpassen
     if (layout === 'xyz') {
@@ -242,6 +245,7 @@ function updateCoordinateInputOrder(layout, point) {
     }
 }
 
+// wird aufgerufen, immer wenn eine einstellung geändert wird 
 function handleSettingsChange() {
     // "settings" aus html holen
     bitLength = parseInt(document.getElementById("bitLength").value);
