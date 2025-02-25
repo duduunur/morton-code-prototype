@@ -12,6 +12,8 @@
 <body onload="displayMaxCoord()">
     <h2>Morton Codes / Z-Order</h2>
 
+    <!-------------------------------------------------------------- Settings --------------------------------------------------------------->
+
     <div class="container">
         <div class="settings">
             <div class="select-group">
@@ -53,26 +55,23 @@
 
         <!-------------------------------------------------------------- Point A --------------------------------------------------------------->
 
-        <!-- Input Section for Coordinates -->
         <div id="point-a" class="point">
+            <!-- Input Section for Coordinates -->
             <div class="input-section">
                 <span class="label">point a:</span>
                 <div id="a-coordinateInputs" class="coordinateInputs">
-                    <!-- X Coordinate -->
                     <label for="a-x">x:</label>
                     <div class="input-group">
                         <input id="a-x">
                         <div id="a-xError" class="error"></div>
                     </div>
 
-                    <!-- Y Coordinate -->
                     <label for="a-y">y:</label>
                     <div class="input-group">
                         <input id="a-y">
                         <div id="a-yError" class="error"></div>
                     </div>
 
-                    <!-- Z Coordinate -->
                     <label for="a-z" id="a-zLabel" class="hidden">z:</label>
                     <div id="a-zInput" class="input-group hidden">
                         <input id="a-z">
@@ -108,31 +107,30 @@
                             onclick="showSourceCode('a-magicBitsCodeContainer', 'a-forLoopHeader','a-show-code-btn2','a-resultForLoop', 'magicBitsCode')">
                             show source code</button>
                     </div>
-
                     <div id="a-resultMagicBits" class="result"></div>
                 </div>
             </div>
         </div>
+
         <!-------------------------------------------------------------- Point B --------------------------------------------------------------->
+
         <div id="point-b" class="point">
+            <!-- Input Section for Coordinates -->
             <div class="input-section">
                 <span class="label">point b:</span>
                 <div id="b-coordinateInputs" class="coordinateInputs">
-                    <!-- X Coordinate -->
                     <label for="b-x">x:</label>
                     <div class="input-group">
                         <input id="b-x">
                         <div id="b-xError" class="error"></div>
                     </div>
 
-                    <!-- Y Coordinate -->
                     <label for="b-y">y:</label>
                     <div class="input-group">
                         <input id="b-y">
                         <div id="b-yError" class="error"></div>
                     </div>
 
-                    <!-- Z Coordinate -->
                     <label for="b-z" id="b-zLabel" class="hidden">z:</label>
                     <div id="b-zInput" class="input-group hidden">
                         <input id="b-z">
@@ -167,15 +165,13 @@
                             onclick="showSourceCode('b-magicBitsCodeContainer', 'b-forLoopHeader','b-show-code-btn2','b-resultForLoop', 'magicBitsCode')">
                             show source code</button>
                     </div>
-
                     <div id="b-resultMagicBits" class="result"></div>
                 </div>
             </div>
         </div>
 
+        <!------------------------------------------------------------------ Addition and Subtraction --------------------------------------------------------------------->
 
-
-        <!------------------------------------------------------------------ addition and subtraction --------------------------------------------------------------------->
         <div id="addition" class="arithmetic">
             <div class="input-section">
                 <span class="label">a + b</span>
@@ -203,7 +199,7 @@
             </div>
         </div>
 
-        <!-------------------------------------------------------------------------- stencil ----------------------------------------------------------------------->
+        <!-------------------------------------------------------------------------- Stencils ----------------------------------------------------------------------->
 
         <div id="stencilContainer-a" class="stencil hidden">
             <div class="input-section">

@@ -1,7 +1,8 @@
-// Globale Variablen
-let bitLength = 16;  
-let dimension = 2;    
-let layout = "xyz";   
+// ---------------------------------------------------- Globale Variablen und Objekte ----------------------------------------------------
+
+let bitLength = 16; // Standartwert 16
+let dimension = 2;  // Standartwert 2
+let layout = "xyz"; // Standartwert xyz
 
 let maxCoordinateValue = 0n;
 
@@ -34,15 +35,44 @@ function displayMaxCoord() {
     maxCoordContainer.innerText = `Maximum Coordinate Value: ${maxCoordinateValue.toString()}`;
 }
 
+function clearCoordinateInputs(point) {
+    document.getElementById(`${point.id}-x`).value = "";
+    document.getElementById(`${point.id}-y`).value = "";
+    const zInput = document.getElementById(`${point.id}-z`);
+    if (zInput) {
+        zInput.value = "";
+    }
+}
+
+function clearStencil(point) {
+    document.getElementById(`stencilContainer-${point.id}`).classList.remove('expanded');
+
+    const canvas = document.getElementById(`canvasStencil-${point.id}`);
+    const resultDiv = document.getElementById(`stencilResult-${point.id}`);
+    
+    // Canvas leeren
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    
+    // Inhalt des resultDiv leeren
+    if (resultDiv) {
+        resultDiv.innerHTML = '';
+        resultDiv.style.removeProperty('height');
+        resultDiv.style.resize = 'none';
+    }
+}
+
 function clearContainers() {
-    // Ergebnis Container und Error container leeren
+    // Eingabefelder, Ergebnisfelder, Errorfelder, Stencilfelder leeren
+    clearCoordinateInputs(pointA);
+    clearCoordinateInputs(pointB);
+
     document.getElementById(`a-resultForLoop`).innerHTML = '';
     document.getElementById(`a-resultMagicBits`).innerHTML = '';
     document.getElementById(`b-resultForLoop`).innerHTML = '';
     document.getElementById(`b-resultMagicBits`).innerHTML = '';
-
-    clearCoordinateInputs(pointA);
-    clearCoordinateInputs(pointB);
 
     document.getElementById(`a-xError`).innerHTML = '';
     document.getElementById(`a-x`).classList.remove('input-error');
@@ -57,9 +87,6 @@ function clearContainers() {
     document.getElementById(`b-y`).classList.remove('input-error');
     document.getElementById(`b-zError`).innerHTML = '';
     document.getElementById(`b-z`).classList.remove('input-error');
-
-    clearStencil(pointA);
-    clearStencil(pointB);
 
     document.getElementById(`resultAddition`).innerHTML = '';
     document.getElementById(`resultSubtraction`).innerHTML = '';
@@ -76,6 +103,10 @@ function clearContainers() {
     document.getElementById(`point-a`).style.resize = 'none';
     document.getElementById(`point-b`).style.resize = 'none';
 
+    // Stencil Container leeren
+    clearStencil(pointA);
+    clearStencil(pointB);
+
     // Werte in den Objekten zurücksetzen
     pointA.x = null;
     pointA.y = null;
@@ -88,15 +119,6 @@ function clearContainers() {
     pointB.mortonCode = null;
 }
 
-function clearCoordinateInputs(point) {
-    document.getElementById(`${point.id}-x`).value = "";
-    document.getElementById(`${point.id}-y`).value = "";
-    const zInput = document.getElementById(`${point.id}-z`);
-    if (zInput) {
-        zInput.value = "";
-    }
-}
-
 function checkCoordinateLimits(point) {
     const xInput = document.getElementById(`${point.id}-x`);
     const yInput = document.getElementById(`${point.id}-y`);
@@ -107,7 +129,7 @@ function checkCoordinateLimits(point) {
     const yError = document.getElementById(`${point.id}-yError`);
     const zError = document.getElementById(`${point.id}-zError`);
 
-    const x = xInput && xInput.value ? xInput.value : null; //brauche ich das? 
+    const x = xInput && xInput.value ? xInput.value : null; //brauche ich das? ja, damit es null bleibt, falls ohne eingabe jmd calculate klickt 
     const y = yInput && yInput.value ? yInput.value : null;
     const z = zInput && zInput.value ? zInput.value : null;
 
@@ -230,29 +252,21 @@ function handleSettingsChange() {
     toggleCoordinateFields(pointA); 
     toggleCoordinateFields(pointB);
     displayMaxCoord();
-    closeCode('a-forLoopCodeContainer', 'a-magicBitsHeader', 'a-show-code-btn', 'a-resultMagicBits'); // to-do: prüfen, ob offen 
-    closeCode('a-magicBitsCodeContainer', 'a-forLoopHeader','a-show-code-btn2','a-resultForLoop');// to-do: prüfen, ob offen 
-    closeCode('b-forLoopCodeContainer', 'b-magicBitsHeader', 'b-show-code-btn', 'b-resultMagicBits'); // to-do: prüfen, ob offen 
-    closeCode('b-magicBitsCodeContainer', 'b-forLoopHeader','b-show-code-btn2','b-resultForLoop');// to-do: prüfen, ob offen 
-}
 
-function clearStencil(point) {
-    document.getElementById(`stencilContainer-${point.id}`).classList.remove('expanded');
+    if(!document.getElementById('a-forLoopCodeContainer').classList.contains("hidden")) {
+        closeCode('a-forLoopCodeContainer', 'a-magicBitsHeader', 'a-show-code-btn', 'a-resultMagicBits');  
+    }
 
-    const canvas = document.getElementById(`canvasStencil-${point.id}`);
-    const resultDiv = document.getElementById(`stencilResult-${point.id}`);
-    
-    // Canvas leeren
-    if (canvas) {
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if(!document.getElementById('a-magicBitsCodeContainer').classList.contains("hidden")) {
+        closeCode('a-magicBitsCodeContainer', 'a-forLoopHeader','a-show-code-btn2','a-resultForLoop');
+    }
+
+    if(!document.getElementById('b-forLoopCodeContainer').classList.contains("hidden")) {
+        closeCode('b-forLoopCodeContainer', 'b-magicBitsHeader', 'b-show-code-btn', 'b-resultMagicBits');  
     }
     
-    // Inhalt des resultDiv leeren
-    if (resultDiv) {
-        resultDiv.innerHTML = '';
-        resultDiv.style.removeProperty('height');
-        resultDiv.style.resize = 'none';
+    if(!document.getElementById('b-magicBitsCodeContainer').classList.contains("hidden")) {
+        closeCode('b-magicBitsCodeContainer', 'b-forLoopHeader','b-show-code-btn2','b-resultForLoop');
     }
 }
 
@@ -945,7 +959,7 @@ function addition() {
         ${x_sum.toString(2).padStart(bitLength, '0')}</div><br>`;
 
 
-        const y_sum = (pointA.mortonCode | xz3_mask) + (pointB.mortonCode & y3_mask) & y3_mask;
+        const y_sum = ((pointA.mortonCode | xz3_mask) + (pointB.mortonCode & y3_mask)) & y3_mask;
         steps += `<p>${layout[1]}-sum calculation: </p><div class="binary">((pointA | 
         ${layout[0]}${layout[2]}-mask) + (pointB & ${layout[1]}-mask)) & ${layout[1]}-mask:<br><br>
 
@@ -955,7 +969,7 @@ function addition() {
         ${y3_mask.toString(2).padStart(bitLength, '0')}) & ${y3_mask.toString(2).padStart(bitLength, '0')}<br><br>= 
         ${y_sum.toString(2).padStart(bitLength, '0')}</div><br>`;
 
-        const z_sum = (pointA.mortonCode | xy3_mask) + (pointB.mortonCode & z3_mask) & z3_mask;
+        const z_sum = ((pointA.mortonCode | xy3_mask) + (pointB.mortonCode & z3_mask)) & z3_mask;
         steps += `<p>${layout[2]}-sum calculation: </p><div class="binary">(pointA | 
         ${layout[0]}${layout[1]}-mask) + (pointB & ${layout[2]}-mask)) & ${layout[2]}-mask:<br><br>
         (<span class="color-a">${pointA.mortonCode.toString(2).padStart(bitLength, '0')}</span> | 
