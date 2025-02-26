@@ -281,7 +281,7 @@ function calculateMortonCode(point) {
     document.getElementById(`${point.id}-resultForLoop`).innerHTML = '';
     document.getElementById(`${point.id}-resultMagicBits`).innerHTML = '';
 
-    // point container wieder klein und disable resize 
+    // point container wieder klein und disable resize (für den fall dass nach eingabe einer nicht validen koordinate auf calculate geklickt wird)
     const pointContainer = document.getElementById(`point-${point.id}`);
     pointContainer.style.removeProperty('height');
     pointContainer.style.resize = 'none';
@@ -310,7 +310,7 @@ function calculateMortonCode(point) {
     const y = parseInt(document.getElementById(`${point.id}-y`).value);
     const z = dimension === 3 ? (parseInt(document.getElementById(`${point.id}-z`).value)) : 0;
 
-    // koordinaten in point objekte speichern
+    // koordinaten in point objekt speichern
     point.x = x;
     point.y = y;
     point.z = dimension === 3 ? z : null; // Z nur speichern, wenn Dimension 3
@@ -319,7 +319,7 @@ function calculateMortonCode(point) {
     const mortonCode = interleaveForLoop(point);
     displayMagicBits(point);
 
-    // Morton-Codes speichern
+    // Morton-Codes in objekt speichern
     point.mortonCode = mortonCode;
 
     // stencil generieren
@@ -332,7 +332,6 @@ function calculateMortonCode(point) {
 function interleaveForLoop(point) {
     let mortonCode = BigInt(0);
     const bitsPerCoord = parseInt(bitLength / dimension); 
-    const bitsMortonCode = bitsPerCoord * dimension;
 
     const resultContainer = document.getElementById(`${point.id}-resultForLoop`);
 
@@ -360,7 +359,7 @@ function interleaveForLoop(point) {
 
     // funktion für Morton Code und Rechenschritte (binary und mit Nullen füllen)
     function formatBinary(value) {
-        return value.toString(2).padStart(Number(bitsMortonCode), '0');
+        return value.toString(2).padStart(Number(bitLength), '0');
     }
 
     // Morton Code färben
@@ -931,7 +930,7 @@ function addition() {
 
         sum = x_sum | y_sum;
         steps += `<p>final sum: </p><div class="binary">X-sum | Y-sum :<br><br>
-        ${x_sum.toString(2).padStart(bitLength, '0')} | ${y_sum.toString(2).padStart(bitLength, '0')} <br><br>= <b>${sum.toString(2).padStart(bitLength, '0')}</b></div><br><br>`;
+        ${x_sum.toString(2).padStart(bitLength, '0')} | ${y_sum.toString(2).padStart(bitLength, '0')} <br><br>= <b>${sum.toString(2).padStart(bitLength, '0')}</b></div>`;
 
     } else if (dimension === 3) {
         // Generate masks for 3D
@@ -985,7 +984,7 @@ function addition() {
         sum = x_sum| y_sum | z_sum;
         steps += `<p>final sum: </p><div class="binary">
         ${layout[0]}-sum | ${layout[1]}-sum | ${layout[2]}-sum:<br><br>
-        ${x_sum.toString(2).padStart(bitLength, '0')} | ${y_sum.toString(2).padStart(bitLength, '0')} | ${z_sum.toString(2).padStart(bitLength, '0')} <br><br>= <b>${sum.toString(2).padStart(bitLength, '0')}</b></div><br><br>`;
+        ${x_sum.toString(2).padStart(bitLength, '0')} | ${y_sum.toString(2).padStart(bitLength, '0')} | ${z_sum.toString(2).padStart(bitLength, '0')} <br><br>= <b>${sum.toString(2).padStart(bitLength, '0')}</b></div>`;
     } else {
         resultContainer.innerHTML = "<p>Invalid dimension!</p>";
         return;
@@ -1088,7 +1087,7 @@ function subtraction() {
 
         diff = (x_diff & x2_mask) | (y_diff & y2_mask);
         steps += `<p>final diff:</p><div class="binary">(X-diff & X-mask) | (Y-diff & Y-mask):<br><br>
-        ${x_diff.toString(2).padStart(bitLength, '0')} & ${x2_mask.toString(2).padStart(bitLength, '0')} | ${y_diff.toString(2).padStart(bitLength, '0')} & ${y2_mask.toString(2).padStart(bitLength, '0')} <br><br>= <b>${diff.toString(2).padStart(bitLength, '0')}</b></div><br><br>`;
+        ${x_diff.toString(2).padStart(bitLength, '0')} & ${x2_mask.toString(2).padStart(bitLength, '0')} | ${y_diff.toString(2).padStart(bitLength, '0')} & ${y2_mask.toString(2).padStart(bitLength, '0')} <br><br>= <b>${diff.toString(2).padStart(bitLength, '0')}</b></div>`;
 
     } else if (dimension === 3) {
         // Generate masks for 3D
@@ -1116,7 +1115,7 @@ function subtraction() {
 
         diff = (x_diff & x3_mask) | (y_diff & y3_mask) | (z_diff & z3_mask);
         steps += `<p>final diff:</p><div class="binary">(${layout[0]}-diff & ${layout[0]}-mask) | (${layout[1]}-diff & ${layout[1]}-mask) | (${layout[2]}-diff & ${layout[2]}-mask):<br><br>
-        ${x_diff.toString(2).padStart(bitLength, '0')} & ${x3_mask.toString(2).padStart(bitLength, '0')} | ${y_diff.toString(2).padStart(bitLength, '0')} & ${y3_mask.toString(2).padStart(bitLength, '0')} | ${z_diff.toString(2).padStart(bitLength, '0')} & ${z3_mask.toString(2).padStart(bitLength, '0')} <br><br>= <b>${diff.toString(2).padStart(bitLength, '0')}</b></div><br><br>`;
+        ${x_diff.toString(2).padStart(bitLength, '0')} & ${x3_mask.toString(2).padStart(bitLength, '0')} | ${y_diff.toString(2).padStart(bitLength, '0')} & ${y3_mask.toString(2).padStart(bitLength, '0')} | ${z_diff.toString(2).padStart(bitLength, '0')} & ${z3_mask.toString(2).padStart(bitLength, '0')} <br><br>= <b>${diff.toString(2).padStart(bitLength, '0')}</b></div>`;
     }
 
 

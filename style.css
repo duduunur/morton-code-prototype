@@ -129,6 +129,7 @@ p {
 
 .point {
     resize: none;
+    max-height: 1000px;
 }
 
 .input-section {
@@ -264,6 +265,7 @@ input::-webkit-inner-spin-button {
 
 .resultArithmetic{
     overflow-y: auto;
+    max-height: 850px;
 }
 
 #stencilResult-a.result{
