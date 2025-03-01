@@ -133,9 +133,9 @@ function checkCoordinateLimits(point) {
     const yError = document.getElementById(`${point.id}-yError`);
     const zError = document.getElementById(`${point.id}-zError`);
 
-    const x = xInput && xInput.value ? xInput.value : null; //brauche ich das? ja, damit es null bleibt, falls ohne eingabe jmd calculate klickt 
-    const y = yInput && yInput.value ? yInput.value : null;
-    const z = zInput && zInput.value ? zInput.value : null;
+    const x = xInput && xInput.value.trim() ? xInput.value.trim() : null;
+    const y = yInput && yInput.value.trim() ? yInput.value.trim() : null;
+    const z = zInput && zInput.value.trim() ? zInput.value.trim() : null;
 
     let hasError = false;
 
@@ -187,7 +187,7 @@ function checkCoordinateLimits(point) {
 }
 
 // eingabefelder an dimension anpassen
-function toggleCoordinateFields(point) {
+function updateCoordinateFields(point) {
     dimension = parseInt(document.getElementById("dimension").value);
     layout = document.getElementById("layout").value;
     const layoutContainer = document.getElementById("layoutContainer");
@@ -253,8 +253,8 @@ function handleSettingsChange() {
     layout = document.getElementById("layout").value;
 
     clearContainers();
-    toggleCoordinateFields(pointA); 
-    toggleCoordinateFields(pointB);
+    updateCoordinateFields(pointA); 
+    updateCoordinateFields(pointB);
     displayMaxCoord();
 
     if(!document.getElementById('a-forLoopCodeContainer').classList.contains("hidden")) {
@@ -294,6 +294,12 @@ function calculateMortonCode(point) {
     document.getElementById(`resultSubtraction`).innerHTML = '';
     document.getElementById(`additionError`).innerHTML = '';
     document.getElementById(`subtractionError`).innerHTML = '';
+
+    // addition und subtraktion Container höhe zurücksetzen und nicht mehr resizable
+    document.getElementById(`resultAddition`).style.removeProperty('height');
+    document.getElementById(`resultSubtraction`).style.removeProperty('height');
+    document.getElementById(`resultAddition`).style.resize = 'none';
+    document.getElementById(`resultSubtraction`).style.resize = 'none';
 
     // Koordinaten überprüfen
     if (checkCoordinateLimits(point) == false) {
@@ -406,7 +412,7 @@ function interleaveForLoop(point) {
             mortonCode |= shiftedBit;
 
             // Wählen der entsprechenden Farbe basierend auf j-Wert
-            const colorClass = `color-${layout[j]}`; // Farben basierend auf Index
+            const colorClass = `color-${layout[j]}`;
 
             // Formatierte Ausgabe des aktuellen Bits und des verschobenen Bits
             const formattedCurrentBit = formatAndColorizeBits(currentBit, colorClass);
@@ -1190,9 +1196,7 @@ function checkCoordinatesForSubtraction() {
 
 //--------------------------------------------------------- stencil -------------------------------------------------------------
 
-// Funktion, um den 9-Punkte-Stencil zu zeichnen
 function generateStencil(pointId) {
-    document.getElementById(`stencilContainer-${pointId}`).classList.remove("hidden");
     document.getElementById(`stencilContainer-${pointId}`).classList.add('expanded');
     const canvas = document.getElementById(`canvasStencil-${pointId}`);
     if (!canvas) {
