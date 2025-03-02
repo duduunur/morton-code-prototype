@@ -973,7 +973,7 @@ function addition() {
         ${layout[0]}${layout[2]}-mask) + (pointB & ${layout[1]}-mask)) & ${layout[1]}-mask:<br><br>
 
         ((<span class="color-a">${pointA.mortonCode.toString(2).padStart(bitLength, '0')}</span> | 
-        ${xz3_mask.toString(2).padStart(bitLength, '0')} + 
+        ${xz3_mask.toString(2).padStart(bitLength, '0')}) + 
         (<span class="color-b">${pointB.mortonCode.toString(2).padStart(bitLength, '0')}</span> & 
         ${y3_mask.toString(2).padStart(bitLength, '0')})) & ${y3_mask.toString(2).padStart(bitLength, '0')}<br><br>= 
         ${y_sum.toString(2).padStart(bitLength, '0')}</div><br>`;
@@ -983,7 +983,7 @@ function addition() {
         ${layout[0]}${layout[1]}-mask) + (pointB & ${layout[2]}-mask)) & ${layout[2]}-mask:<br><br>
 
         ((<span class="color-a">${pointA.mortonCode.toString(2).padStart(bitLength, '0')}</span> | 
-        ${xy3_mask.toString(2).padStart(bitLength, '0')} + 
+        ${xy3_mask.toString(2).padStart(bitLength, '0')}) + 
         (<span class="color-b">${pointB.mortonCode.toString(2).padStart(bitLength, '0')}</span> & 
         ${z3_mask.toString(2).padStart(bitLength, '0')})) & ${z3_mask.toString(2).padStart(bitLength, '0')} <br><br>= 
         ${z_sum.toString(2).padStart(bitLength, '0')}</div><br>`;
