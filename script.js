@@ -1231,24 +1231,11 @@ function checkCoordinatesForSubtraction() {
 function generateStencil(pointId) {
     document.getElementById(`stencilContainer-${pointId}`).classList.add('expanded');
     const canvas = document.getElementById(`canvasStencil-${pointId}`);
-    if (!canvas) {
-        console.error('Canvas not found');
-        return;
-    }
-
     const ctx = canvas.getContext('2d');
-    if (!ctx) {
-        console.error('Canvas context not found');
-        return;
-    }
-
 
     // Rücksetzen aller Transformationen und Inhalte
     ctx.setTransform(1, 0, 0, 1, 0, 0); // Rücksetzt die Skalierung und Verschiebung
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Löscht den Canvas-Inhalt
- 
-
-    const dimension = BigInt(document.getElementById("dimension").value);
 
     if (pointId == 'a') {
         if (dimension == 2){
